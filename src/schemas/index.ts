@@ -23,3 +23,13 @@ export {
   AntiPatternRuleSchema,
   type VisualIdentityData,
 } from "./visual-identity.js";
+export {
+  MessagingSchema,
+  PerspectiveSchema,
+  VoiceCodexSchema,
+  BrandStorySchema,
+  type MessagingData,
+  type PerspectiveData,
+  type VoiceCodexData,
+  type BrandStoryData,
+} from "./messaging.js";

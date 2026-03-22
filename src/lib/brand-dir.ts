@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, access, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { stringify, parse } from "yaml";
-import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualIdentityData } from "../schemas/index.js";
+import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualIdentityData, MessagingData } from "../schemas/index.js";
 import type { AssetManifestEntry } from "../types/index.js";
 
 export interface AssetManifest {
@@ -124,6 +124,25 @@ export class BrandDir {
 
   async readMarkdown(filename: string): Promise<string> {
     return readFile(this.path(filename), "utf-8");
+  }
+
+  // --- Messaging (Session 3) ---
+
+  async readMessaging(): Promise<MessagingData> {
+    return this.readYaml<MessagingData>("messaging.yaml");
+  }
+
+  async writeMessaging(data: MessagingData): Promise<void> {
+    await this.writeYaml("messaging.yaml", data);
+  }
+
+  async hasMessaging(): Promise<boolean> {
+    try {
+      await access(this.path("messaging.yaml"));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // --- Asset scanning ---

@@ -132,6 +132,91 @@ export interface VisualIdentity {
   positioning_context: string; // from Session 1 interview Q3
 }
 
+// --- Session 3: Core Messaging ---
+
+export interface Perspective {
+  worldview: string;
+  tension: string;
+  resolution: string;
+  audience: string;
+  positioning: string;
+  one_liner: string;
+}
+
+export interface ToneSpec {
+  descriptors: string[]; // exactly 3 words
+  register: string; // how the brand speaks to its audience
+  never_sounds_like: string; // negative tone constraint
+  sentence_patterns: {
+    prefer: string[];
+    avoid: string[];
+  };
+  conventions: {
+    person: string; // "we" | "I" | "they"
+    founder_voice?: string; // "I" for founder channels
+    reader_address: string; // "you"
+    oxford_comma: boolean;
+    sentence_length: number; // target average words
+    paragraph_length: number; // target sentences
+  };
+}
+
+export interface AnchorTerm {
+  use: string; // the preferred word
+  not: string; // words it replaces
+  reason: string; // why this word matters
+}
+
+export interface NeverSayTerm {
+  word: string;
+  reason: string;
+}
+
+export interface VoiceCodex {
+  tone: ToneSpec;
+  vocabulary: {
+    anchor: AnchorTerm[];
+    never_say: NeverSayTerm[];
+    jargon_policy: string; // e.g. "define on first use"
+    placeholder_defaults: {
+      headline: string;
+      subhead: string;
+      cta: string;
+      body_paragraph: string;
+    };
+  };
+  ai_ism_detection: {
+    patterns: string[];
+    instruction: string;
+  };
+}
+
+export interface BrandStory {
+  origin: string;
+  tension: string;
+  resolution: string;
+  vision: string;
+  tagline: string;
+}
+
+export interface MessagingAuditResult {
+  voice_fingerprint: {
+    formality: number; // 1-10
+    jargon_density: string;
+    avg_sentence_length: number;
+    active_voice_pct: number;
+    hedging_frequency: string;
+    tone_by_channel: Record<string, string>;
+  };
+  vocabulary_frequency: Array<{ term: string; count: number; assessment: string }>;
+  claims: {
+    explicit: Array<{ claim: string; frequency: number; issues: string[] }>;
+    implicit: Array<{ claim: string; evidence: string; status: string }>;
+    contradictions: string[];
+  };
+  gaps: string[];
+}
+
 /** DTCG token value */
 export interface DTCGToken {
   $value: string | number;
