@@ -405,56 +405,80 @@ describe("generateTeam", () => {
 describe("generateEmail", () => {
   it("starts with a sharing-oriented intro", () => {
     const result = generateEmail(makeMinimalData());
-    expect(result).toContain("brand system for AI tools");
+    expect(result).toContain("brand system for");
   });
 
-  it("lists top 5 colors max", () => {
+  it("lists all colors with names and roles", () => {
     const data = makeFullData();
     const result = generateEmail(data);
-    expect(result).toContain("**Colors:**");
-    // Has 6 colors in fixture, should only show 5
+    expect(result).toContain("## Colors");
+    // Should include all 6 colors now
     expect(result).toContain("#e4250c");
-    expect(result).not.toContain("#3b82f6"); // 6th color should be omitted
+    expect(result).toContain("#3b82f6");
+    expect(result).toContain("Brand Red");
   });
 
-  it("lists font names", () => {
+  it("lists fonts with usage hints", () => {
     const data = makeFullData();
     const result = generateEmail(data);
-    expect(result).toContain("**Fonts:**");
+    expect(result).toContain("## Typography");
     expect(result).toContain("Inter");
     expect(result).toContain("JetBrains Mono");
+    // Should include usage hints
+    expect(result).toContain("(headings)");
+    expect(result).toContain("(body text)");
+    expect(result).toContain("(code / monospace)");
   });
 
-  it("includes top 3 anti-patterns prioritizing hard rules", () => {
+  it("includes top 5 anti-patterns prioritizing hard rules", () => {
     const data = makeFullData();
     const result = generateEmail(data);
-    expect(result).toContain("**Top rules:**");
+    expect(result).toContain("Anti-Patterns");
     expect(result).toContain("No drop shadows");
     expect(result).toContain("No orange as background fill");
+    expect(result).toContain("**NEVER**");
   });
 
-  it("includes voice in one sentence", () => {
+  it("includes voice summary with 2-3 sentences", () => {
     const data = makeFullData();
     const result = generateEmail(data);
+    expect(result).toContain("## Voice");
     expect(result).toContain("precise, warm, confident");
+    expect(result).toContain("Expert peer, not professor");
+    expect(result).toContain("never sound like");
   });
 
-  it("links to brandsystem.app", () => {
+  it("includes brand positioning one-liner", () => {
+    const data = makeFullData();
+    const result = generateEmail(data);
+    expect(result).toContain("Brand positioning");
+    expect(result).toContain("We make thinking visible.");
+  });
+
+  it("includes brand tagline", () => {
+    const data = makeFullData();
+    const result = generateEmail(data);
+    expect(result).toContain("Brand governance, not brand police.");
+  });
+
+  it("links to brandsystem.app with a 'full guidelines' note", () => {
     const result = generateEmail(makeMinimalData());
     expect(result).toContain("brandsystem.app");
+    expect(result).toContain("full guidelines");
   });
 
-  it("is concise (under 500 words for full data)", () => {
+  it("is between 200 and 500 words for full data", () => {
     const data = makeFullData();
     const result = generateEmail(data);
     const wordCount = result.split(/\s+/).length;
+    expect(wordCount).toBeGreaterThan(150);
     expect(wordCount).toBeLessThan(500);
   });
 
   it("works with minimal data", () => {
     const result = generateEmail(makeMinimalData());
     expect(result).toContain("Acme Corp");
-    expect(result).not.toContain("**Colors:**");
-    expect(result).not.toContain("**Fonts:**");
+    expect(result).not.toContain("## Colors");
+    expect(result).not.toContain("## Typography");
   });
 });

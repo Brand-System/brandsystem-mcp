@@ -389,13 +389,20 @@ export function generateTeam(data: BrandData, includeLogo: boolean): string {
   if (includeLogo && identity.logo.length > 0) {
     lines.push("## Logo\n");
     for (const logo of identity.logo) {
-      lines.push(`**Type**: ${logo.type}`);
+      lines.push(`**Type**: ${logo.type}\n`);
       for (const v of logo.variants) {
-        lines.push(`- **${v.name}** variant available`);
+        if (v.inline_svg) {
+          lines.push(`### ${v.name} variant\n`);
+          lines.push("```svg");
+          lines.push(v.inline_svg.trim());
+          lines.push("```\n");
+        } else {
+          lines.push(`- **${v.name}** variant available`);
+        }
       }
     }
     lines.push("");
-    lines.push("*Logo files are stored in `.brand/assets/logo/`. Use the provided SVG files for all placements.*\n");
+    lines.push("*See the Logo section in the full brand system for all variants and usage rules.*\n");
   }
 
   // Colors
@@ -478,52 +485,89 @@ export function generateEmail(data: BrandData): string {
   lines.push(`# ${config.client_name} — Brand System Summary`);
   lines.push("");
   lines.push(
-    "Here's our brand system for AI tools. Key rules:"
+    `Here's the brand system for ${config.client_name}, built for AI tools and creative workflows. When generating content, visuals, or code for this brand, follow these guidelines to stay on-brand.`
   );
   lines.push("");
 
-  // Top 5 colors
-  const topColors = identity.colors.slice(0, 5);
-  if (topColors.length > 0) {
-    lines.push("**Colors:**");
-    for (const c of topColors) {
-      const roleLabel = c.role !== "unknown" ? ` (${c.role})` : "";
-      lines.push(`- ${cleanColorName(c)}: \`${c.value}\`${roleLabel}`);
+  // Brand positioning one-liner
+  if (messaging?.perspective?.one_liner) {
+    lines.push(`**Brand positioning:** ${messaging.perspective.one_liner}`);
+    lines.push("");
+  }
+
+  // All assigned colors with names
+  if (identity.colors.length > 0) {
+    lines.push("## Colors\n");
+    for (const c of identity.colors) {
+      const roleLabel = c.role !== "unknown" ? ` — ${c.role}` : "";
+      lines.push(`- **${cleanColorName(c)}**: \`${c.value}\`${roleLabel}`);
+    }
+    lines.push("");
+    lines.push("Use only these hex values. Do not introduce off-palette colors.\n");
+  }
+
+  // Typography with usage hints
+  if (identity.typography.length > 0) {
+    lines.push("## Typography\n");
+    for (const t of identity.typography) {
+      const parts = [`**${t.name}**: \`${t.family}\``];
+      if (t.weight) parts.push(`weight ${t.weight}`);
+      if (t.size) parts.push(`size ${t.size}`);
+      // Infer usage hint from name or weight
+      const nameLower = t.name.toLowerCase();
+      if (nameLower.includes("heading") || nameLower.includes("display") || (t.weight && t.weight >= 600)) {
+        parts.push("(headings)");
+      } else if (nameLower.includes("body") || nameLower.includes("text")) {
+        parts.push("(body text)");
+      } else if (nameLower.includes("code") || nameLower.includes("mono")) {
+        parts.push("(code / monospace)");
+      }
+      lines.push(`- ${parts.join(", ")}`);
     }
     lines.push("");
   }
 
-  // Font names
-  const fontFamilies = [...new Set(identity.typography.map((t) => t.family))];
-  if (fontFamilies.length > 0) {
-    lines.push(`**Fonts:** ${fontFamilies.join(", ")}`);
-    lines.push("");
-  }
-
-  // 3 most important anti-patterns (hard severity first)
+  // Top 5 anti-patterns (hard severity first)
   if (visual && visual.anti_patterns.length > 0) {
     const sorted = [...visual.anti_patterns].sort((a, b) =>
       a.severity === "hard" && b.severity !== "hard" ? -1 : b.severity === "hard" && a.severity !== "hard" ? 1 : 0
     );
-    const top3 = sorted.slice(0, 3);
-    lines.push("**Top rules:**");
-    for (const ap of top3) {
-      lines.push(`- ${ap.rule}`);
+    const top5 = sorted.slice(0, 5);
+    lines.push("## Anti-Patterns (Do NOT Do These)\n");
+    for (const ap of top5) {
+      const severity = ap.severity === "hard" ? "NEVER" : "Avoid";
+      lines.push(`- **${severity}**: ${ap.rule}`);
     }
     lines.push("");
   }
 
-  // Voice in one sentence
+  // Voice summary (2-3 sentences)
   if (messaging?.voice) {
-    const descriptors = messaging.voice.tone.descriptors.join(", ");
+    const v = messaging.voice;
+    const descriptors = v.tone.descriptors.join(", ");
+    lines.push("## Voice\n");
     lines.push(
-      `**Voice:** ${descriptors}. ${messaging.voice.tone.register}`
+      `Our tone is ${descriptors}. Think of the register as: ${v.tone.register}. We never sound like ${v.tone.never_sounds_like}.`
     );
+    if (v.vocabulary.anchor.length > 0) {
+      const anchorExamples = v.vocabulary.anchor
+        .slice(0, 3)
+        .map((a) => `"${a.use}" (not "${a.not}")`)
+        .join(", ");
+      lines.push(`\nKey vocabulary: ${anchorExamples}.`);
+    }
     lines.push("");
   }
 
+  // Brand story tagline
+  if (messaging?.brand_story?.tagline) {
+    lines.push(`**Tagline:** ${messaging.brand_story.tagline}`);
+    lines.push("");
+  }
+
+  lines.push("---\n");
   lines.push(
-    "Full brand system: [brandsystem.app](https://brandsystem.app)"
+    `For the full guidelines — including logo files, composition rules, and detailed voice specs — visit [brandsystem.app](https://brandsystem.app).`
   );
   lines.push("");
 

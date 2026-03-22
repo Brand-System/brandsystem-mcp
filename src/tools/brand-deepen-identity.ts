@@ -131,6 +131,7 @@ const QUESTION_BANK: Record<Section, InterviewQuestion[]> = {
  * 1. They match exactly after normalization (strip parenthetical notes, collapse whitespace)
  * 2. One fully contains the other
  * 3. They share the same "no [noun phrase]" core
+ * 4. After stripping negation prefixes and filler words, 60%+ of significant words overlap
  */
 function isSemanticDuplicate(existing: string, candidate: string): boolean {
   const normalize = (s: string) =>
@@ -157,6 +158,37 @@ function isSemanticDuplicate(existing: string, candidate: string): boolean {
   const coreA = extractCore(a);
   const coreB = extractCore(b);
   if (coreA && coreB && coreA === coreB) return true;
+
+  // Fuzzy keyword overlap: strip negation, filler, stem, then compare
+  const stopWords = new Set([
+    "no", "never", "dont", "do", "not", "avoid", "use", "any", "all",
+    "on", "the", "a", "an", "in", "as", "with", "for", "every", "always",
+    "of", "or", "is", "are", "be", "been", "being", "should", "must",
+    "will", "can", "may",
+  ]);
+  const stem = (w: string) =>
+    w.replace(/(ing|ed|ly|tion|ness|ment|able|ible)$/, "").replace(/s$/, "");
+
+  const extractKeywords = (s: string) => {
+    return s
+      .split(/\s+/)
+      .map((w) => w.replace(/[^a-z]/g, ""))
+      .filter((w) => w.length > 2 && !stopWords.has(w))
+      .map(stem);
+  };
+
+  const kwA = extractKeywords(a);
+  const kwB = extractKeywords(b);
+
+  if (kwA.length === 0 || kwB.length === 0) return false;
+
+  const setA = new Set(kwA);
+  const setB = new Set(kwB);
+  const intersection = [...setA].filter((w) => setB.has(w));
+  const minSize = Math.min(setA.size, setB.size);
+
+  // If 60%+ of the smaller set's keywords appear in the larger, it's a duplicate
+  if (minSize > 0 && intersection.length / minSize >= 0.6) return true;
 
   return false;
 }

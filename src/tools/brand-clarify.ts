@@ -67,6 +67,97 @@ function saturation(hex: string): number {
     : (max - min) / (max + min);
 }
 
+// Scoring functions for color keyword matching: higher = better match
+const colorKeywords: Record<string, (hex: string) => number> = {
+  purple: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    // Purple = high blue + some red, low green
+    return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
+  },
+  violet: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
+  },
+  blue: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return b - (r + g) / 2;
+  },
+  red: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return r - (g + b) / 2;
+  },
+  coral: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    // Coral = high red, some green, low blue (warm reddish)
+    return r - b + (r > 150 && g > 50 && g < 150 ? 30 : 0);
+  },
+  orange: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    // Orange = high red, medium green, low blue
+    return r + g / 2 - b * 2 + (r > 180 && g > 80 && g < 200 && b < 100 ? 50 : 0);
+  },
+  yellow: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (r + g) / 2 - b;
+  },
+  green: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return g - (r + b) / 2;
+  },
+  teal: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (g + b) / 2 - r;
+  },
+  cyan: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (g + b) / 2 - r;
+  },
+  pink: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (r + b) / 2 - g + (r > 180 ? 30 : 0);
+  },
+  magenta: (h) => {
+    const { r, g, b } = hexToRgb(h);
+    return (r + b) / 2 - g;
+  },
+  dark: (h) => {
+    return 1 - luminance(h); // darker = higher score
+  },
+  light: (h) => {
+    return luminance(h); // lighter = higher score
+  },
+  white: (h) => {
+    return luminance(h); // closest to white
+  },
+  black: (h) => {
+    return 1 - luminance(h); // closest to black
+  },
+  gray: (h) => {
+    // Low saturation = more gray
+    return 1 - saturation(h);
+  },
+  grey: (h) => {
+    return 1 - saturation(h);
+  },
+  neutral: (h) => {
+    return 1 - saturation(h);
+  },
+};
+
+/**
+ * Find the scoring function that matches a color description.
+ * Returns the scoreFn or null if no keyword matched.
+ */
+function findScoringFunction(desc: string): ((hex: string) => number) | null {
+  const lower = desc.toLowerCase().trim();
+  for (const [keyword, scoreFn] of Object.entries(colorKeywords)) {
+    if (lower.includes(keyword)) {
+      return scoreFn;
+    }
+  }
+  return null;
+}
+
 /**
  * Match a natural-language color description (e.g. "purple", "dark", "the light one")
  * to the best-matching hex value from a list of colors.
@@ -81,99 +172,45 @@ export function matchColorByDescription(
   // Direct hex match
   if (/^#[0-9a-f]{3,8}$/i.test(lower)) return lower;
 
-  // Scoring functions: higher = better match for the keyword
-  const colorKeywords: Record<string, (hex: string) => number> = {
-    purple: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      // Purple = high blue + some red, low green
-      return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
-    },
-    violet: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
-    },
-    blue: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return b - (r + g) / 2;
-    },
-    red: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return r - (g + b) / 2;
-    },
-    coral: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      // Coral = high red, some green, low blue (warm reddish)
-      return r - b + (r > 150 && g > 50 && g < 150 ? 30 : 0);
-    },
-    orange: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      // Orange = high red, medium green, low blue
-      return r + g / 2 - b * 2 + (r > 180 && g > 80 && g < 200 && b < 100 ? 50 : 0);
-    },
-    yellow: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (r + g) / 2 - b;
-    },
-    green: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return g - (r + b) / 2;
-    },
-    teal: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (g + b) / 2 - r;
-    },
-    cyan: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (g + b) / 2 - r;
-    },
-    pink: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (r + b) / 2 - g + (r > 180 ? 30 : 0);
-    },
-    magenta: (h) => {
-      const { r, g, b } = hexToRgb(h);
-      return (r + b) / 2 - g;
-    },
-    dark: (h) => {
-      return 1 - luminance(h); // darker = higher score
-    },
-    light: (h) => {
-      return luminance(h); // lighter = higher score
-    },
-    white: (h) => {
-      return luminance(h); // closest to white
-    },
-    black: (h) => {
-      return 1 - luminance(h); // closest to black
-    },
-    gray: (h) => {
-      // Low saturation = more gray
-      return 1 - saturation(h);
-    },
-    grey: (h) => {
-      return 1 - saturation(h);
-    },
-    neutral: (h) => {
-      return 1 - saturation(h);
-    },
-  };
+  const scoreFn = findScoringFunction(desc);
+  if (!scoreFn) return null;
 
-  // Find which keyword matches the description
-  for (const [keyword, scoreFn] of Object.entries(colorKeywords)) {
-    if (lower.includes(keyword)) {
-      let bestHex: string | null = null;
-      let bestScore = -Infinity;
-      for (const c of colors) {
-        const score = scoreFn(c.value);
-        if (score > bestScore) {
-          bestScore = score;
-          bestHex = c.value;
-        }
-      }
-      return bestHex;
+  let bestHex: string | null = null;
+  let bestScore = -Infinity;
+  for (const c of colors) {
+    const score = scoreFn(c.value);
+    if (score > bestScore) {
+      bestScore = score;
+      bestHex = c.value;
     }
   }
-  return null;
+  return bestHex;
+}
+
+/**
+ * Match a natural-language color description to the top N best-matching hex values.
+ * Used when the user refers to colors in the plural ("the coral/red ones are secondary").
+ * Returns up to `limit` hex strings sorted by score (best first), or empty array if no match.
+ */
+export function matchMultipleColorsByDescription(
+  desc: string,
+  colors: Array<{ value: string; role: string }>,
+  limit = 3
+): string[] {
+  const lower = desc.toLowerCase().trim();
+
+  // Direct hex match — return as single-element array
+  if (/^#[0-9a-f]{3,8}$/i.test(lower)) return [lower];
+
+  const scoreFn = findScoringFunction(desc);
+  if (!scoreFn) return [];
+
+  return colors
+    .map((c) => ({ hex: c.value, score: scoreFn(c.value) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .filter((s) => s.score > 0)
+    .map((s) => s.hex);
 }
 
 /**
@@ -207,8 +244,9 @@ function parseRoleAssignments(
 
   for (const segment of segments) {
     // Match patterns like "the purple one is primary", "dark color is neutral",
-    // "purple = accent", "the light one is surface"
-    const nlPattern = /(?:the\s+)?(.+?)\s+(?:one\s+)?(?:is|=|:|-|—)\s*(\w+)/i;
+    // "purple = accent", "the light one is surface",
+    // "the coral/red ones are secondary"
+    const nlPattern = /(?:the\s+)?(.+?)\s+(?:ones?\s+)?(?:is|are|=|:|-|—)\s*(\w+)/i;
     const nlMatch = segment.match(nlPattern);
     if (!nlMatch) continue;
 
@@ -217,9 +255,19 @@ function parseRoleAssignments(
 
     if (!isValidRole(roleName)) continue;
 
-    const matchedHex = matchColorByDescription(colorDesc, colors);
-    if (matchedHex) {
-      assignments.push({ hex: matchedHex.toLowerCase(), role: roleName as ColorRole });
+    // Detect plural indicators — assign to multiple matching colors
+    const isPlural = /\bones\b|\bcolors\b|\bboth\b|\ball\b/i.test(segment);
+
+    if (isPlural) {
+      const matchedHexes = matchMultipleColorsByDescription(colorDesc, colors, 3);
+      for (const hex of matchedHexes) {
+        assignments.push({ hex: hex.toLowerCase(), role: roleName as ColorRole });
+      }
+    } else {
+      const matchedHex = matchColorByDescription(colorDesc, colors);
+      if (matchedHex) {
+        assignments.push({ hex: matchedHex.toLowerCase(), role: roleName as ColorRole });
+      }
     }
   }
 
