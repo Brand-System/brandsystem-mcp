@@ -246,6 +246,115 @@ function buildUsageSection(identity: CoreIdentity): string {
   return parts.join("\n");
 }
 
+function buildComparisonSection(config: BrandConfig, identity: CoreIdentity): string {
+  const hasLogo = identity.logo.length > 0 && identity.logo[0]?.variants[0]?.inline_svg;
+  const primaryColor = identity.colors.find((c) => c.role === "primary");
+  const colorCount = identity.colors.filter((c) => c.confidence !== "low").length;
+  const brandFonts = identity.typography.filter((t) => t.confidence !== "low");
+  const clientName = escapeHtml(config.client_name);
+
+  return `
+  <section>
+    <h2>Your Brand vs. Generic AI</h2>
+    <p style="font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:16px">
+      This is what your AI tools know now vs. what they&rsquo;d guess without a brand system.
+    </p>
+    <table class="comp-table">
+      <thead><tr><th></th><th>With Your Brand System</th><th>Without It</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="comp-label">Logo</td>
+          <td class="comp-yours">${
+            hasLogo
+              ? `<div class="comp-logo-preview">${identity.logo[0].variants[0].inline_svg}</div><span>Embedded vector &mdash; renders everywhere, no files needed</span>`
+              : `<span class="comp-missing">Not yet extracted &mdash; add via Figma or upload</span>`
+          }</td>
+          <td class="comp-generic">Would type &ldquo;${clientName}&rdquo; in a similar-looking font, or skip the logo entirely</td>
+        </tr>
+        <tr>
+          <td class="comp-label">Colors</td>
+          <td class="comp-yours">${
+            primaryColor
+              ? `<span class="comp-swatch" style="background:${primaryColor.value}"></span> ${primaryColor.value} (primary) + ${colorCount - 1} more &mdash; exact hex with roles`
+              : colorCount > 0
+                ? `${colorCount} colors extracted with hex values`
+                : `<span class="comp-missing">Not yet extracted</span>`
+          }</td>
+          <td class="comp-generic">Would pick a blue primary or &ldquo;professional-looking&rdquo; defaults</td>
+        </tr>
+        <tr>
+          <td class="comp-label">Fonts</td>
+          <td class="comp-yours">${
+            brandFonts.length > 0
+              ? brandFonts.map((f) => f.family).join(", ") + " &mdash; from your actual CSS"
+              : `<span class="comp-missing">Not yet extracted</span>`
+          }</td>
+          <td class="comp-generic">Would default to Inter, system-ui, or Arial</td>
+        </tr>
+        <tr>
+          <td class="comp-label">Tokens</td>
+          <td class="comp-yours">Machine-readable DTCG format &mdash; any tool can consume it</td>
+          <td class="comp-generic">Would re-interpret a PDF or screenshot every time</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>`;
+}
+
+function buildSessionProgression(): string {
+  return `
+  <section>
+    <h2>Brand System Depth</h2>
+    <p style="font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:16px">
+      Your brand system gets more powerful with each session.
+    </p>
+    <div class="session-track">
+      <div class="session-item session-complete">
+        <div class="session-marker">&check;</div>
+        <div>
+          <div class="session-name">Core Identity</div>
+          <div class="session-desc">Colors, typography, logo, design tokens. The basics every AI tool needs.</div>
+        </div>
+      </div>
+      <div class="session-item session-next">
+        <div class="session-marker">2</div>
+        <div>
+          <div class="session-name">Full Visual Identity</div>
+          <div class="session-desc">Composition rules, patterns, illustration language, anti-patterns, automated preflight. Makes output <em>recognizable</em>, not just color-correct.</div>
+        </div>
+      </div>
+      <div class="session-item session-future">
+        <div class="session-marker">3</div>
+        <div>
+          <div class="session-name">Brand Voice &amp; Messaging</div>
+          <div class="session-desc">Voice profile, key messages, audience personas. Written content sounds like you, not like AI.</div>
+        </div>
+      </div>
+      <div class="session-item session-future">
+        <div class="session-marker">4</div>
+        <div>
+          <div class="session-name">Claims &amp; Evidence</div>
+          <div class="session-desc">Proof points with confidence scores. What you can say, what needs qualification, what to never claim.</div>
+        </div>
+      </div>
+      <div class="session-item session-future">
+        <div class="session-marker">5</div>
+        <div>
+          <div class="session-name">Content Strategy</div>
+          <div class="session-desc">Application rules by content type. Blog posts, social, email, case studies &mdash; each with its own governance.</div>
+        </div>
+      </div>
+      <div class="session-item session-future">
+        <div class="session-marker">6</div>
+        <div>
+          <div class="session-name">Full Operations</div>
+          <div class="session-desc">Production engines, measurement loops, content library. The complete brand operating system.</div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
 function buildClarifications(items: ClarificationItem[]): string {
   if (items.length === 0) return "";
   return `
@@ -382,6 +491,31 @@ h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;c
 .fix-item strong{display:block;font-size:13px;color:#c8c6ca;margin-bottom:2px}
 .fix-item span{font-size:12px;color:#6b6876;line-height:1.5}
 
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#6b6876;padding:8px 12px;border-bottom:1px solid #2a2830}
+.comp-table td{padding:12px;border-bottom:1px solid #1e1c24;vertical-align:top;line-height:1.6}
+.comp-label{font-weight:600;color:#c8c6ca;width:80px}
+.comp-yours{color:#4ade80}
+.comp-generic{color:#6b6876;font-style:italic}
+.comp-swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:6px;border:1px solid #2a2830}
+.comp-logo-preview{max-width:120px;margin-bottom:6px}
+.comp-logo-preview svg{width:100%;height:auto}
+.comp-missing{color:#fbbf24;font-style:normal}
+
+/* Session progression */
+.session-track{display:flex;flex-direction:column;gap:0}
+.session-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-left:2px solid #2a2830;margin-left:11px;padding-left:22px;position:relative}
+.session-item:last-child{border-left-color:transparent}
+.session-marker{position:absolute;left:-12px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#2a2830;color:#6b6876;flex-shrink:0}
+.session-complete .session-marker{background:#1a3a2a;color:#4ade80}
+.session-complete .session-name{color:#4ade80}
+.session-next .session-marker{background:#1a2030;color:#7dd3fc;border:2px solid #3a5a7a}
+.session-next .session-name{color:#7dd3fc}
+.session-future .session-name{color:#6b6876}
+.session-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.session-desc{font-size:12px;color:#6b6876;line-height:1.5}
+
 footer{border-top:1px solid #2a2830;padding-top:20px;font-size:11px;color:#4a4856}
 </style>
 </head>
@@ -402,6 +536,8 @@ footer{border-top:1px solid #2a2830;padding-top:20px;font-size:11px;color:#4a485
   &ldquo;Use this as my brand guidelines for all visual output.&rdquo;
   Logos are embedded as vectors &mdash; no external files needed.
 </div>
+
+${buildSessionProgression()}
 
 <section>
   <h2>Logo</h2>
@@ -426,6 +562,8 @@ footer{border-top:1px solid #2a2830;padding-top:20px;font-size:11px;color:#4a485
   <h2>Quick Reference</h2>
   ${buildUsageSection(identity)}
 </section>
+
+${buildComparisonSection(config, identity)}
 
 ${buildClarifications(clarifications)}
 
