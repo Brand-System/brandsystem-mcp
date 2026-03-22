@@ -19,6 +19,7 @@ import { register as registerBuildJourney } from "./tools/brand-build-journey.js
 import { register as registerBuildPersonas } from "./tools/brand-build-personas.js";
 import { register as registerBuildMatrix } from "./tools/brand-build-matrix.js";
 import { register as registerBuildThemes } from "./tools/brand-build-themes.js";
+import { register as registerExport } from "./tools/brand-export.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -45,6 +46,7 @@ export function createServer(): McpServer {
   registerBuildPersonas(server);
   registerBuildMatrix(server);
   registerBuildThemes(server);
+  registerExport(server);
 
   return server;
 }

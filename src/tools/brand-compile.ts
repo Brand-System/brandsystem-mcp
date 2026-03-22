@@ -118,7 +118,11 @@ async function handler() {
     await brandDir.writeMarkdown("visual-identity-manifest.md", vimMarkdown);
     filesWritten.push("visual-identity-manifest.md");
 
-    const integrationMarkdown = generateSystemIntegration(config, identity, visual);
+    // Include messaging data if available for self-contained output
+    const hasMessaging = await brandDir.hasMessaging();
+    const messaging = hasMessaging ? await brandDir.readMessaging() : null;
+
+    const integrationMarkdown = generateSystemIntegration(config, identity, visual, messaging);
     await brandDir.writeMarkdown("system-integration.md", integrationMarkdown);
     filesWritten.push("system-integration.md");
 
@@ -134,7 +138,6 @@ async function handler() {
     );
 
     // Check if Session 3 is needed
-    const hasMessaging = await brandDir.hasMessaging();
     if (!hasMessaging) {
       nextSteps.push("Ready for Session 3: run brand_extract_messaging to audit your voice, then brand_compile_messaging to define perspective + voice + brand story");
     }

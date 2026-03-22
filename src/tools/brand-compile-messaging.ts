@@ -551,13 +551,12 @@ async function handleRecord(brandDir: BrandDir, section: Section, answersRaw: st
         changes.push("Bumped config.session to 3");
       }
 
-      // Regenerate system-integration.md with voice rules
+      // Regenerate system-integration.md with voice rules inline
       if (await brandDir.hasVisualIdentity()) {
         const identity = await brandDir.readCoreIdentity();
         const visual = await brandDir.readVisualIdentity();
         const { generateSystemIntegration } = await import("../lib/vim-generator.js");
-        let integrationMd = generateSystemIntegration(config, identity, visual);
-        integrationMd = appendVoiceRulesToIntegration(integrationMd, messaging);
+        const integrationMd = generateSystemIntegration(config, identity, visual, messaging);
         await brandDir.writeMarkdown("system-integration.md", integrationMd);
         changes.push("Updated system-integration.md with voice rules");
       }
