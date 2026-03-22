@@ -319,25 +319,66 @@ async function handleRecord(brandDir: BrandDir, section: Section, answersRaw: st
       break;
     }
     case "anti_patterns": {
-      // Anti-patterns are additive — merge with existing
-      const newRules = (answers.rules as Array<{ rule: string; severity?: string; preflight_id?: string }>) ?? [];
-      for (const r of newRules) {
+      // Anti-patterns are additive — merge with existing.
+      // Accept multiple formats:
+      //   1. { rules: [{ rule: "...", severity: "hard" }] }  (structured)
+      //   2. { rules: ["string", "string"] }                 (string array)
+      //   3. { rules: "sentence. sentence." }                (freeform text)
+      //   4. { visual_dont: "...", rules: "..." }            (freeform fields)
+      //   5. Top-level string fields treated as freeform rules
+      const rawRules = answers.rules ?? answers.visual_dont ?? answers.anti_patterns ?? "";
+      const parsedRules: Array<{ rule: string; severity: "hard" | "soft"; preflight_id?: string }> = [];
+
+      if (Array.isArray(rawRules)) {
+        for (const item of rawRules) {
+          if (typeof item === "string") {
+            parsedRules.push({ rule: item.trim(), severity: "hard" });
+          } else if (item && typeof item === "object" && "rule" in item) {
+            parsedRules.push({
+              rule: (item as { rule: string }).rule,
+              severity: ((item as { severity?: string }).severity as "hard" | "soft") ?? "hard",
+              ...((item as { preflight_id?: string }).preflight_id
+                ? { preflight_id: (item as { preflight_id: string }).preflight_id }
+                : {}),
+            });
+          }
+        }
+      } else if (typeof rawRules === "string" && rawRules.trim()) {
+        // Split freeform text on periods, newlines, or "No "/"Never " boundaries
+        const sentences = rawRules
+          .split(/(?:\.\s+|\n+|(?=(?:No |Never |Don't |Avoid )))/i)
+          .map((s) => s.trim().replace(/\.+$/, ""))
+          .filter((s) => s.length > 5);
+        for (const s of sentences) {
+          parsedRules.push({ rule: s, severity: "hard" });
+        }
+      }
+
+      // Also check for a separate visual_dont field if rules was something else
+      if (answers.visual_dont && answers.visual_dont !== rawRules) {
+        const dontText = String(answers.visual_dont);
+        const dontSentences = dontText
+          .split(/(?:\.\s+|\n+|(?=(?:No |Never |Don't |Avoid )))/i)
+          .map((s) => s.trim().replace(/\.+$/, ""))
+          .filter((s) => s.length > 5);
+        for (const s of dontSentences) {
+          parsedRules.push({ rule: s, severity: "hard" });
+        }
+      }
+
+      for (const r of parsedRules) {
         const exists = visual.anti_patterns.some(
           (existing) => existing.rule.toLowerCase() === r.rule.toLowerCase()
         );
         if (!exists) {
-          visual.anti_patterns.push({
-            rule: r.rule,
-            severity: (r.severity as "hard" | "soft") ?? "hard",
-            ...(r.preflight_id ? { preflight_id: r.preflight_id } : {}),
-          });
-          changes.push(`Added anti-pattern rule: "${r.rule}" (${r.severity ?? "hard"})`);
+          visual.anti_patterns.push(r);
+          changes.push(`Added anti-pattern rule: "${r.rule}" (${r.severity})`);
         } else {
           changes.push(`Skipped duplicate anti-pattern: "${r.rule}"`);
         }
       }
-      if (newRules.length === 0) {
-        changes.push("No anti-pattern rules provided in answers.rules array");
+      if (parsedRules.length === 0) {
+        changes.push("Could not parse any anti-pattern rules from the provided answers. Try sending rules as a plain text string separated by periods, or as an array of strings.");
       }
       break;
     }

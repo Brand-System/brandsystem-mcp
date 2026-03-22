@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
+import { buildResponse } from "../lib/response.js";
 import { generateReportHTML, generateBrandInstructions } from "../lib/report-html.js";
 import type { NeedsClarification } from "../types/index.js";
 import { access } from "node:fs/promises";
@@ -103,53 +104,43 @@ async function handler() {
     "**Scan a different URL** — If this wasn't your main brand page, try brand_extract_web with a different URL",
   );
 
-  // Return both metadata (for the LLM) and HTML (for artifact rendering)
-  return {
-    content: [
-      {
-        type: "text" as const,
-        text: JSON.stringify(
-          {
-            _metadata: {
-              what_happened: `Generated brand identity report for "${config.client_name}"`,
-              conversation_guide: {
-                instruction: "Present the HTML as an artifact, then ask the user: 'Does this look right?' and present the two paths below based on their answer.",
-                if_looks_right: {
-                  say: `Great — here's how to start using your brand identity everywhere:`,
-                  actions: looksRightActions,
-                },
-                if_looks_wrong: {
-                  say: "No problem — let's get it right. What's off? Here are some ways to improve it:",
-                  actions: looksWrongActions,
-                  follow_up: "Which of these would be easiest for you? Or tell me what specifically looks wrong and I'll help fix it.",
-                },
-              },
-            },
-            report: {
-              file: ".brand/brand-report.html",
-              colors: identity.colors.length,
-              fonts: identity.typography.length,
-              logos: identity.logo.length,
-              tokens: tokenCount,
-              clarifications: clarifications.items.length,
-              completeness: {
-                has_logo: hasLogo,
-                has_primary_color: hasPrimary,
-                has_fonts: hasHighConfFonts,
-              },
-            },
-            brand_instructions: brandInstructions,
-          },
-          null,
-          2
-        ),
-      },
-      {
-        type: "text" as const,
-        text: `---BRAND_REPORT_HTML_START---\n${html}\n---BRAND_REPORT_HTML_END---`,
-      },
+  // Always write to disk; return summary only (HTML is too large for MCP response)
+  return buildResponse({
+    what_happened: `Generated brand identity report for "${config.client_name}" → .brand/brand-report.html`,
+    next_steps: [
+      "Open .brand/brand-report.html in a browser to preview the report",
+      "Ask the user: 'Does this look right?'",
     ],
-  };
+    data: {
+      file: ".brand/brand-report.html",
+      file_size: `${Math.round(html.length / 1024)}KB`,
+      report_summary: {
+        colors: identity.colors.length,
+        fonts: identity.typography.length,
+        logos: identity.logo.length,
+        tokens: tokenCount,
+        clarifications: clarifications.items.length,
+        completeness: {
+          has_logo: hasLogo,
+          has_primary_color: hasPrimary,
+          has_fonts: hasHighConfFonts,
+        },
+      },
+      conversation_guide: {
+        instruction: "Tell the user the report has been saved to .brand/brand-report.html. Summarize the key findings (colors, fonts, logo status). Then ask: 'Does this look right?'",
+        if_looks_right: {
+          say: `Great — here's how to start using your brand identity everywhere:`,
+          actions: looksRightActions,
+        },
+        if_looks_wrong: {
+          say: "No problem — let's get it right. What's off?",
+          actions: looksWrongActions,
+          follow_up: "Which of these would be easiest for you? Or tell me what specifically looks wrong and I'll help fix it.",
+        },
+      },
+      brand_instructions: brandInstructions,
+    },
+  });
 }
 
 export function register(server: McpServer) {
