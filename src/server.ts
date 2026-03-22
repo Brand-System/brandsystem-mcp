@@ -15,6 +15,10 @@ import { register as registerPreflight } from "./tools/brand-preflight.js";
 import { register as registerExtractMessaging } from "./tools/brand-extract-messaging.js";
 import { register as registerWrite } from "./tools/brand-write.js";
 import { register as registerCompileMessaging } from "./tools/brand-compile-messaging.js";
+import { register as registerBuildJourney } from "./tools/brand-build-journey.js";
+import { register as registerBuildPersonas } from "./tools/brand-build-personas.js";
+import { register as registerBuildMatrix } from "./tools/brand-build-matrix.js";
+import { register as registerBuildThemes } from "./tools/brand-build-themes.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -37,6 +41,10 @@ export function createServer(): McpServer {
   registerExtractMessaging(server);
   registerWrite(server);
   registerCompileMessaging(server);
+  registerBuildJourney(server);
+  registerBuildPersonas(server);
+  registerBuildMatrix(server);
+  registerBuildThemes(server);
 
   return server;
 }
