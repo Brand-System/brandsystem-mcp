@@ -68,12 +68,11 @@ function synthesizeCoreMessage(
   const goal = stage.content_goal;
   const narrativeAngle = persona.narrative_emphasis.primary;
 
-  // Build the adapted message
+  // Build the adapted message — branch on stage.id for reliable matching
   const parts: string[] = [];
 
-  // Open with the persona's tension, refracted through the stage mindset
-  if (stage.id === "first-touch" || stage.tone_shift.toLowerCase().includes("curious") || stage.tone_shift.toLowerCase().includes("aware")) {
-    // Early-stage: lead with the tension as a question or provocation
+  if (stage.id === "first-touch") {
+    // Provocative, tension-as-hook — earn the click, interrupt the scroll
     parts.push(
       `${personaLabel} feels this acutely: ${tensionPhrase}.`
     );
@@ -89,8 +88,25 @@ function synthesizeCoreMessage(
     parts.push(
       `Content goal: ${goal}. Lead with ${narrativeAngle} to earn attention.`
     );
-  } else if (stage.tone_shift.toLowerCase().includes("proof") || stage.tone_shift.toLowerCase().includes("valid") || stage.tone_shift.toLowerCase().includes("evidence")) {
-    // Validation stage: lead with proof, resolve the tension
+  } else if (stage.id === "context-and-meaning") {
+    // Educational, framework-oriented — give them a lens, not a pitch
+    parts.push(
+      `${personaLabel} is past awareness and looking for a framework. Their tension: ${tensionPhrase}.`
+    );
+    if (perspective) {
+      parts.push(
+        `Introduce ${perspective.worldview} as the lens — help them see the problem differently. Their mindset: ${mindset}.`
+      );
+    } else {
+      parts.push(
+        `Help them reframe the problem. Their mindset: ${mindset}.`
+      );
+    }
+    parts.push(
+      `Content goal: ${goal}. Build depth through ${narrativeAngle} — teach, don't sell.`
+    );
+  } else if (stage.id === "validation-and-proof") {
+    // Evidence-heavy, concrete outcomes, social proof
     parts.push(
       `For ${personaLabel}, the core tension is: ${tensionPhrase}.`
     );
@@ -106,8 +122,8 @@ function synthesizeCoreMessage(
     parts.push(
       `Content goal: ${goal}. Emphasize ${narrativeAngle} with evidence.`
     );
-  } else if (stage.tone_shift.toLowerCase().includes("decision") || stage.tone_shift.toLowerCase().includes("commit") || stage.tone_shift.toLowerCase().includes("buy")) {
-    // Decision stage: resolve tension, provide confidence
+  } else if (stage.id === "decision-support") {
+    // Direct, action-oriented — remove friction, arm the champion
     parts.push(
       `${personaLabel} is ready to decide. Their original tension — ${tensionPhrase} — needs a resolution they can defend to stakeholders.`
     );
@@ -124,7 +140,7 @@ function synthesizeCoreMessage(
       `Content goal: ${goal}. Use ${narrativeAngle} to close the loop.`
     );
   } else {
-    // Default: balanced message
+    // Generic fallback for custom stages
     parts.push(
       `For ${personaLabel} (${persona.seniority}), the driving tension is: ${tensionPhrase}.`
     );

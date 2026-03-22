@@ -125,6 +125,42 @@ const QUESTION_BANK: Record<Section, InterviewQuestion[]> = {
 
 // --- Helpers ---
 
+/**
+ * Fuzzy deduplication for anti-pattern rules.
+ * Two rules are duplicates if:
+ * 1. They match exactly after normalization (strip parenthetical notes, collapse whitespace)
+ * 2. One fully contains the other
+ * 3. They share the same "no [noun phrase]" core
+ */
+function isSemanticDuplicate(existing: string, candidate: string): boolean {
+  const normalize = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/\(.*?\)/g, "") // strip parenthetical notes
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const a = normalize(existing);
+  const b = normalize(candidate);
+
+  // Exact match after normalization
+  if (a === b) return true;
+
+  // One contains the other
+  if (a.includes(b) || b.includes(a)) return true;
+
+  // Extract core noun phrase: "no [X]" pattern
+  const extractCore = (s: string) => {
+    const match = s.match(/no\s+(\w+(?:\s+\w+)?)/i);
+    return match?.[1]?.toLowerCase() || "";
+  };
+  const coreA = extractCore(a);
+  const coreB = extractCore(b);
+  if (coreA && coreB && coreA === coreB) return true;
+
+  return false;
+}
+
 function getMissingSections(visual: VisualIdentityData | null): Section[] {
   if (!visual) return [...SECTIONS];
 
@@ -367,8 +403,8 @@ async function handleRecord(brandDir: BrandDir, section: Section, answersRaw: st
       }
 
       for (const r of parsedRules) {
-        const exists = visual.anti_patterns.some(
-          (existing) => existing.rule.toLowerCase() === r.rule.toLowerCase()
+        const exists = visual.anti_patterns.some((existing) =>
+          isSemanticDuplicate(existing.rule, r.rule)
         );
         if (!exists) {
           visual.anti_patterns.push(r);

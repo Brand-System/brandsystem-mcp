@@ -24,21 +24,202 @@ function isValidRole(s: string): s is ColorRole {
 }
 
 /**
+ * Parse a hex color string into RGB components (0-255).
+ * Supports 3, 4, 6, and 8 character hex values.
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  let h = hex.replace("#", "").toLowerCase();
+  // Expand shorthand (3 or 4 char) to 6 or 8 char
+  if (h.length === 3 || h.length === 4) {
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return { r, g, b };
+}
+
+/**
+ * Compute relative luminance (0 = black, 1 = white).
+ */
+function luminance(hex: string): number {
+  const { r, g, b } = hexToRgb(hex);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+/**
+ * Compute HSL saturation (0-1) from a hex color.
+ */
+function saturation(hex: string): number {
+  const { r, g, b } = hexToRgb(hex);
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  if (max === min) return 0;
+  const l = (max + min) / 2;
+  return l > 0.5
+    ? (max - min) / (2 - max - min)
+    : (max - min) / (max + min);
+}
+
+/**
+ * Match a natural-language color description (e.g. "purple", "dark", "the light one")
+ * to the best-matching hex value from a list of colors.
+ * Returns the hex string of the best match, or null if no keyword matched.
+ */
+export function matchColorByDescription(
+  desc: string,
+  colors: Array<{ value: string; role: string }>
+): string | null {
+  const lower = desc.toLowerCase().trim();
+
+  // Direct hex match
+  if (/^#[0-9a-f]{3,8}$/i.test(lower)) return lower;
+
+  // Scoring functions: higher = better match for the keyword
+  const colorKeywords: Record<string, (hex: string) => number> = {
+    purple: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      // Purple = high blue + some red, low green
+      return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
+    },
+    violet: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (r + b) / 2 - g + (b > g && r > g ? 50 : 0);
+    },
+    blue: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return b - (r + g) / 2;
+    },
+    red: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return r - (g + b) / 2;
+    },
+    coral: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      // Coral = high red, some green, low blue (warm reddish)
+      return r - b + (r > 150 && g > 50 && g < 150 ? 30 : 0);
+    },
+    orange: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      // Orange = high red, medium green, low blue
+      return r + g / 2 - b * 2 + (r > 180 && g > 80 && g < 200 && b < 100 ? 50 : 0);
+    },
+    yellow: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (r + g) / 2 - b;
+    },
+    green: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return g - (r + b) / 2;
+    },
+    teal: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (g + b) / 2 - r;
+    },
+    cyan: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (g + b) / 2 - r;
+    },
+    pink: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (r + b) / 2 - g + (r > 180 ? 30 : 0);
+    },
+    magenta: (h) => {
+      const { r, g, b } = hexToRgb(h);
+      return (r + b) / 2 - g;
+    },
+    dark: (h) => {
+      return 1 - luminance(h); // darker = higher score
+    },
+    light: (h) => {
+      return luminance(h); // lighter = higher score
+    },
+    white: (h) => {
+      return luminance(h); // closest to white
+    },
+    black: (h) => {
+      return 1 - luminance(h); // closest to black
+    },
+    gray: (h) => {
+      // Low saturation = more gray
+      return 1 - saturation(h);
+    },
+    grey: (h) => {
+      return 1 - saturation(h);
+    },
+    neutral: (h) => {
+      return 1 - saturation(h);
+    },
+  };
+
+  // Find which keyword matches the description
+  for (const [keyword, scoreFn] of Object.entries(colorKeywords)) {
+    if (lower.includes(keyword)) {
+      let bestHex: string | null = null;
+      let bestScore = -Infinity;
+      for (const c of colors) {
+        const score = scoreFn(c.value);
+        if (score > bestScore) {
+          bestScore = score;
+          bestHex = c.value;
+        }
+      }
+      return bestHex;
+    }
+  }
+  return null;
+}
+
+/**
  * Parse role assignment strings like "#5544f2 is accent, #f44d37 is secondary"
+ * or natural language like "the purple one is accent, the dark color is neutral".
  * Returns an array of { hex, role } pairs.
  */
-function parseRoleAssignments(answer: string): Array<{ hex: string; role: ColorRole }> {
+function parseRoleAssignments(
+  answer: string,
+  colors: Array<{ value: string; role: string }> = []
+): Array<{ hex: string; role: ColorRole }> {
   const assignments: Array<{ hex: string; role: ColorRole }> = [];
 
-  // Match patterns like "#hex is role" or "#hex = role" or "#hex: role"
-  const pattern = /(#[0-9a-fA-F]{3,8})\s*(?:is|=|:|-|—)\s*(\w+)/gi;
+  // --- Primary path: exact hex references ---
+  const hexPattern = /(#[0-9a-fA-F]{3,8})\s*(?:is|=|:|-|—)\s*(\w+)/gi;
   let match: RegExpExecArray | null;
 
-  while ((match = pattern.exec(answer)) !== null) {
+  while ((match = hexPattern.exec(answer)) !== null) {
     const hex = match[1].toLowerCase();
     const roleName = match[2].toLowerCase();
     if (HEX_RE.test(hex) && isValidRole(roleName)) {
       assignments.push({ hex, role: roleName as ColorRole });
+    }
+  }
+
+  if (assignments.length > 0) return assignments;
+
+  // --- Fallback: natural language color descriptions ---
+  // Split on commas, semicolons, periods, "and"
+  const segments = answer.split(/[,;.]|\band\b/i).map((s) => s.trim()).filter(Boolean);
+
+  for (const segment of segments) {
+    // Match patterns like "the purple one is primary", "dark color is neutral",
+    // "purple = accent", "the light one is surface"
+    const nlPattern = /(?:the\s+)?(.+?)\s+(?:one\s+)?(?:is|=|:|-|—)\s*(\w+)/i;
+    const nlMatch = segment.match(nlPattern);
+    if (!nlMatch) continue;
+
+    const colorDesc = nlMatch[1].trim();
+    const roleName = nlMatch[2].trim().toLowerCase();
+
+    if (!isValidRole(roleName)) continue;
+
+    const matchedHex = matchColorByDescription(colorDesc, colors);
+    if (matchedHex) {
+      assignments.push({ hex: matchedHex.toLowerCase(), role: roleName as ColorRole });
     }
   }
 
@@ -94,13 +275,17 @@ async function handler(input: Params) {
   // Apply the answer based on the field
   if (item.field === "colors.roles") {
     // Bulk role assignment for unknown-role colors
-    const assignments = parseRoleAssignments(input.answer);
+    const assignments = parseRoleAssignments(input.answer, identity.colors);
     if (assignments.length === 0) {
+      const colorList = identity.colors.map(
+        (c) => `${c.value} (current role: ${c.role})`
+      );
       return buildResponse({
         what_happened: "Could not parse role assignments from your answer",
         next_steps: [
-          'Format: "#hex is role, #hex is role" (e.g. "#5544f2 is accent, #f44d37 is secondary")',
+          'Format: "#hex is role" or "the purple one is accent, the dark color is neutral"',
           `Valid roles: ${VALID_ROLES.join(", ")}`,
+          `Available colors: ${colorList.join(", ")}`,
         ],
         data: { error: "parse_failed", answer: input.answer },
       });
@@ -122,11 +307,25 @@ async function handler(input: Params) {
     const rolePart = item.field.replace("colors.", "");
     const answer = input.answer.trim();
 
+    // Extract hex from the question text to identify which specific color this item is about
+    const hexInQuestion = item.question
+      .match(/#[0-9a-fA-F]{3,8}/)?.[0]
+      ?.toLowerCase();
+
     if (HEX_RE.test(answer)) {
       // Answer is a hex value — update or add a color with this role
-      const existingIdx = identity.colors.findIndex(
-        (c) => c.role === rolePart || c.value.toLowerCase() === answer.toLowerCase()
-      );
+      // Prefer matching by hex from question when role is "unknown"
+      let existingIdx = -1;
+      if (hexInQuestion) {
+        existingIdx = identity.colors.findIndex(
+          (c) => c.value.toLowerCase() === hexInQuestion
+        );
+      }
+      if (existingIdx === -1) {
+        existingIdx = identity.colors.findIndex(
+          (c) => c.role === rolePart || c.value.toLowerCase() === answer.toLowerCase()
+        );
+      }
 
       if (existingIdx !== -1) {
         identity.colors[existingIdx].value = answer.toLowerCase();
@@ -149,9 +348,18 @@ async function handler(input: Params) {
       }
     } else if (isValidRole(answer.toLowerCase())) {
       // Answer is a role name — find a matching color and update its role
-      const colorIdx = identity.colors.findIndex(
-        (c) => c.role === rolePart || c.role === "unknown"
-      );
+      // Prefer matching by hex from question to avoid grabbing the wrong "unknown" color
+      let colorIdx = -1;
+      if (hexInQuestion) {
+        colorIdx = identity.colors.findIndex(
+          (c) => c.value.toLowerCase() === hexInQuestion
+        );
+      }
+      if (colorIdx === -1) {
+        colorIdx = identity.colors.findIndex(
+          (c) => c.role === rolePart || c.role === "unknown"
+        );
+      }
       if (colorIdx !== -1) {
         const oldRole = identity.colors[colorIdx].role;
         identity.colors[colorIdx].role = answer.toLowerCase() as ColorRole;
@@ -164,7 +372,16 @@ async function handler(input: Params) {
       }
     } else {
       // Freeform answer — try to confirm the existing color
-      const colorIdx = identity.colors.findIndex((c) => c.role === rolePart);
+      // Prefer matching by hex from question
+      let colorIdx = -1;
+      if (hexInQuestion) {
+        colorIdx = identity.colors.findIndex(
+          (c) => c.value.toLowerCase() === hexInQuestion
+        );
+      }
+      if (colorIdx === -1) {
+        colorIdx = identity.colors.findIndex((c) => c.role === rolePart);
+      }
       if (colorIdx !== -1) {
         identity.colors[colorIdx].confidence = "confirmed";
         changes.push(`Confirmed color ${identity.colors[colorIdx].value} as "${rolePart}"`);
