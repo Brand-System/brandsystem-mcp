@@ -116,10 +116,22 @@ function renderColorPrimitives(identity: CoreIdentityData): string {
     return lines.join("\n") + "\n";
   }
 
+  const assigned = identity.colors.filter((c) => c.role !== "unknown");
+  const unassigned = identity.colors.filter((c) => c.role === "unknown");
+
   lines.push("| Name | Hex | Role | Confidence |");
   lines.push("|------|-----|------|------------|");
-  for (const c of identity.colors) {
-    lines.push(`| ${c.name} | \`${c.value}\` | ${c.role} | ${c.confidence} |`);
+  for (const c of assigned) {
+    lines.push(`| ${cleanColorName(c)} | \`${c.value}\` | ${c.role} | ${c.confidence} |`);
+  }
+
+  if (unassigned.length > 0) {
+    lines.push("");
+    lines.push("**Unassigned colors** — use `brand_clarify` to assign roles:");
+    lines.push("");
+    for (const c of unassigned) {
+      lines.push(`- \`${c.value}\` (${c.confidence} confidence, via ${c.source})`);
+    }
   }
   lines.push("");
   return lines.join("\n") + "\n";
@@ -135,11 +147,12 @@ function renderSemanticMapping(identity: CoreIdentityData): string {
     return lines.join("\n") + "\n";
   }
 
-  const byRole = groupBy(identity.colors, (c) => c.role);
+  const assigned = identity.colors.filter((c) => c.role !== "unknown");
+  const byRole = groupBy(assigned, (c) => c.role);
   for (const [role, colors] of Object.entries(byRole)) {
     lines.push(`**${capitalize(role)}**`);
     for (const c of colors) {
-      lines.push(`- \`${c.value}\` — ${c.name}`);
+      lines.push(`- \`${c.value}\` — ${cleanColorName(c)}`);
     }
     lines.push("");
   }
@@ -166,7 +179,7 @@ function renderThemeModes(identity: CoreIdentityData): string {
     const surfaces = identity.colors.filter((c) => c.role === "surface");
     lines.push("**Surface colors:**");
     for (const s of surfaces) {
-      lines.push(`- \`${s.value}\` — ${s.name}`);
+      lines.push(`- \`${s.value}\` — ${cleanColorName(s)}`);
     }
     lines.push("");
   }
@@ -174,7 +187,7 @@ function renderThemeModes(identity: CoreIdentityData): string {
     const texts = identity.colors.filter((c) => c.role === "text");
     lines.push("**Text colors:**");
     for (const t of texts) {
-      lines.push(`- \`${t.value}\` — ${t.name}`);
+      lines.push(`- \`${t.value}\` — ${cleanColorName(t)}`);
     }
     lines.push("");
   }
@@ -217,18 +230,33 @@ function renderTypeUsage(identity: CoreIdentityData): string {
     return lines.join("\n") + "\n";
   }
 
-  // Attempt to categorize by name convention
+  // Categorize by name/weight convention
   const headings = identity.typography.filter(
-    (t) => /heading|display|title|h[1-6]/i.test(t.name)
+    (t) =>
+      /heading|display|title|h[1-6]/i.test(t.name) ||
+      /bold|semibold|black|heavy/i.test(t.name) ||
+      /bold|semibold|black|heavy/i.test(t.family) ||
+      (t.weight !== undefined && t.weight >= 600)
   );
   const body = identity.typography.filter(
-    (t) => /body|paragraph|text|caption|base/i.test(t.name)
+    (t) =>
+      !headings.includes(t) &&
+      (/body|paragraph|text|caption|base|regular|book/i.test(t.name) ||
+        /grotesk|sans$/i.test(t.family) ||
+        (t.weight !== undefined && t.weight >= 300 && t.weight <= 500))
   );
   const mono = identity.typography.filter(
-    (t) => /mono|code/i.test(t.name) || /mono/i.test(t.family)
+    (t) => /mono|code|consolas|courier/i.test(t.name) || /mono|code/i.test(t.family)
+  );
+  const ui = identity.typography.filter(
+    (t) =>
+      !headings.includes(t) &&
+      !body.includes(t) &&
+      !mono.includes(t) &&
+      /inter|system|ui|roboto/i.test(t.family)
   );
   const other = identity.typography.filter(
-    (t) => !headings.includes(t) && !body.includes(t) && !mono.includes(t)
+    (t) => !headings.includes(t) && !body.includes(t) && !mono.includes(t) && !ui.includes(t)
   );
 
   if (headings.length > 0) {
@@ -240,10 +268,13 @@ function renderTypeUsage(identity: CoreIdentityData): string {
   if (mono.length > 0) {
     lines.push("**Monospace:** " + mono.map((t) => `${t.family}`).join(", "));
   }
-  if (other.length > 0) {
-    lines.push("**Other:** " + other.map((t) => `${t.family} (${t.name})`).join(", "));
+  if (ui.length > 0) {
+    lines.push("**UI/System:** " + ui.map((t) => `${t.family}`).join(", "));
   }
-  if (headings.length === 0 && body.length === 0 && mono.length === 0 && other.length === 0) {
+  if (other.length > 0) {
+    lines.push("**Other:** " + other.map((t) => `${t.family}`).join(", "));
+  }
+  if (headings.length === 0 && body.length === 0 && mono.length === 0 && ui.length === 0 && other.length === 0) {
     lines.push("Run extraction tools to categorize font usage.");
   }
 
@@ -439,7 +470,8 @@ function renderAssetReference(identity: CoreIdentityData): string {
   for (const logo of identity.logo) {
     lines.push(`**${capitalize(logo.type)}** (source: ${logo.source}, confidence: ${logo.confidence})`);
     for (const v of logo.variants) {
-      const ref = v.file ? `\`.brand/assets/logo/${v.file}\`` : v.inline_svg ? "inline SVG" : "data URI";
+      const filePath = v.file?.startsWith("logo/") ? v.file : `logo/${v.file}`;
+      const ref = v.file ? `\`.brand/assets/${filePath}\`` : v.inline_svg ? "inline SVG" : "data URI";
       lines.push(`- ${v.name}: ${ref}`);
     }
     lines.push("");
@@ -514,11 +546,12 @@ function renderQuickSetupBlock(
   lines.push(`# ${config.client_name} Brand System`);
   lines.push("");
 
-  // Colors
-  if (identity.colors.length > 0) {
+  // Colors — only show assigned roles, skip unknowns
+  const assignedColors = identity.colors.filter((c) => c.role !== "unknown");
+  if (assignedColors.length > 0) {
     lines.push("## Colors");
-    for (const c of identity.colors) {
-      lines.push(`- ${capitalize(c.role)}: ${c.value} (${c.name})`);
+    for (const c of assignedColors) {
+      lines.push(`- ${capitalize(c.role)}: ${c.value}`);
     }
     lines.push("");
   }
@@ -607,7 +640,10 @@ function renderPainPoints(
     const logoFiles = identity.logo
       .flatMap((l) => l.variants)
       .filter((v) => v.file)
-      .map((v) => `.brand/assets/logo/${v.file}`);
+      .map((v) => {
+        const fp = v.file!.startsWith("logo/") ? v.file! : `logo/${v.file}`;
+        return `.brand/assets/${fp}`;
+      });
     if (logoFiles.length > 0) {
       lines.push(`Your logo files: ${logoFiles.map((f) => `\`${f}\``).join(", ")}`);
       lines.push("");
@@ -650,6 +686,18 @@ function stub(section: string, tool: string, topic?: string): string {
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/** Generate a clean, human-readable color name from extracted data */
+function cleanColorName(color: { name: string; value: string; role: string }): string {
+  const raw = color.name;
+  // If the name is just a CSS property + hex, generate from role or hex
+  if (/^(color|background|border-color|--tw-|tw )/.test(raw) || raw.includes(color.value)) {
+    if (color.role !== "unknown") return capitalize(color.role);
+    // Generate from hex — create a descriptive name
+    return color.value.toUpperCase();
+  }
+  return raw;
 }
 
 function groupBy<T>(arr: T[], keyFn: (item: T) => string): Record<string, T[]> {
