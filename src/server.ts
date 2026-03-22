@@ -5,6 +5,7 @@ import { register as registerExtractWeb } from "./tools/brand-extract-web.js";
 import { register as registerExtractFigma } from "./tools/brand-extract-figma.js";
 import { register as registerCompile } from "./tools/brand-compile.js";
 import { register as registerAudit } from "./tools/brand-audit.js";
+import { register as registerReport } from "./tools/brand-report.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -18,6 +19,7 @@ export function createServer(): McpServer {
   registerExtractFigma(server);
   registerCompile(server);
   registerAudit(server);
+  registerReport(server);
 
   return server;
 }
