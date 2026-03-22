@@ -18,3 +18,8 @@ export {
   ClarificationItemSchema,
   type NeedsClarificationData,
 } from "./needs-clarification.js";
+export {
+  VisualIdentitySchema,
+  AntiPatternRuleSchema,
+  type VisualIdentityData,
+} from "./visual-identity.js";

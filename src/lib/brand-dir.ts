@@ -1,7 +1,8 @@
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { join } from "node:path";
 import { stringify, parse } from "yaml";
-import type { BrandConfigData, CoreIdentityData, NeedsClarificationData } from "../schemas/index.js";
+import { readdir, stat } from "node:fs/promises";
+import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualIdentityData } from "../schemas/index.js";
 
 export class BrandDir {
   readonly root: string;
@@ -92,6 +93,60 @@ export class BrandDir {
 
   async writeClarifications(data: NeedsClarificationData): Promise<void> {
     await this.writeYaml("needs-clarification.yaml", data);
+  }
+
+  // --- Visual Identity (Session 2) ---
+
+  async readVisualIdentity(): Promise<VisualIdentityData> {
+    return this.readYaml<VisualIdentityData>("visual-identity.yaml");
+  }
+
+  async writeVisualIdentity(data: VisualIdentityData): Promise<void> {
+    await this.writeYaml("visual-identity.yaml", data);
+  }
+
+  async hasVisualIdentity(): Promise<boolean> {
+    try {
+      await access(this.path("visual-identity.yaml"));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async writeMarkdown(filename: string, content: string): Promise<void> {
+    await writeFile(this.path(filename), content, "utf-8");
+  }
+
+  async readMarkdown(filename: string): Promise<string> {
+    return readFile(this.path(filename), "utf-8");
+  }
+
+  // --- Asset scanning ---
+
+  async listAssets(subdir: string): Promise<string[]> {
+    const dir = this.path("assets", subdir);
+    try {
+      const entries = await readdir(dir);
+      return entries.filter((e) => !e.startsWith(".") && !e.endsWith(".md"));
+    } catch {
+      return [];
+    }
+  }
+
+  async listAssetDirs(): Promise<string[]> {
+    const assetsDir = this.path("assets");
+    try {
+      const entries = await readdir(assetsDir);
+      const dirs: string[] = [];
+      for (const entry of entries) {
+        const s = await stat(join(assetsDir, entry));
+        if (s.isDirectory()) dirs.push(entry);
+      }
+      return dirs;
+    } catch {
+      return [];
+    }
   }
 
   // --- Assets ---
