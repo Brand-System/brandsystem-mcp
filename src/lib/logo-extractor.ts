@@ -4,6 +4,8 @@ export interface ExtractedLogo {
   url: string;
   type: "og-image" | "svg-favicon" | "selector-img" | "selector-svg" | "apple-touch-icon" | "favicon";
   confidence: "high" | "medium" | "low";
+  /** Full SVG markup for inline SVGs (selector-svg type) */
+  inline_svg?: string;
 }
 
 /**
@@ -54,16 +56,17 @@ export function extractLogos(html: string, baseUrl: string): ExtractedLogo[] {
     '#logo svg',
     '[class*="logo"] svg',
     'a[href="/"] svg',
+    'nav a svg',
   ];
   for (const sel of svgSelectors) {
     $(sel).each((_, el) => {
       const svgHtml = $.html(el);
-      if (svgHtml && svgHtml.length > 50) {
-        // Store the SVG content as a data URI placeholder — the actual SVG is inline
+      if (svgHtml && svgHtml.length > 50 && svgHtml.length < 100_000) {
         logos.push({
-          url: `inline:svg:${svgHtml.substring(0, 100)}...`,
+          url: `inline:svg:${Buffer.from(svgHtml).toString("base64").substring(0, 40)}`,
           type: "selector-svg",
           confidence: "medium",
+          inline_svg: svgHtml,
         });
       }
     });

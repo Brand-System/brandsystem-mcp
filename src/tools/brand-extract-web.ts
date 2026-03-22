@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
-import { extractFromCSS, inferColorConfidence, inferColorRole } from "../lib/css-parser.js";
+import { extractFromCSS, inferColorConfidence, inferColorRole, promotePrimaryColor } from "../lib/css-parser.js";
 import { extractLogos, fetchLogo } from "../lib/logo-extractor.js";
 import { resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { mergeColor, mergeTypography } from "../lib/confidence.js";
@@ -75,10 +75,13 @@ async function handler(input: { url: string }) {
 
   const { colors: extractedColors, fonts: extractedFonts } = extractFromCSS(allCSS);
 
+  // Promote the most frequent chromatic color to primary if none was explicitly named
+  const promotedColors = promotePrimaryColor(extractedColors);
+
   const identity = await brandDir.readCoreIdentity();
   let colors = [...identity.colors];
 
-  for (const ec of extractedColors.slice(0, 20)) {
+  for (const ec of promotedColors.slice(0, 20)) {
     const entry: ColorEntry = {
       name: ec.property.startsWith("--")
         ? ec.property.replace(/^--/, "").replace(/[-_]/g, " ")
@@ -106,7 +109,28 @@ async function handler(input: { url: string }) {
   const logoCandidates = extractLogos(html, input.url);
   const logos: LogoSpec[] = [...identity.logo];
 
-  for (const candidate of logoCandidates.slice(0, 3)) {
+  for (const candidate of logoCandidates.slice(0, 5)) {
+    // Handle inline SVGs directly — no fetch needed
+    if (candidate.inline_svg) {
+      const { inline_svg, data_uri } = resolveSvg(candidate.inline_svg);
+      const filename = `logo-${candidate.type}.svg`;
+      await brandDir.writeAsset(`logo/${filename}`, candidate.inline_svg);
+
+      logos.push({
+        type: "wordmark",
+        source: "web",
+        confidence: candidate.confidence,
+        variants: [{
+          name: "default",
+          file: `logo/${filename}`,
+          inline_svg,
+          data_uri,
+        }],
+      });
+      break;
+    }
+
+    // Fetch remote logos
     const fetched = await fetchLogo(candidate.url);
     if (!fetched) continue;
 

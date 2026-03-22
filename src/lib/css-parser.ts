@@ -125,7 +125,7 @@ export function extractFromCSS(cssText: string): {
         const families = raw
           .split(",")
           .map((f) => f.trim().replace(/^["']|["']$/g, ""))
-          .filter((f) => !isGenericFont(f));
+          .filter((f) => !isSystemFont(f));
 
         for (const family of families) {
           fontMap.set(family, (fontMap.get(family) || 0) + 1);
@@ -145,13 +145,92 @@ export function extractFromCSS(cssText: string): {
   return { colors, fonts };
 }
 
-function isGenericFont(name: string): boolean {
-  return [
-    "serif", "sans-serif", "monospace", "cursive", "fantasy",
-    "system-ui", "ui-serif", "ui-sans-serif", "ui-monospace",
-    "ui-rounded", "emoji", "math", "fangsong",
-    "inherit", "initial", "unset", "revert",
-  ].includes(name.toLowerCase());
+/** CSS generic families + platform system fonts that are never brand fonts */
+const SYSTEM_FONTS = new Set([
+  // CSS generic families
+  "serif", "sans-serif", "monospace", "cursive", "fantasy",
+  "system-ui", "ui-serif", "ui-sans-serif", "ui-monospace",
+  "ui-rounded", "emoji", "math", "fangsong",
+  // CSS keywords
+  "inherit", "initial", "unset", "revert",
+  // Apple system fonts
+  "-apple-system", "blinkmacsystemfont",
+  "sf pro", "sf pro display", "sf pro text", "sf pro rounded",
+  // Apple monospace fallbacks
+  "sfmono-regular", "sf mono", "menlo", "monaco",
+  // Windows system fonts
+  "segoe ui", "segoe ui emoji", "segoe ui symbol",
+  // Cross-platform monospace fallbacks
+  "consolas", "liberation mono", "courier new", "courier",
+  // Android
+  "roboto mono", "droid sans mono",
+]);
+
+function isSystemFont(name: string): boolean {
+  return SYSTEM_FONTS.has(name.toLowerCase());
+}
+
+// --- Color analysis utilities ---
+
+function hexToRGB(hex: string): { r: number; g: number; b: number } {
+  const h = hex.replace("#", "");
+  return {
+    r: parseInt(h.substring(0, 2), 16),
+    g: parseInt(h.substring(2, 4), 16),
+    b: parseInt(h.substring(4, 6), 16),
+  };
+}
+
+function relativeLuminance(hex: string): number {
+  const { r, g, b } = hexToRGB(hex);
+  const [rl, gl, bl] = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
+}
+
+export function isNearWhite(hex: string): boolean {
+  return relativeLuminance(hex) > 0.85;
+}
+
+export function isNearBlack(hex: string): boolean {
+  return relativeLuminance(hex) < 0.05;
+}
+
+/** Low saturation = gray/neutral */
+export function isNeutral(hex: string): boolean {
+  const { r, g, b } = hexToRGB(hex);
+  return (Math.max(r, g, b) - Math.min(r, g, b)) < 30;
+}
+
+/** Has noticeable hue — not white, black, or gray */
+export function isChromatic(hex: string): boolean {
+  return !isNeutral(hex) && !isNearWhite(hex) && !isNearBlack(hex);
+}
+
+/**
+ * After extraction, if no primary color was identified, promote the
+ * most frequent chromatic color. Returns a new array.
+ */
+export function promotePrimaryColor(colors: ExtractedColor[]): ExtractedColor[] {
+  const hasExplicitPrimary = colors.some(
+    (c) => inferColorRole(c) === "primary"
+  );
+  if (hasExplicitPrimary) return colors;
+
+  // Find chromatic colors sorted by frequency
+  const chromatic = colors
+    .filter((c) => isChromatic(c.value))
+    .sort((a, b) => b.frequency - a.frequency);
+
+  if (chromatic.length === 0) return colors;
+
+  // Tag the winner so the caller can detect it
+  const winner = chromatic[0];
+  return colors.map((c) =>
+    c === winner ? { ...c, _promoted_role: "primary" as const } : c
+  );
 }
 
 /** Infer confidence from extraction quality */
@@ -164,10 +243,13 @@ export function inferColorConfidence(
   return "low";
 }
 
-/** Infer role from CSS property/variable name */
+/** Infer role from CSS property/variable name, then fall back to value heuristics */
 export function inferColorRole(
-  color: ExtractedColor
+  color: ExtractedColor & { _promoted_role?: string }
 ): "primary" | "secondary" | "accent" | "neutral" | "surface" | "text" | "action" | "unknown" {
+  // Promotion override from promotePrimaryColor()
+  if (color._promoted_role === "primary") return "primary";
+
   const prop = color.property.toLowerCase();
 
   // CSS variable name heuristics
@@ -179,9 +261,10 @@ export function inferColorRole(
   if (prop.includes("text") || prop.includes("foreground")) return "text";
   if (prop.includes("action") || prop.includes("cta") || prop.includes("button")) return "action";
 
-  // Computed property heuristics
-  if (color.property === "background-color") return "surface";
-  if (color.property === "color") return "text";
+  // Value-based heuristics (when CSS names give no signal)
+  if (isNearWhite(color.value)) return "surface";
+  if (isNearBlack(color.value)) return "text";
+  if (isNeutral(color.value)) return "neutral";
 
   return "unknown";
 }
