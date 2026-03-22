@@ -71,13 +71,15 @@ async function handler() {
   const s1Status = s1Done ? "✓ Complete" : identity.colors.length > 0 || identity.typography.length > 0 ? "◐ In progress" : "○ Not started";
   const s2Status = hasVisual ? "✓ Complete" : s1Done ? "→ Ready" : "○ Needs Session 1";
   const s3Status = hasMessaging ? "✓ Complete" : hasVisual ? "→ Ready" : "○ Needs Session 2";
+  const hasStrategy = await brandDir.hasStrategy();
+  const s4Status = hasStrategy ? "✓ Complete" : hasMessaging ? "→ Ready" : "○ Needs Session 3";
 
   lines.push("");
   lines.push("── Sessions ──────────────────────────");
   lines.push(`Session 1: Core Identity        ${s1Status}`);
   lines.push(`Session 2: Full Visual Identity ${s2Status}`);
   lines.push(`Session 3: Core Messaging       ${s3Status}`);
-  lines.push("Session 4: Content Strategy     ○ Not started");
+  lines.push(`Session 4: Content Strategy     ${s4Status}`);
   lines.push("Session 5: Full Governance      ○ Not started");
   lines.push("Session 6: Content Operations   ○ Not started");
 
@@ -101,6 +103,24 @@ async function handler() {
     lines.push(`Brand Story:   ${messaging.brand_story ? "✓" : "○"}`);
   }
 
+  if (hasStrategy) {
+    const strategy = await brandDir.readStrategy();
+    lines.push("");
+    lines.push("── Content Strategy ──────────────────");
+    lines.push(`Personas:      ${strategy.personas.length} (${strategy.personas.filter((p) => p.status === "Active").length} active, ${strategy.personas.filter((p) => p.status === "Hypothesis").length} hypothesis)`);
+    lines.push(`Journey:       ${strategy.journey_stages.length} stages`);
+    lines.push(`Matrix:        ${strategy.messaging_matrix.length} variants (${strategy.messaging_matrix.filter((v) => v.status === "Active").length} active, ${strategy.messaging_matrix.filter((v) => v.status === "Draft").length} draft)`);
+    lines.push(`Themes:        ${strategy.themes.length} (${strategy.themes.filter((t) => t.status === "Active").length} active)`);
+
+    // Theme balance
+    const heat = strategy.themes.filter((t) => t.content_intent === "Brand Heat").length;
+    const momentum = strategy.themes.filter((t) => t.content_intent === "Momentum").length;
+    const conversion = strategy.themes.filter((t) => t.content_intent === "Conversion").length;
+    if (strategy.themes.length > 0) {
+      lines.push(`  Balance:     Heat ${heat} / Momentum ${momentum} / Conversion ${conversion}`);
+    }
+  }
+
   const nextSteps: string[] = [];
   if (!s1Done) {
     if (config.website_url) {
@@ -112,8 +132,10 @@ async function handler() {
     nextSteps.push("Run brand_deepen_identity to start Session 2 — capture composition, patterns, and anti-patterns");
   } else if (!hasMessaging) {
     nextSteps.push("Run brand_extract_messaging to audit your current voice, then brand_compile_messaging for Session 3");
+  } else if (!hasStrategy) {
+    nextSteps.push("Run brand_build_personas to start Session 4 — define your target audiences and content strategy");
   } else {
-    nextSteps.push("Run brand_write to generate on-brand content using your full brand system");
+    nextSteps.push("Run brand_write to generate audience-targeted content using your full brand system");
   }
 
   if (config.figma_file_key && identity.colors.every((c) => c.source !== "figma")) {

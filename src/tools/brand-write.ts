@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
-import type { CoreIdentityData } from "../schemas/index.js";
+import type { CoreIdentityData, ContentStrategyData } from "../schemas/index.js";
 import type { VisualIdentityData, MessagingData } from "../schemas/index.js";
 
 // ---------------------------------------------------------------------------
@@ -250,6 +250,8 @@ interface WriteParams {
   topic?: string;
   channel?: string;
   theme?: "dark" | "light";
+  persona?: string;
+  stage?: string;
 }
 
 async function handler(input: WriteParams) {
@@ -314,12 +316,22 @@ async function handler(input: WriteParams) {
     // Tokens are optional
   }
 
+  let strategy: ContentStrategyData | null = null;
+  if (await brandDir.hasStrategy()) {
+    try {
+      strategy = await brandDir.readStrategy();
+    } catch {
+      // Degrade gracefully
+    }
+  }
+
   // ── Determine available layers ──
 
   const layersAvailable: string[] = ["core_identity"];
   if (visual) layersAvailable.push("visual_identity");
   if (messaging) layersAvailable.push("messaging");
   if (tokens) layersAvailable.push("tokens");
+  if (strategy) layersAvailable.push("content_strategy");
 
   // ── Build creation brief ──
 
@@ -346,6 +358,101 @@ async function handler(input: WriteParams) {
     if (!brief.voice) {
       brief.voice = buildVoiceBrief(messaging);
     }
+  }
+
+  // Include strategy context if Session 4 data exists
+  if (strategy) {
+    const strategyBrief: Record<string, unknown> = {};
+
+    // Find target persona
+    if (input.persona) {
+      const persona = strategy.personas.find(
+        (p) =>
+          p.id.toLowerCase() === input.persona!.toLowerCase() ||
+          p.name.toLowerCase() === input.persona!.toLowerCase() ||
+          p.role_tag.toLowerCase() === input.persona!.toLowerCase()
+      );
+      if (persona) {
+        strategyBrief.persona = {
+          id: persona.id,
+          name: persona.name,
+          role: persona.role_tag,
+          core_tension: persona.core_tension,
+          key_objections: persona.key_objections,
+          narrative_emphasis: persona.narrative_emphasis,
+          preferred_channels: persona.preferred_channels,
+        };
+      }
+    }
+
+    // Find journey stage
+    if (input.stage) {
+      const stage = strategy.journey_stages.find(
+        (s) =>
+          s.id.toLowerCase() === input.stage!.toLowerCase() ||
+          s.name.toLowerCase() === input.stage!.toLowerCase()
+      );
+      if (stage) {
+        strategyBrief.journey_stage = {
+          id: stage.id,
+          name: stage.name,
+          buyer_mindset: stage.buyer_mindset,
+          content_goal: stage.content_goal,
+          tone_shift: stage.tone_shift,
+        };
+      }
+    }
+
+    // Find matching messaging variant
+    if (input.persona && input.stage) {
+      const personaMatch = strategy.personas.find(
+        (p) =>
+          p.id.toLowerCase() === input.persona!.toLowerCase() ||
+          p.name.toLowerCase() === input.persona!.toLowerCase() ||
+          p.role_tag.toLowerCase() === input.persona!.toLowerCase()
+      );
+      const stageMatch = strategy.journey_stages.find(
+        (s) =>
+          s.id.toLowerCase() === input.stage!.toLowerCase() ||
+          s.name.toLowerCase() === input.stage!.toLowerCase()
+      );
+      if (personaMatch && stageMatch) {
+        const variant = strategy.messaging_matrix.find(
+          (v) => v.persona === personaMatch.id && v.journey_stage === stageMatch.id
+        );
+        if (variant) {
+          strategyBrief.messaging_variant = {
+            core_message: variant.core_message,
+            tone_shift: variant.tone_shift,
+            proof_points: variant.proof_points,
+          };
+        }
+      }
+    }
+
+    // Include active themes for context
+    const activeThemes = strategy.themes.filter((t) => t.status === "Active");
+    if (activeThemes.length > 0) {
+      strategyBrief.active_themes = activeThemes.map((t) => ({
+        name: t.name,
+        intent: t.content_intent,
+        priority: t.strategic_priority,
+      }));
+    }
+
+    // If no persona/stage specified, list available options
+    if (!input.persona && strategy.personas.length > 0) {
+      strategyBrief.available_personas = strategy.personas
+        .filter((p) => p.status !== "Retired")
+        .map((p) => `${p.id}: ${p.name} (${p.role_tag})`);
+    }
+    if (!input.stage && strategy.journey_stages.length > 0) {
+      strategyBrief.available_stages = strategy.journey_stages.map(
+        (s) => `${s.id}: ${s.name}`
+      );
+    }
+
+    brief.strategy = strategyBrief;
   }
 
   // Include tokens if available (theme-specific section if present)
@@ -509,6 +616,14 @@ const paramsShape = {
     .enum(["dark", "light"])
     .default("dark")
     .describe('Color theme to use — "dark" or "light" (defaults to "dark")'),
+  persona: z
+    .string()
+    .optional()
+    .describe("Target persona ID or name (e.g. 'PER-001' or 'VP Marketing'). If Session 4 data exists, adapts messaging for this audience."),
+  stage: z
+    .string()
+    .optional()
+    .describe("Buyer journey stage (e.g. 'first-touch', 'validation-and-proof'). Adapts tone and depth."),
 };
 
 export function register(server: McpServer) {
