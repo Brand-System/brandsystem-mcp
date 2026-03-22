@@ -59,27 +59,47 @@ Extract --> Compile --> Audit --> Report
 
 ## Tools Reference
 
+### Session 1: Core Identity
+
 | Tool | Description | Key Parameters |
 |------|-------------|----------------|
-| `brand_start` | **Entry point.** Creates brand system or resumes existing one. Presents source menu (website scan, Figma, upload, manual). Use this first. | `client_name` (required), `website_url`, `industry` |
+| `brand_start` | **Entry point.** Creates brand system or resumes existing one. Presents source menu and interview questions. | `client_name` (required), `website_url`, `industry` |
 | `brand_init` | Initialize a new `.brand/` directory with config scaffold and empty identity | `client_name` (required), `industry`, `website_url`, `figma_file_key` |
 | `brand_extract_web` | Extract colors, fonts, and logos from a website by parsing HTML and CSS | `url` (required) |
-| `brand_extract_figma` | Extract brand identity from Figma. Two modes: `plan` returns instructions for Figma MCP calls; `ingest` processes the collected data | `mode` (required: `plan` or `ingest`), `figma_file_key`, `variables`, `styles`, `logo_svg` |
-| `brand_compile` | Compile identity data into DTCG `tokens.json` and surface items needing clarification | No parameters |
-| `brand_clarify` | Resolve a clarification item interactively. Accepts color role assignments, font confirmations/corrections, and freeform answers. | `id` (required), `answer` (required) |
+| `brand_extract_figma` | Extract brand identity from Figma (two-phase: plan then ingest) | `mode` (`plan` or `ingest`), `figma_file_key`, `variables`, `styles`, `logo_svg` |
+| `brand_compile` | Compile core-identity into DTCG tokens. Generates VIM when Session 2 data exists. | No parameters |
+| `brand_clarify` | Resolve clarification items interactively (color roles, font confirmations) | `id` (required), `answer` (required) |
 | `brand_audit` | Validate the `.brand/` directory against schema requirements | No parameters |
-| `brand_status` | Show current state: extraction completeness, confidence distribution, next steps | No parameters |
+| `brand_status` | Show current state with session progression and next steps | No parameters |
 | `brand_report` | Generate a portable HTML brand identity report with embedded assets | No parameters |
 
-### Tool Order
+### Session 2: Visual Identity
 
-Run them in this sequence for a complete brand system:
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `brand_deepen_identity` | Visual identity interview — composition, patterns, illustration, photography, signature, anti-patterns | `mode` (`interview` or `record`), `section`, `answers` |
+| `brand_ingest_assets` | Scan and catalog brand assets, generate manifests | `mode` (`scan` or `tag`), `file`, `description`, `usage`, `theme` |
+| `brand_preflight` | Check HTML content against brand compliance rules | `html` (required), `mode` (`check` or `rules`) |
+
+### Session 3: Core Messaging
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `brand_extract_messaging` | Audit existing website voice — fingerprint, vocabulary, claims, contradictions, AI-isms | `url` (required), `pages` (optional) |
+| `brand_compile_messaging` | Guided interview for perspective, voice codex, and brand story | `mode` (`interview` or `record`), `section`, `answers` |
+| `brand_write` | Load full brand context for content generation. Routes visual vs written vs mixed types. | `content_type` (required), `topic`, `channel`, `theme` |
+
+### Tool Flow
+
+The tools auto-chain — each tool's response tells the LLM what to run next:
 
 ```
-brand_start --> brand_extract_web --> brand_extract_figma (optional) --> brand_compile --> brand_clarify (if needed) --> brand_audit --> brand_report
+Session 1: brand_start → brand_extract_web → brand_compile → brand_clarify → brand_report
+Session 2: brand_deepen_identity (interview × 6 sections) → brand_compile (generates VIM)
+Session 3: brand_extract_messaging → brand_compile_messaging (interview × 3 sections) → brand_write
 ```
 
-`brand_status` can be called at any point to check progress. `brand_start` replaces `brand_init` as the recommended entry point — it handles both fresh starts and session resumption.
+`brand_status` can be called at any point. `brand_preflight` runs after any content generation. `brand_audit` validates the system at any stage.
 
 ---
 
@@ -89,14 +109,23 @@ After running the full pipeline, your `.brand/` directory looks like this:
 
 ```
 .brand/
-  brand.config.yaml          # Client name, industry, source URLs, session state
-  core-identity.yaml         # Colors, typography, logos with confidence scores
-  tokens.json                # DTCG design tokens (compiled output)
-  needs-clarification.yaml   # Items requiring human review
-  brand-report.html          # Portable HTML brand report
+  brand.config.yaml              # Client name, industry, source URLs, session state
+  core-identity.yaml             # Colors, typography, logos with confidence scores
+  tokens.json                    # DTCG design tokens (compiled output)
+  needs-clarification.yaml       # Items requiring human review
+  brand-report.html              # Portable HTML brand report
+  visual-identity.yaml           # Session 2: composition, patterns, anti-patterns
+  visual-identity-manifest.md    # Session 2: compiled VIM document
+  system-integration.md          # Session 2: CLAUDE.md / .cursorrules setup guide
+  messaging.yaml                 # Session 3: perspective, voice, brand story
+  messaging-audit.md             # Session 3: voice fingerprint analysis
+  brand-story.md                 # Session 3: compiled brand narrative
   assets/
     logo/
-      logo-wordmark.svg      # Extracted logo files
+      logo-wordmark.svg          # Extracted logo files
+    illustrations/               # Brand illustrations with MANIFEST.yaml
+    stickers/                    # Brand stickers with MANIFEST.yaml
+    patterns/                    # Brand patterns with MANIFEST.yaml
 ```
 
 ### File Details
@@ -247,25 +276,32 @@ npm start
 ```
 src/
   index.ts              # Entry point -- stdio transport
-  server.ts             # MCP server creation and tool registration
+  server.ts             # MCP server creation and tool registration (16 tools)
   tools/                # One file per tool
-    brand-start.ts      # Onboarding router (entry point)
-    brand-init.ts
-    brand-extract-web.ts
-    brand-extract-figma.ts
-    brand-compile.ts
-    brand-clarify.ts    # Interactive clarification resolution
-    brand-audit.ts
-    brand-status.ts
-    brand-report.ts
+    brand-start.ts              # Onboarding router (entry point)
+    brand-init.ts               # Directory scaffolding
+    brand-extract-web.ts        # Website extraction
+    brand-extract-figma.ts      # Figma extraction (plan/ingest)
+    brand-compile.ts            # Token + VIM compilation
+    brand-clarify.ts            # Interactive clarification
+    brand-audit.ts              # Schema validation
+    brand-status.ts             # Progress dashboard
+    brand-report.ts             # HTML report generation
+    brand-deepen-identity.ts    # Session 2: visual identity interview
+    brand-ingest-assets.ts      # Session 2: asset cataloging
+    brand-preflight.ts          # Session 2: HTML compliance checking
+    brand-extract-messaging.ts  # Session 3: voice/messaging audit
+    brand-compile-messaging.ts  # Session 3: perspective + voice interview
+    brand-write.ts              # Session 3: content generation context
   lib/                  # Shared utilities
-    brand-dir.ts        # .brand/ directory I/O
+    brand-dir.ts        # .brand/ directory I/O (YAML, JSON, markdown, assets)
     confidence.ts       # Confidence scoring and source precedence
     css-parser.ts       # CSS color and font extraction
     dtcg-compiler.ts    # DTCG token compilation
     logo-extractor.ts   # Logo candidate detection
     svg-resolver.ts     # SVG inlining and base64 encoding
     report-html.ts      # HTML report generation
+    vim-generator.ts    # Visual Identity Manifest + system integration markdown
     response.ts         # Structured MCP response builder
   types/
     index.ts            # TypeScript type definitions
