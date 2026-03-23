@@ -14,11 +14,20 @@ export interface ExtractedLogo {
 // ── Icon filtering ──────────────────────────────────────────────
 // SVGs that are clearly NOT logos
 
-const ICON_CLASSES = /chevron|arrow|icon|close|menu|hamburger|caret|toggle|search|play|pause|spinner|loader|decoration|ornament|pattern/i;
+const ICON_CLASSES = /chevron|arrow|close|hamburger|caret|toggle|spinner|loader|decoration|ornament|pattern/i;
+// Separate patterns that are too broad as substrings — require word boundary or standalone class
+const ICON_STANDALONE = /\b(icon|menu|search|play|pause)\b/i;
 const ICON_DATA_ATTRS = /data-prefix="fa|data-icon|svg-inline--fa/;
 const SOCIAL_ICONS = /twitter|instagram|facebook|linkedin|youtube|dribbble|github|tiktok|pinterest|reddit|discord|slack|whatsapp/i;
 
 function isIconSvg($: cheerio.CheerioAPI, el: any): boolean {
+  // Override: if this SVG or its parent is explicitly labeled as a logo, it's NOT an icon
+  const ariaLabel = $(el).attr("aria-label") || "";
+  const parentClass = $(el).parent()?.attr("class") || "";
+  const parentHref = $(el).parent()?.attr("href") || "";
+  if (/logo|brand|wordmark/i.test(ariaLabel)) return false;
+  if (/logo|brand|wordmark/i.test(parentClass) && /home|\/$/i.test(parentHref)) return false;
+
   const html = $.html(el);
   const outerHtml = html || "";
 
@@ -31,13 +40,18 @@ function isIconSvg($: cheerio.CheerioAPI, el: any): boolean {
   const height = parseInt($(el).attr("height") || "0", 10);
   if (width > 0 && width < 24 && height > 0 && height < 24) return true;
 
-  // Icon-named classes
+  // Icon-named classes (exact patterns that don't substring-match in logo contexts)
   const className = $(el).attr("class") || "";
   if (ICON_CLASSES.test(className)) return true;
 
-  // Parent has icon class
-  const parentClass = $(el).parent()?.attr("class") || "";
-  if (ICON_CLASSES.test(parentClass)) return true;
+  // Check parent class with standalone patterns (avoid "menu" matching "navigation-menu-home-link")
+  // Split parent class into individual classes and check each
+  const parentClasses = parentClass.split(/\s+/);
+  for (const cls of parentClasses) {
+    if (ICON_CLASSES.test(cls)) return true;
+    // Standalone check: only match if the class IS the word (e.g., "menu" but not "menu-home-link")
+    if (ICON_STANDALONE.test(cls) && cls.length < 20) return true;
+  }
 
   return false;
 }
