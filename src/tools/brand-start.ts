@@ -526,7 +526,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
         tokens: tokenCount,
         stylesheets_parsed: stylesheetUrls.slice(0, 5).length + 1,
       },
-      top_colors: colors.slice(0, 6).map((c) => ({
+      all_colors: colors.map((c) => ({
         name: c.name,
         hex: c.value,
         role: c.role,
@@ -538,9 +538,15 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
           found: logoFound,
           preview_available: logos.length > 0 && !!(logos[logos.length - 1]?.variants[0]?.inline_svg || logos[logos.length - 1]?.variants[0]?.data_uri),
         },
-        primary_color: {
-          candidates: chromaticCandidates,
-          auto_assigned: suggestedPrimary,
+        colors: {
+          chromatic_candidates: chromaticCandidates,
+          suggested_primary: suggestedPrimary,
+          all_extracted: colors.map((c) => ({
+            hex: c.value,
+            name: c.name,
+            role: c.role,
+          })),
+          instruction: "Show ALL extracted colors. Ask: 1) Which is primary? 2) Any that should NOT be in the brand? 3) Roles for unknowns.",
         },
         fonts: typography.map((t) => t.family),
       },
@@ -556,7 +562,10 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
           "The entire Session 1 pipeline ran automatically. Present the results:",
           `1. Show extraction quality (${qualityScore}) and mention: ${qualityRecommendation}`,
           `2. ${logoFound ? "Show the logo if possible — ask 'Is this your logo?'" : "No logo was found. Suggest: Figma extraction, direct logo URL via brand_set_logo, or manual upload."}`,
-          `3. Show the top color candidates (${chromaticCandidates.join(", ") || "none found"}) — ask 'Which is your primary brand color?'`,
+          `3. Show ALL ${colors.length} extracted colors (hex + name + role). Ask three things:`,
+          `   a) 'Which is your PRIMARY brand color?' (highlight candidates: ${chromaticCandidates.join(", ") || "none"})`,
+          `   b) 'Are any of these NOT part of your brand? (retired colors, third-party colors?)'`,
+          `   c) 'What roles should the remaining colors play? (secondary, accent, etc.)'`,
           `4. List the fonts (${typography.map((t) => t.family).join(", ") || "none found"}) — ask 'Are these correct?'`,
           "5. After confirmation, suggest Session 2: 'Your core identity is set. Want to go deeper into your visual identity?'",
           ...(qualityScore === "LOW" ? ["If extraction quality is LOW, suggest: Figma extraction, different URL, or manual input via brand_set_logo."] : []),
