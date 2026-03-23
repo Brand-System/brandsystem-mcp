@@ -126,14 +126,14 @@ function buildColorCards(identity: CoreIdentity): string {
     .map((c) => {
       const isLight = luminance(c.value) > 0.7;
       return `
-    <div class="color-card">
-      <div class="color-swatch${isLight ? " is-light" : ""}" style="background:${c.value}"></div>
-      <div class="color-info">
-        <div class="color-role">${roleBadge(c.role)}</div>
-        <div class="color-hex">${c.value}</div>
-        <div class="color-meta">${confidenceBadge(c.confidence)} <span class="source">via ${c.source}</span></div>
-      </div>
-    </div>`;
+        <div class="color-card">
+          <div class="color-swatch${isLight ? " is-light" : ""}" style="background:${c.value}"></div>
+          <div class="color-info">
+            <div class="color-role">${roleBadge(c.role)}</div>
+            <div class="color-hex">${c.value}</div>
+            <div class="color-meta">${confidenceBadge(c.confidence)} <span class="source">via ${c.source}</span></div>
+          </div>
+        </div>`;
     })
     .join("\n");
 }
@@ -142,14 +142,14 @@ function buildFontCards(identity: CoreIdentity): string {
   return identity.typography
     .map(
       (t) => `
-    <div class="font-card">
-      <div class="font-specimen">${escapeHtml(t.family)}</div>
-      <div class="font-meta">
-        ${confidenceBadge(t.confidence)}
-        <span class="source">via ${t.source}</span>
-        ${t.weight ? `<span class="detail">weight ${t.weight}</span>` : ""}
-      </div>
-    </div>`
+        <div class="font-card">
+          <div class="font-specimen">${escapeHtml(t.family)}</div>
+          <div class="font-meta">
+            ${confidenceBadge(t.confidence)}
+            <span class="source">via ${t.source}</span>
+            ${t.weight ? `<span class="detail">weight ${t.weight}</span>` : ""}
+          </div>
+        </div>`
     )
     .join("\n");
 }
@@ -157,9 +157,9 @@ function buildFontCards(identity: CoreIdentity): string {
 function buildLogoSection(identity: CoreIdentity): string {
   if (identity.logo.length === 0) {
     return `
-    <div class="empty-state">
-      No logo detected. Add one via Figma extraction or manual upload.
-    </div>`;
+      <div class="empty-state">
+        No logo detected. Add one via Figma extraction or manual upload.
+      </div>`;
   }
 
   const blocks: string[] = [];
@@ -170,15 +170,21 @@ function buildLogoSection(identity: CoreIdentity): string {
       const svgMarkup = sanitizeSvg(rawSvg);
 
       blocks.push(`
-    <div class="logo-pair">
-      <div class="logo-display logo-light">${svgMarkup}</div>
-      <div class="logo-display logo-dark">${svgMarkup}</div>
-    </div>
-    <div class="logo-meta-row">
-      <span>Type: ${logo.type}</span>
-      <span>${confidenceBadge(logo.confidence)}</span>
-      <span class="source">via ${logo.source}</span>
-    </div>`);
+      <div class="logo-pair">
+        <div class="logo-display logo-light">
+          <div class="logo-inner">${svgMarkup}</div>
+          <span class="logo-label">On light</span>
+        </div>
+        <div class="logo-display logo-dark">
+          <div class="logo-inner">${svgMarkup}</div>
+          <span class="logo-label logo-label-dark">On dark</span>
+        </div>
+      </div>
+      <div class="logo-meta-row">
+        <span>Type: ${logo.type}</span>
+        <span>${confidenceBadge(logo.confidence)}</span>
+        <span class="source">via ${logo.source}</span>
+      </div>`);
     }
   }
 
@@ -199,20 +205,20 @@ function buildUsageSection(identity: CoreIdentity): string {
     const svgId = nextCopyId();
     const uriId = nextCopyId();
     parts.push(`
-    <div class="usage-block">
-      <h3>Logo SVG</h3>
-      <p>Never type the company name in a font. Always use this vector:</p>
-      <div class="copy-wrap" id="${svgId}">
-        <button class="copy-btn" onclick="copyBlock('${svgId}')">Copy</button>
-        <pre><code>${escapeHtml(logoVariant.inline_svg.trim())}</code></pre>
-      </div>
-      ${logoVariant.data_uri ? `<h3>Logo Data URI</h3>
-      <p>For &lt;img&gt; tags — use as src value:</p>
-      <div class="copy-wrap compact" id="${uriId}">
-        <button class="copy-btn" onclick="copyBlock('${uriId}')">Copy</button>
-        <pre><code>${escapeHtml(logoVariant.data_uri)}</code></pre>
-      </div>` : ""}
-    </div>`);
+      <div class="usage-block">
+        <h3>Logo SVG</h3>
+        <p>Never type the company name in a font. Always use this vector:</p>
+        <div class="copy-wrap" id="${svgId}">
+          <button class="copy-btn" onclick="copyBlock('${svgId}')">Copy</button>
+          <pre><code>${escapeHtml(logoVariant.inline_svg.trim())}</code></pre>
+        </div>
+        ${logoVariant.data_uri ? `<h3>Logo Data URI</h3>
+        <p>For &lt;img&gt; tags — use as src value:</p>
+        <div class="copy-wrap compact" id="${uriId}">
+          <button class="copy-btn" onclick="copyBlock('${uriId}')">Copy</button>
+          <pre><code>${escapeHtml(logoVariant.data_uri)}</code></pre>
+        </div>` : ""}
+      </div>`);
   }
 
   // Color quick-ref
@@ -221,13 +227,13 @@ function buildUsageSection(identity: CoreIdentity): string {
     const colorLine = namedColors.map((c) => `${c.role}: ${c.value}`).join("  |  ");
     const colorId = nextCopyId();
     parts.push(`
-    <div class="usage-block">
-      <h3>Colors</h3>
-      <div class="copy-wrap" id="${colorId}">
-        <button class="copy-btn" onclick="copyBlock('${colorId}')">Copy</button>
-        <pre><code>${escapeHtml(colorLine)}</code></pre>
-      </div>
-    </div>`);
+      <div class="usage-block">
+        <h3>Colors</h3>
+        <div class="copy-wrap" id="${colorId}">
+          <button class="copy-btn" onclick="copyBlock('${colorId}')">Copy</button>
+          <pre><code>${escapeHtml(colorLine)}</code></pre>
+        </div>
+      </div>`);
   }
 
   // Font quick-ref
@@ -236,13 +242,13 @@ function buildUsageSection(identity: CoreIdentity): string {
     const fontLine = highConfFonts.map((t) => t.family).join(", ");
     const fontId = nextCopyId();
     parts.push(`
-    <div class="usage-block">
-      <h3>Fonts</h3>
-      <div class="copy-wrap" id="${fontId}">
-        <button class="copy-btn" onclick="copyBlock('${fontId}')">Copy</button>
-        <pre><code>font-family: ${escapeHtml(fontLine)}</code></pre>
-      </div>
-    </div>`);
+      <div class="usage-block">
+        <h3>Fonts</h3>
+        <div class="copy-wrap" id="${fontId}">
+          <button class="copy-btn" onclick="copyBlock('${fontId}')">Copy</button>
+          <pre><code>font-family: ${escapeHtml(fontLine)}</code></pre>
+        </div>
+      </div>`);
   }
 
   return parts.join("\n");
@@ -258,48 +264,73 @@ function buildComparisonSection(config: BrandConfig, identity: CoreIdentity): st
   return `
   <section>
     <h2>Your Brand vs. Generic AI</h2>
-    <p style="font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:16px">
+    <p class="section-intro">
       This is what your AI tools know now vs. what they&rsquo;d guess without a brand system.
     </p>
-    <table class="comp-table">
-      <thead><tr><th></th><th>With Your Brand System</th><th>Without It</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="comp-label">Logo</td>
-          <td class="comp-yours">${
-            hasLogo
-              ? `<div class="comp-logo-preview">${sanitizeSvg(identity.logo[0].variants[0].inline_svg || "")}</div><span>Embedded vector &mdash; renders everywhere, no files needed</span>`
-              : `<span class="comp-missing">Not yet extracted &mdash; add via Figma or upload</span>`
-          }</td>
-          <td class="comp-generic">Would type &ldquo;${clientName}&rdquo; in a similar-looking font, or skip the logo entirely</td>
-        </tr>
-        <tr>
-          <td class="comp-label">Colors</td>
-          <td class="comp-yours">${
-            primaryColor
-              ? `<span class="comp-swatch" style="background:${primaryColor.value}"></span> ${primaryColor.value} (primary) + ${colorCount - 1} more &mdash; exact hex with roles`
-              : colorCount > 0
-                ? `${colorCount} colors extracted with hex values`
+    <div class="comp-grid">
+      <div class="comp-card comp-card-brand">
+        <div class="comp-card-header">
+          <span class="comp-card-dot comp-dot-brand"></span>
+          With Your Brand System
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <span class="comp-row-label">Logo</span>
+            <span class="comp-row-value">${
+              hasLogo
+                ? `<div class="comp-logo-preview">${sanitizeSvg(identity.logo[0].variants[0].inline_svg || "")}</div>Embedded vector &mdash; renders everywhere`
+                : `<span class="comp-missing">Not yet extracted &mdash; add via Figma or upload</span>`
+            }</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Colors</span>
+            <span class="comp-row-value">${
+              primaryColor
+                ? `<span class="comp-swatch" style="background:${primaryColor.value}"></span>${primaryColor.value} (primary) + ${colorCount - 1} more`
+                : colorCount > 0
+                  ? `${colorCount} colors extracted with hex values`
+                  : `<span class="comp-missing">Not yet extracted</span>`
+            }</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Fonts</span>
+            <span class="comp-row-value">${
+              brandFonts.length > 0
+                ? brandFonts.map((f) => f.family).join(", ")
                 : `<span class="comp-missing">Not yet extracted</span>`
-          }</td>
-          <td class="comp-generic">Would pick a blue primary or &ldquo;professional-looking&rdquo; defaults</td>
-        </tr>
-        <tr>
-          <td class="comp-label">Fonts</td>
-          <td class="comp-yours">${
-            brandFonts.length > 0
-              ? brandFonts.map((f) => f.family).join(", ") + " &mdash; from your actual CSS"
-              : `<span class="comp-missing">Not yet extracted</span>`
-          }</td>
-          <td class="comp-generic">Would default to Inter, system-ui, or Arial</td>
-        </tr>
-        <tr>
-          <td class="comp-label">Tokens</td>
-          <td class="comp-yours">Machine-readable DTCG format &mdash; any tool can consume it</td>
-          <td class="comp-generic">Would re-interpret a PDF or screenshot every time</td>
-        </tr>
-      </tbody>
-    </table>
+            }</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Tokens</span>
+            <span class="comp-row-value">Machine-readable DTCG format</span>
+          </div>
+        </div>
+      </div>
+      <div class="comp-card comp-card-generic">
+        <div class="comp-card-header">
+          <span class="comp-card-dot comp-dot-generic"></span>
+          Without It
+        </div>
+        <div class="comp-card-body">
+          <div class="comp-row">
+            <span class="comp-row-label">Logo</span>
+            <span class="comp-row-value comp-generic-text">Would type &ldquo;${clientName}&rdquo; in a similar-looking font</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Colors</span>
+            <span class="comp-row-value comp-generic-text">Would pick a blue primary or &ldquo;professional&rdquo; defaults</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Fonts</span>
+            <span class="comp-row-value comp-generic-text">Would default to Inter, system-ui, or Arial</span>
+          </div>
+          <div class="comp-row">
+            <span class="comp-row-label">Tokens</span>
+            <span class="comp-row-value comp-generic-text">Would re-interpret a PDF or screenshot every time</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>`;
 }
 
@@ -307,48 +338,68 @@ function buildSessionProgression(): string {
   return `
   <section>
     <h2>Brand System Depth</h2>
-    <p style="font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:16px">
+    <p class="section-intro">
       Your brand system gets more powerful with each session.
     </p>
     <div class="session-track">
-      <div class="session-item session-complete">
-        <div class="session-marker">&check;</div>
-        <div>
+      <div class="session-step session-complete">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-done">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="session-connector session-connector-done"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Core Identity</div>
           <div class="session-desc">Colors, typography, logo, design tokens. The basics every AI tool needs.</div>
         </div>
       </div>
-      <div class="session-item session-next">
-        <div class="session-marker">2</div>
-        <div>
+      <div class="session-step session-next">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-upcoming">2</div>
+          <div class="session-connector"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Full Visual Identity</div>
           <div class="session-desc">Composition rules, patterns, illustration language, anti-patterns, automated preflight. Makes output <em>recognizable</em>, not just color-correct.</div>
         </div>
       </div>
-      <div class="session-item session-future">
-        <div class="session-marker">3</div>
-        <div>
+      <div class="session-step session-future">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-future">3</div>
+          <div class="session-connector"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Brand Voice &amp; Messaging</div>
           <div class="session-desc">Voice profile, key messages, audience personas. Written content sounds like you, not like AI.</div>
         </div>
       </div>
-      <div class="session-item session-future">
-        <div class="session-marker">4</div>
-        <div>
+      <div class="session-step session-future">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-future">4</div>
+          <div class="session-connector"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Claims &amp; Evidence</div>
           <div class="session-desc">Proof points with confidence scores. What you can say, what needs qualification, what to never claim.</div>
         </div>
       </div>
-      <div class="session-item session-future">
-        <div class="session-marker">5</div>
-        <div>
+      <div class="session-step session-future">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-future">5</div>
+          <div class="session-connector"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Content Strategy</div>
           <div class="session-desc">Application rules by content type. Blog posts, social, email, case studies &mdash; each with its own governance.</div>
         </div>
       </div>
-      <div class="session-item session-future">
-        <div class="session-marker">6</div>
-        <div>
+      <div class="session-step session-future">
+        <div class="session-pip">
+          <div class="session-pip-inner session-pip-future">6</div>
+          <div class="session-connector-none"></div>
+        </div>
+        <div class="session-content">
           <div class="session-name">Full Operations</div>
           <div class="session-desc">Production engines, measurement loops, content library. The complete brand operating system.</div>
         </div>
@@ -366,13 +417,13 @@ function buildClarifications(items: ClarificationItem[]): string {
       ${items
         .map(
           (item, i) => `
-      <div class="clarify-card">
-        <div class="clarify-num">${i + 1}</div>
-        <div>
-          <div class="clarify-q">${escapeHtml(item.question)}</div>
-          <div class="clarify-field">${escapeHtml(item.field)} &bull; ${item.priority} priority</div>
-        </div>
-      </div>`
+        <div class="clarify-card">
+          <div class="clarify-num">${i + 1}</div>
+          <div>
+            <div class="clarify-q">${escapeHtml(item.question)}</div>
+            <div class="clarify-field">${escapeHtml(item.field)} &bull; ${item.priority} priority</div>
+          </div>
+        </div>`
         )
         .join("\n")}
     </div>
@@ -403,134 +454,253 @@ export function generateReportHTML(data: ReportData): string {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${clientName} — Brand Identity Report</title>
 <style>
+/* =========================================================
+   brandsystem.app — Brand Identity Report
+   ========================================================= */
+
+/* --- Reset & Base --- */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#0e0c10;color:#e8e6ea;max-width:720px;margin:0 auto;padding:40px 24px 64px}
+body{
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  background:#0a0a0c;
+  color:#f0f0f2;
+  max-width:760px;
+  margin:0 auto;
+  padding:48px 32px 80px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 
-.badge{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:3px;vertical-align:middle}
-.badge-confirmed{background:#1a3a2a;color:#34d399}
-.badge-high{background:#1a3a2a;color:#4ade80}
-.badge-medium{background:#1a1a3a;color:#818cf8}
-.badge-low{background:#3a1a1a;color:#f87171}
-.badge-warn{background:#3a2a0a;color:#fbbf24}
-.badge-role{background:#1a2030;color:#7dd3fc;text-transform:capitalize}
-.source{font-size:11px;color:#6b6876}
-.detail{font-size:11px;color:#6b6876}
+/* --- Badges --- */
+.badge{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:4px;vertical-align:middle}
+.badge-confirmed{background:rgba(129,140,248,.12);color:#818cf8}
+.badge-high{background:rgba(129,140,248,.12);color:#a5b4fc}
+.badge-medium{background:rgba(129,140,248,.08);color:#818cf8}
+.badge-low{background:rgba(248,113,113,.1);color:#f87171}
+.badge-warn{background:rgba(251,191,36,.1);color:#fbbf24}
+.badge-role{background:rgba(129,140,248,.1);color:#a5b4fc;text-transform:capitalize}
+.source{font-size:11px;color:#5a5a66}
+.detail{font-size:11px;color:#5a5a66}
 
-header{border-bottom:1px solid #2a2830;padding-bottom:28px;margin-bottom:40px}
-.overline{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:#6b6876;margin-bottom:6px}
-h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:4px}
-.subtitle{font-size:14px;color:#8b8894}
-.audit-line{margin-top:12px;font-size:13px;color:#8b8894}
-.audit-line strong{color:#4ade80}
+/* --- Header --- */
+header{padding-bottom:32px;margin-bottom:48px;border-bottom:1px solid #2a2a32}
+.overline{
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;
+  color:#818cf8;margin-bottom:12px;
+}
+h1{
+  font-size:44px;font-weight:700;color:#fff;letter-spacing:-.02em;
+  line-height:1.1;margin-bottom:8px;
+}
+.subtitle{font-size:14px;color:#8b8b96;line-height:1.6}
+.audit-line{
+  margin-top:16px;font-size:13px;color:#5a5a66;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+}
+.audit-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#141418;border:1px solid #2a2a32;border-radius:20px;
+  padding:4px 12px;font-size:12px;font-weight:500;color:#8b8b96;
+}
+.audit-pill-pass{color:#818cf8;border-color:rgba(129,140,248,.2)}
+.audit-pill strong{color:#818cf8;font-weight:600}
 
-section{margin-bottom:48px}
-h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#6b6876;margin-bottom:16px;padding-bottom:6px;border-bottom:1px solid #2a2830}
+/* --- Sections --- */
+section{margin-bottom:64px}
+h2{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+  color:#5a5a66;margin-bottom:24px;padding-bottom:0;
+}
+.section-intro{font-size:14px;color:#8b8b96;line-height:1.7;margin-bottom:24px}
 
-.logo-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px}
-.logo-display{border-radius:10px;padding:36px;display:flex;align-items:center;justify-content:center}
-.logo-display svg{width:100%;max-width:280px;height:auto}
-.logo-light{background:#fff}
-.logo-dark{background:#1a171a}
+/* --- Logo --- */
+.logo-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
+.logo-display{
+  border-radius:12px;padding:48px 40px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;
+}
+.logo-inner{width:100%;display:flex;align-items:center;justify-content:center}
+.logo-inner svg{width:100%;max-width:320px;height:auto}
+.logo-light{background:#ffffff}
+.logo-dark{background:#141418;border:1px solid #2a2a32}
 .logo-dark svg path,.logo-dark svg polygon,.logo-dark svg rect,.logo-dark svg circle{fill:#fff !important}
-.logo-meta-row{display:flex;gap:12px;align-items:center;font-size:12px;color:#6b6876;margin-bottom:8px}
+.logo-label{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  color:#8b8b96;
+}
+.logo-label-dark{color:#5a5a66}
+.logo-meta-row{display:flex;gap:12px;align-items:center;font-size:12px;color:#5a5a66;margin-bottom:12px}
 
-.color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.color-card{border-radius:10px;overflow:hidden;background:#1a1820;border:1px solid #2a2830}
-.color-swatch{height:64px}
-.color-swatch.is-light{border-bottom:1px solid #2a2830}
-.color-info{padding:10px 12px}
-.color-role{margin-bottom:2px}
-.color-hex{font-size:13px;font-family:'SF Mono',ui-monospace,monospace;color:#a0a0a0;margin-bottom:4px}
+/* --- Colors --- */
+.color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.color-card{border-radius:12px;overflow:hidden;background:#141418;border:1px solid #2a2a32;transition:border-color .15s}
+.color-card:hover{border-color:#3a3a44}
+.color-swatch{height:80px}
+.color-swatch.is-light{border-bottom:1px solid #2a2a32}
+.color-info{padding:14px 16px}
+.color-role{margin-bottom:4px}
+.color-hex{font-size:13px;font-family:'SF Mono',ui-monospace,monospace;color:#8b8b96;margin-bottom:6px}
 .color-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 
+/* --- Typography --- */
 .font-list{display:flex;flex-direction:column;gap:12px}
-.font-card{background:#1a1820;border:1px solid #2a2830;border-radius:10px;padding:20px}
-.font-specimen{font-size:22px;font-weight:600;color:#fff;margin-bottom:6px}
+.font-card{background:#141418;border:1px solid #2a2a32;border-radius:12px;padding:24px;transition:border-color .15s}
+.font-card:hover{border-color:#3a3a44}
+.font-specimen{font-size:24px;font-weight:600;color:#fff;margin-bottom:8px;letter-spacing:-.01em}
 .font-meta{display:flex;gap:8px;align-items:center}
 
-.usage-block{margin-bottom:24px}
-.usage-block h3{font-size:14px;font-weight:600;color:#c8c6ca;margin-bottom:8px}
-.usage-block p{font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:8px}
+/* --- Quick Reference / Usage --- */
+.usage-block{margin-bottom:28px}
+.usage-block h3{font-size:14px;font-weight:600;color:#f0f0f2;margin-bottom:8px}
+.usage-block p{font-size:14px;color:#8b8b96;line-height:1.7;margin-bottom:10px}
 
-.clarify-list{display:flex;flex-direction:column;gap:10px}
-.clarify-card{background:#1a1820;border:1px solid #2a2830;border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
-.clarify-num{flex-shrink:0;width:22px;height:22px;background:#2a2830;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#8b8894}
-.clarify-q{font-size:13px;color:#c8c6ca;line-height:1.5}
-.clarify-field{font-size:11px;font-family:'SF Mono',ui-monospace,monospace;color:#6b6876;margin-top:4px}
+/* --- Clarifications --- */
+.clarify-list{display:flex;flex-direction:column;gap:12px}
+.clarify-card{background:#141418;border:1px solid #2a2a32;border-radius:12px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;transition:border-color .15s}
+.clarify-card:hover{border-color:#3a3a44}
+.clarify-num{flex-shrink:0;width:24px;height:24px;background:#1c1c22;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#5a5a66}
+.clarify-q{font-size:14px;color:#f0f0f2;line-height:1.6}
+.clarify-field{font-size:11px;font-family:'SF Mono',ui-monospace,monospace;color:#5a5a66;margin-top:4px}
 
-.empty-state{background:#1a1820;border:1px dashed #2a2830;border-radius:10px;padding:32px;text-align:center;font-size:14px;color:#6b6876}
+/* --- Empty State --- */
+.empty-state{background:#141418;border:1px dashed #2a2a32;border-radius:12px;padding:40px;text-align:center;font-size:14px;color:#5a5a66}
 
-.portable-notice{background:#1a2030;border:1px solid #1a3a4a;border-radius:8px;padding:14px 16px;font-size:13px;color:#7dd3fc;line-height:1.6;margin-bottom:40px}
-.portable-notice strong{color:#bae6fd}
+/* --- Portable Notice --- */
+.portable-notice{
+  background:rgba(129,140,248,.06);
+  border:1px solid rgba(129,140,248,.15);
+  border-radius:12px;padding:18px 22px;
+  font-size:14px;color:#a5b4fc;line-height:1.7;margin-bottom:48px;
+}
+.portable-notice strong{color:#c7d2fe}
 
-/* Copyable code blocks */
+/* --- Copyable code blocks --- */
 .copy-wrap{position:relative;margin-bottom:12px}
-.copy-wrap pre{background:#16141a;border:1px solid #2a2830;border-radius:8px;padding:14px 18px;padding-right:70px;overflow-x:auto;max-height:160px;overflow-y:auto}
-.copy-wrap code{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;color:#c4b5fd;white-space:pre-wrap;word-break:break-word;line-height:1.6}
-.copy-wrap.compact code{font-size:9px;color:#818cf8}
-.copy-btn{position:absolute;top:8px;right:8px;background:#2a2830;border:1px solid #3a3840;color:#a8a6ac;font-size:11px;font-weight:600;padding:5px 12px;border-radius:4px;cursor:pointer;transition:all .15s}
-.copy-btn:hover{background:#3a3840;color:#e8e6ea}
-.copy-btn.copied{background:#1a3a2a;border-color:#2a4a3a;color:#4ade80}
+.copy-wrap pre{
+  background:#141418;border:1px solid #2a2a32;border-radius:10px;
+  padding:16px 20px;padding-right:72px;
+  overflow-x:auto;max-height:180px;overflow-y:auto;
+}
+.copy-wrap code{
+  font-family:'SF Mono',ui-monospace,monospace;font-size:12px;
+  color:#a5b4fc;white-space:pre-wrap;word-break:break-word;line-height:1.6;
+}
+.copy-wrap.compact code{font-size:10px;color:#818cf8}
+.copy-btn{
+  position:absolute;top:10px;right:10px;
+  background:#1c1c22;border:1px solid #2a2a32;
+  color:#8b8b96;font-size:11px;font-weight:600;
+  padding:5px 14px;border-radius:6px;cursor:pointer;transition:all .15s;
+}
+.copy-btn:hover{background:#2a2a32;color:#f0f0f2}
+.copy-btn.copied{background:rgba(129,140,248,.15);border-color:rgba(129,140,248,.3);color:#818cf8}
 
-/* Platform tabs */
-.tab-bar{display:flex;gap:4px;margin-bottom:0;overflow-x:auto}
-.tab-btn{background:#1a1820;border:1px solid #2a2830;border-bottom:none;border-radius:8px 8px 0 0;padding:10px 16px;font-size:12px;font-weight:600;color:#6b6876;cursor:pointer;white-space:nowrap;transition:all .15s}
-.tab-btn:hover{color:#a8a6ac;background:#1e1c24}
-.tab-btn.active{background:#1a1820;color:#e8e6ea;border-color:#3a3840}
-.tab-panel{display:none;background:#1a1820;border:1px solid #2a2830;border-radius:0 8px 8px 8px;padding:24px}
+/* --- Platform tabs --- */
+.tab-bar{display:flex;gap:2px;margin-bottom:0;overflow-x:auto}
+.tab-btn{
+  background:#141418;border:1px solid #2a2a32;border-bottom:none;
+  border-radius:10px 10px 0 0;padding:12px 20px;
+  font-size:12px;font-weight:600;color:#5a5a66;
+  cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.tab-btn:hover{color:#8b8b96;background:#1c1c22}
+.tab-btn.active{background:#141418;color:#f0f0f2;border-color:#2a2a32;border-bottom-color:#141418}
+.tab-panel{display:none;background:#141418;border:1px solid #2a2a32;border-radius:0 10px 10px 10px;padding:28px}
 .tab-panel.active{display:block}
-.tab-panel h3{font-size:14px;font-weight:600;color:#c8c6ca;margin-bottom:12px}
-.tab-panel p,.tab-panel li{font-size:13px;color:#a8a6ac;line-height:1.7}
-.tab-panel ol,.tab-panel ul{padding-left:20px;margin-bottom:16px}
-.tab-panel li{margin-bottom:4px}
-.tab-panel li strong{color:#c8c6ca}
-.tab-panel .tip{background:#1a2030;border:1px solid #1a3a4a;border-radius:6px;padding:10px 14px;font-size:12px;color:#7dd3fc;line-height:1.5;margin-top:12px}
-.tab-panel .tip strong{color:#bae6fd}
-.tab-section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b6876;margin:16px 0 8px}
+.tab-panel h3{font-size:16px;font-weight:600;color:#f0f0f2;margin-bottom:14px;letter-spacing:-.01em}
+.tab-panel p,.tab-panel li{font-size:14px;color:#8b8b96;line-height:1.7}
+.tab-panel ol,.tab-panel ul{padding-left:20px;margin-bottom:18px}
+.tab-panel li{margin-bottom:6px}
+.tab-panel li strong{color:#f0f0f2}
+.tab-panel .tip{
+  background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.12);
+  border-radius:8px;padding:14px 18px;font-size:13px;color:#a5b4fc;line-height:1.6;margin-top:16px;
+}
+.tab-panel .tip strong{color:#c7d2fe}
+.tab-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#5a5a66;margin:20px 0 10px}
 
-/* Fix section */
-.fix-list{display:flex;flex-direction:column;gap:10px}
-.fix-item{background:#1a1820;border:1px solid #2a2830;border-radius:8px;padding:14px 18px}
-.fix-item strong{display:block;font-size:13px;color:#c8c6ca;margin-bottom:2px}
-.fix-item span{font-size:12px;color:#6b6876;line-height:1.5}
-
-/* Comparison table */
-.comp-table{width:100%;border-collapse:collapse;font-size:13px}
-.comp-table th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#6b6876;padding:8px 12px;border-bottom:1px solid #2a2830}
-.comp-table td{padding:12px;border-bottom:1px solid #1e1c24;vertical-align:top;line-height:1.6}
-.comp-label{font-weight:600;color:#c8c6ca;width:80px}
-.comp-yours{color:#4ade80}
-.comp-generic{color:#6b6876;font-style:italic}
-.comp-swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:6px;border:1px solid #2a2830}
-.comp-logo-preview{max-width:120px;margin-bottom:6px}
+/* --- Comparison cards --- */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.comp-grid{grid-template-columns:1fr}}
+.comp-card{border-radius:12px;overflow:hidden;border:1px solid #2a2a32}
+.comp-card-brand{border-color:rgba(129,140,248,.3);background:#141418}
+.comp-card-generic{background:#111114;border-color:#1c1c22}
+.comp-card-header{
+  padding:14px 20px;font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid #2a2a32;
+}
+.comp-card-brand .comp-card-header{color:#818cf8;border-color:rgba(129,140,248,.15)}
+.comp-card-generic .comp-card-header{color:#5a5a66;border-color:#1c1c22}
+.comp-card-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.comp-dot-brand{background:#818cf8}
+.comp-dot-generic{background:#3a3a44}
+.comp-card-body{padding:6px 0}
+.comp-row{padding:12px 20px;display:flex;gap:12px;align-items:flex-start}
+.comp-row:not(:last-child){border-bottom:1px solid rgba(42,42,50,.5)}
+.comp-row-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5a5a66;min-width:56px;padding-top:2px;flex-shrink:0}
+.comp-row-value{font-size:13px;color:#f0f0f2;line-height:1.6}
+.comp-generic-text{color:#5a5a66;font-style:italic}
+.comp-swatch{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:middle;margin-right:6px;border:1px solid #2a2a32}
+.comp-logo-preview{max-width:120px;margin-bottom:8px}
 .comp-logo-preview svg{width:100%;height:auto}
 .comp-missing{color:#fbbf24;font-style:normal}
 
-/* Session progression */
+/* --- Session progression (horizontal timeline) --- */
 .session-track{display:flex;flex-direction:column;gap:0}
-.session-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-left:2px solid #2a2830;margin-left:11px;padding-left:22px;position:relative}
-.session-item:last-child{border-left-color:transparent}
-.session-marker{position:absolute;left:-12px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#2a2830;color:#6b6876;flex-shrink:0}
-.session-complete .session-marker{background:#1a3a2a;color:#4ade80}
-.session-complete .session-name{color:#4ade80}
-.session-next .session-marker{background:#1a2030;color:#7dd3fc;border:2px solid #3a5a7a}
-.session-next .session-name{color:#7dd3fc}
-.session-future .session-name{color:#6b6876}
-.session-name{font-size:14px;font-weight:600;margin-bottom:2px}
-.session-desc{font-size:12px;color:#6b6876;line-height:1.5}
+.session-step{display:flex;gap:0;align-items:stretch}
+.session-pip{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:32px}
+.session-pip-inner{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+.session-pip-done{background:rgba(129,140,248,.15);color:#818cf8}
+.session-pip-upcoming{background:rgba(129,140,248,.1);color:#818cf8;border:2px solid rgba(129,140,248,.3)}
+.session-pip-future{background:#1c1c22;color:#5a5a66}
+.session-connector{flex:1;width:2px;background:#2a2a32;margin:4px auto;min-height:12px}
+.session-connector-done{background:rgba(129,140,248,.25)}
+.session-connector-none{flex:1;width:2px;background:transparent;margin:4px auto;min-height:0}
+.session-content{padding:4px 0 20px 16px;flex:1}
+.session-complete .session-name{color:#818cf8}
+.session-next .session-name{color:#a5b4fc}
+.session-future .session-name{color:#5a5a66}
+.session-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.session-desc{font-size:13px;color:#5a5a66;line-height:1.6}
 
-footer{border-top:1px solid #2a2830;padding-top:20px;font-size:11px;color:#4a4856}
+/* --- Fix section --- */
+.fix-grid{display:flex;flex-direction:column;gap:16px}
+.fix-card{background:#141418;border:1px solid #2a2a32;border-radius:12px;padding:24px;transition:border-color .15s}
+.fix-card:hover{border-color:#3a3a44}
+.fix-card-title{font-size:14px;font-weight:600;color:#f0f0f2;margin-bottom:4px}
+.fix-card-desc{font-size:13px;color:#5a5a66;line-height:1.6;margin-bottom:14px}
+
+/* --- Footer --- */
+footer{
+  border-top:1px solid #2a2a32;padding-top:32px;margin-top:16px;
+  font-size:12px;color:#3a3a44;line-height:1.7;
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+}
+footer a{color:#818cf8;text-decoration:none;font-weight:600;transition:color .15s}
+footer a:hover{color:#a5b4fc}
+footer .footer-sep{color:#2a2a32}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="overline">brandsystem.app &mdash; brand identity report</div>
+  <div class="overline">brandsystem.app</div>
   <h1>${clientName}</h1>
-  <div class="subtitle">${config.website_url ? `Source: ${escapeHtml(config.website_url)}` : "Manual entry"}${config.industry ? ` &bull; ${escapeHtml(config.industry)}` : ""}</div>
+  <div class="subtitle">${config.website_url ? `${escapeHtml(config.website_url)}` : "Manual entry"}${config.industry ? ` &bull; ${escapeHtml(config.industry)}` : ""}</div>
   <div class="audit-line">
-    Audit: <strong>${auditSummary.pass} pass</strong> &bull; ${auditSummary.warn} warn &bull; ${auditSummary.fail} fail
-    &mdash; ${tokenCount} DTCG tokens &bull; ${clarifications.length} item${clarifications.length !== 1 ? "s" : ""} need clarification
+    <span class="audit-pill audit-pill-pass"><strong>${auditSummary.pass}</strong> pass</span>
+    <span class="audit-pill">${auditSummary.warn} warn</span>
+    <span class="audit-pill">${auditSummary.fail} fail</span>
+    <span class="audit-pill">${tokenCount} tokens</span>
+    <span class="audit-pill">${clarifications.length} to clarify</span>
   </div>
 </header>
 
@@ -663,7 +833,7 @@ ${brandInstructions}</code></pre>
   <!-- CODING TOOLS -->
   <div class="tab-panel" id="tab-code">
     <h3>Set up in your coding tool</h3>
-    <p style="margin-bottom:16px">
+    <p style="margin-bottom:18px">
       For production-grade brand compliance, install the <strong>brandsystem MCP server</strong>.
       It gives your coding tool direct access to your brand identity &mdash; logo vectors, exact colors,
       font families &mdash; at the moment of creation.
@@ -674,7 +844,7 @@ ${brandInstructions}</code></pre>
       <button class="copy-btn" onclick="copyBlock('copy-mcp')">Copy</button>
       <pre><code>${escapeHtml(mcpConfig)}</code></pre>
     </div>
-    <ul style="margin-bottom:16px">
+    <ul style="margin-bottom:18px">
       <li><strong>Claude Code</strong> &mdash; save as <code>.mcp.json</code> in your project root</li>
       <li><strong>Cursor</strong> &mdash; save as <code>.cursor/mcp.json</code></li>
       <li><strong>Windsurf</strong> &mdash; add to Windsurf MCP settings</li>
@@ -718,42 +888,42 @@ Once the MCP is available:
 <!-- SOMETHING LOOK WRONG? -->
 <section>
   <h2>Something Look Wrong?</h2>
-  <p style="font-size:13px;color:#8b8894;line-height:1.6;margin-bottom:20px">
+  <p class="section-intro">
     Go back to your AI chat and paste one of these prompts to fix what&rsquo;s off.
   </p>
-  <div class="fix-list">
+  <div class="fix-grid">
 
-    <div class="fix-item">
-      <strong>Connect to Figma</strong>
-      <span>Extract logo, colors, and typography directly from your design file (highest accuracy)</span>
-      <div class="copy-wrap" id="copy-fix-figma" style="margin-top:10px">
+    <div class="fix-card">
+      <div class="fix-card-title">Connect to Figma</div>
+      <div class="fix-card-desc">Extract logo, colors, and typography directly from your design file (highest accuracy)</div>
+      <div class="copy-wrap" id="copy-fix-figma">
         <button class="copy-btn" onclick="copyBlock('copy-fix-figma')">Copy</button>
         <pre><code>I have a Figma file with my brand's design system. Can you walk me through connecting to it to extract our exact colors, typography, and logo? The web extraction got close but I need higher accuracy from the source design file.</code></pre>
       </div>
     </div>
 
-    <div class="fix-item">
-      <strong>Upload brand guidelines</strong>
-      <span>Share your brand guidelines PDF or document for accurate extraction</span>
-      <div class="copy-wrap" id="copy-fix-guidelines" style="margin-top:10px">
+    <div class="fix-card">
+      <div class="fix-card-title">Upload brand guidelines</div>
+      <div class="fix-card-desc">Share your brand guidelines PDF or document for accurate extraction</div>
+      <div class="copy-wrap" id="copy-fix-guidelines">
         <button class="copy-btn" onclick="copyBlock('copy-fix-guidelines')">Copy</button>
         <pre><code>I'm uploading our brand guidelines document. Please extract the correct colors (with their roles — primary, secondary, accent, etc.), typography (font families, weights, and usage), and any logo specifications. Compare what you find against the brand report I set up earlier and tell me what needs to be corrected.</code></pre>
       </div>
     </div>
 
-    <div class="fix-item">
-      <strong>Upload an on-brand asset</strong>
-      <span>Share a file you know is correct and we&rsquo;ll sample from it</span>
-      <div class="copy-wrap" id="copy-fix-asset" style="margin-top:10px">
+    <div class="fix-card">
+      <div class="fix-card-title">Upload an on-brand asset</div>
+      <div class="fix-card-desc">Share a file you know is correct and we&rsquo;ll sample from it</div>
+      <div class="copy-wrap" id="copy-fix-asset">
         <button class="copy-btn" onclick="copyBlock('copy-fix-asset')">Copy</button>
         <pre><code>I'm uploading a file that I know is on-brand (it was approved by our design team). Please sample the colors, fonts, and any logo usage from it and compare against the brand report I set up. Update the brand identity with any corrections you find.</code></pre>
       </div>
     </div>
 
-    <div class="fix-item">
-      <strong>Send to your design team</strong>
-      <span>Forward this report for review &mdash; they can send back corrections</span>
-      <div class="copy-wrap" id="copy-fix-team" style="margin-top:10px">
+    <div class="fix-card">
+      <div class="fix-card-title">Send to your design team</div>
+      <div class="fix-card-desc">Forward this report for review &mdash; they can send back corrections</div>
+      <div class="copy-wrap" id="copy-fix-team">
         <button class="copy-btn" onclick="copyBlock('copy-fix-team')">Copy</button>
         <pre><code>Can you draft a short message I can send to our design team? I need them to review this brand identity report and tell me:
 1. Are the colors correct? What are the actual hex values and roles (primary, secondary, accent)?
@@ -763,10 +933,10 @@ Once the MCP is available:
       </div>
     </div>
 
-    <div class="fix-item">
-      <strong>Scan a different page</strong>
-      <span>If this wasn&rsquo;t your main brand page, try a different URL</span>
-      <div class="copy-wrap" id="copy-fix-rescan" style="margin-top:10px">
+    <div class="fix-card">
+      <div class="fix-card-title">Scan a different page</div>
+      <div class="fix-card-desc">If this wasn&rsquo;t your main brand page, try a different URL</div>
+      <div class="copy-wrap" id="copy-fix-rescan">
         <button class="copy-btn" onclick="copyBlock('copy-fix-rescan')">Copy</button>
         <pre><code>The brand extraction didn't get the right results from that URL. Let's try scanning a different page — I think [PASTE YOUR URL HERE] would be a better source for our brand colors and logo. Please re-run the extraction and update the report.</code></pre>
       </div>
@@ -776,8 +946,14 @@ Once the MCP is available:
 </section>
 
 <footer>
-  Generated by <a href="https://brandsystem.app" style="color:#818cf8;text-decoration:none">brandsystem.app</a> v0.1.0 &bull; ${new Date().toISOString().split("T")[0]}
-  &bull; Audit: ${overall} (${auditSummary.pass}/${auditSummary.warn}/${auditSummary.fail})
+  <span>Generated by</span>
+  <a href="https://brandsystem.app">brandsystem.app</a>
+  <span class="footer-sep">&bull;</span>
+  <span>v0.1.0</span>
+  <span class="footer-sep">&bull;</span>
+  <span>${new Date().toISOString().split("T")[0]}</span>
+  <span class="footer-sep">&bull;</span>
+  <span>Audit: ${overall} (${auditSummary.pass}/${auditSummary.warn}/${auditSummary.fail})</span>
 </footer>
 
 <script>
