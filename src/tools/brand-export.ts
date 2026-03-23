@@ -16,7 +16,7 @@ import { cleanColorName } from "../lib/color-namer.js";
 // Types
 // ---------------------------------------------------------------------------
 
-type ExportTarget = "chat" | "code" | "team" | "email";
+type ExportTarget = "chat" | "code" | "team" | "email" | "claude-skill";
 
 interface ExportParams {
   target: ExportTarget;
@@ -575,6 +575,165 @@ export function generateEmail(data: BrandData): string {
 }
 
 // ---------------------------------------------------------------------------
+// Claude Skill export — persistent brand identity across all Claude artifacts
+// ---------------------------------------------------------------------------
+
+export function generateClaudeSkill(data: BrandData, includeLogo: boolean): string {
+  const { config, identity, visual, messaging } = data;
+  const brandName = config.client_name;
+  const lines: string[] = [];
+
+  lines.push(`# ${brandName} Brand Identity Skill`);
+  lines.push("");
+  lines.push("## When to Use");
+  lines.push(`Use this skill whenever creating a visual artifact (HTML, React/JSX, SVG) for ${brandName}. This includes: dashboards, landing pages, social graphics, reports, interactive tools, presentations rendered as HTML, or any UI prototype.`);
+  lines.push("");
+  lines.push("Read this file BEFORE writing any artifact code.");
+  lines.push("");
+
+  // Logo section — the critical part
+  lines.push("## Logo Asset");
+  lines.push("");
+  if (identity.logo.length > 0 && includeLogo) {
+    for (const logo of identity.logo) {
+      for (const v of logo.variants) {
+        if (v.inline_svg) {
+          lines.push(`### Primary Logo (SVG — ${logo.type})`);
+          lines.push("");
+          lines.push("```svg");
+          lines.push(v.inline_svg.trim());
+          lines.push("```");
+          lines.push("");
+        }
+        if (v.data_uri) {
+          lines.push("### Base64 Data URI (for `<img>` tags)");
+          lines.push("");
+          lines.push("```");
+          lines.push(v.data_uri);
+          lines.push("```");
+          lines.push("");
+        }
+      }
+    }
+  } else {
+    lines.push("*No logo extracted yet. Run `brand_set_logo` or `brand_extract_web` with a `logo_url` to add one.*");
+    lines.push("");
+  }
+
+  // Embedding rules
+  lines.push("## Embedding Rules");
+  lines.push("");
+  lines.push("1. **Always inline the logo** — never use an external URL `src`. Claude artifacts block external images via CSP.");
+  lines.push("2. **For SVG logos:** Paste the `<svg>` markup directly into the JSX/HTML. Wrap in a container with explicit width (e.g., `width: 120px`) and `height: auto`.");
+  lines.push("3. **For base64 logos:** Use `<img src=\"data:image/png;base64,...\" alt=\"" + brandName + " logo\" />`.");
+  lines.push("4. **Placement defaults** (override per request): top-left for dashboards, centered for landing pages.");
+  lines.push(`5. **Always include** \`alt="${brandName} logo"\` on all logo image tags.`);
+  lines.push("6. **Do not distort.** Always preserve aspect ratio. Use `object-fit: contain` or `preserveAspectRatio=\"xMidYMid meet\"`.");
+  lines.push("");
+
+  // Colors as CSS variables
+  lines.push("## Brand Colors");
+  lines.push("");
+  lines.push("Use ONLY these colors. Do not introduce off-palette colors.");
+  lines.push("");
+  lines.push("```css");
+  lines.push(":root {");
+  for (const c of identity.colors) {
+    const name = cleanColorName(c);
+    const role = c.role !== "unknown" ? c.role : name.toLowerCase().replace(/\s+/g, "-");
+    lines.push(`  --brand-${role}: ${c.value};  /* ${name} */`);
+  }
+  lines.push("}");
+  lines.push("```");
+  lines.push("");
+
+  // Quick reference table
+  lines.push("| Role | Hex | Name |");
+  lines.push("|------|-----|------|");
+  for (const c of identity.colors) {
+    lines.push(`| ${c.role} | \`${c.value}\` | ${cleanColorName(c)} |`);
+  }
+  lines.push("");
+
+  // Typography
+  if (identity.typography.length > 0) {
+    lines.push("## Typography");
+    lines.push("");
+    for (const t of identity.typography) {
+      lines.push(`- **${t.family}**${t.weight ? ` (weight: ${t.weight})` : ""}`);
+    }
+    lines.push("");
+    lines.push("Use these font families in `font-family` declarations. If the font is not available in the artifact sandbox, fall back to `system-ui, -apple-system, sans-serif`.");
+    lines.push("");
+  }
+
+  // Anti-patterns as HARD RULES
+  if (visual?.anti_patterns && visual.anti_patterns.length > 0) {
+    lines.push("## Anti-Patterns (NEVER DO)");
+    lines.push("");
+    for (const ap of visual.anti_patterns) {
+      const rule = typeof ap === "string" ? ap : ap.rule;
+      lines.push(`- ❌ ${rule}`);
+    }
+    lines.push("");
+  }
+
+  // Voice quick reference
+  if (messaging?.voice?.tone?.descriptors) {
+    lines.push("## Voice (Quick Reference)");
+    lines.push("");
+    lines.push(`**Tone:** ${messaging.voice.tone.descriptors.join(", ")}`);
+    if (messaging.voice.tone.register) {
+      lines.push(`**Register:** ${messaging.voice.tone.register}`);
+    }
+    if (messaging.voice.vocabulary?.anchor?.length) {
+      lines.push("");
+      lines.push("**Vocabulary:**");
+      for (const a of messaging.voice.vocabulary.anchor) {
+        lines.push(`- Use "${a.use}" not "${a.not}"`);
+      }
+    }
+    lines.push("");
+  }
+
+  // Deployment instructions
+  lines.push("---");
+  lines.push("");
+  lines.push("## How to Deploy This Skill");
+  lines.push("");
+  lines.push("### Option 1: Personal Skill (Claude Pro, Team, or Enterprise)");
+  lines.push("");
+  lines.push(`1. Save this file as \`SKILL.md\` inside \`~/.claude/skills/${brandName.toLowerCase().replace(/\s+/g, "-")}-brand/\``);
+  lines.push("2. Claude will read it automatically before creating any visual artifact");
+  lines.push("3. The logo is embedded — no uploads needed, no external URLs, works every time");
+  lines.push("");
+  lines.push("### Option 2: Organization Skill (Claude Teams/Enterprise)");
+  lines.push("");
+  lines.push("1. Ask your admin to add this as an org-level skill");
+  lines.push("2. Every team member gets the brand applied automatically");
+  lines.push("");
+  lines.push("### Option 3: Project Instructions (Claude Pro+)");
+  lines.push("");
+  lines.push("1. Create a Claude Project for this brand");
+  lines.push("2. Paste this file into the Project Instructions");
+  lines.push("3. Works for all conversations in that project");
+  lines.push("");
+  lines.push("### Option 4: Per-Conversation (any plan)");
+  lines.push("");
+  lines.push("1. Upload this file at the start of a conversation");
+  lines.push(`2. Say: "Use this brand system for all visual artifacts this session"`);
+  lines.push("");
+  lines.push("**Why skills are best:** Skills re-read on every turn where triggered. Project knowledge loads once and can drift out of context in long conversations. For mission-critical brand consistency, skills > project knowledge > per-session upload.");
+  lines.push("");
+  lines.push(`---\n*Generated by [@brandsystem/mcp](https://brandsystem.app)*`);
+
+  return lines
+    .join("\n")
+    .replace(/\n{4,}/g, "\n\n\n")
+    .trim() + "\n";
+}
+
+// ---------------------------------------------------------------------------
 // Filenames per target
 // ---------------------------------------------------------------------------
 
@@ -583,6 +742,7 @@ const TARGET_FILES: Record<ExportTarget, string> = {
   code: "exports/brand-system-code.md",
   team: "exports/brand-guidelines.md",
   email: "exports/brand-summary.md",
+  "claude-skill": "exports/brand-skill.md",
 };
 
 // ---------------------------------------------------------------------------
@@ -630,6 +790,9 @@ async function handler(input: ExportParams) {
     case "email":
       content = generateEmail(data);
       break;
+    case "claude-skill":
+      content = generateClaudeSkill(data, includeLogo);
+      break;
   }
 
   const filename = TARGET_FILES[target];
@@ -648,7 +811,9 @@ async function handler(input: ExportParams) {
           ? "Follow the setup instructions in .brand/exports/brand-system-code.md"
           : target === "team"
             ? "Share .brand/exports/brand-guidelines.md with your team"
-            : "Copy the summary from .brand/exports/brand-summary.md into an email or Slack",
+            : target === "claude-skill"
+              ? "Save .brand/exports/brand-skill.md as SKILL.md in your Claude skills folder. See deployment instructions at the bottom of the file."
+              : "Copy the summary from .brand/exports/brand-summary.md into an email or Slack",
     ],
     data: {
       file: `.brand/${filename}`,
@@ -666,9 +831,9 @@ async function handler(input: ExportParams) {
 
 const paramsShape = {
   target: z
-    .enum(["chat", "code", "team", "email"])
+    .enum(["chat", "code", "team", "email", "claude-skill"])
     .describe(
-      "Where this export will be used. 'chat': upload to AI conversation (Claude/ChatGPT/Gemini). 'code': paste into CLAUDE.md or .cursorrules. 'team': share with designers/writers. 'email': send via Slack or email."
+      "Where this export will be used. 'chat': upload to AI conversation (Claude/ChatGPT/Gemini). 'code': paste into CLAUDE.md or .cursorrules. 'team': share with designers/writers. 'email': send via Slack or email. 'claude-skill': persistent Claude skill file with embedded logo + brand rules — the gold standard for automatic brand application in every artifact."
     ),
   include_logo: z
     .boolean()
