@@ -4,7 +4,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { extractFromCSS, inferColorConfidence, inferColorRole, promotePrimaryColor, getTopChromaticCandidates } from "../lib/css-parser.js";
-import { extractLogos, fetchLogo, fetchClearbitLogo, probeCommonLogoPaths } from "../lib/logo-extractor.js";
+import { extractLogos, fetchLogo, fetchClearbitLogo, probeCommonLogoPaths, fetchGoogleFavicon, fetchAndEncodeLogo } from "../lib/logo-extractor.js";
 import { resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { mergeColor, mergeTypography } from "../lib/confidence.js";
 import { getVersion } from "../lib/version.js";
@@ -308,6 +308,40 @@ async function handler(input: { url: string; logo_url?: string }) {
         }
         logoFound = true;
       }
+    }
+  }
+
+  // ── Fallback 3: Fetch + encode apple-touch-icon or OG image ──
+  // These were found in HTML extraction but not yet fetched
+  if (!logoFound) {
+    const fallbackCandidates = extractLogos(html, input.url)
+      .filter(c => c.type === "apple-touch-icon" || c.type === "og-image");
+    for (const candidate of fallbackCandidates) {
+      const encoded = await fetchAndEncodeLogo(candidate.url);
+      if (encoded && encoded.data_uri) {
+        logos.push({
+          type: candidate.type === "apple-touch-icon" ? "logomark" : "wordmark",
+          source: "web",
+          confidence: "low",
+          variants: [{ name: "default", data_uri: encoded.data_uri }],
+        });
+        logoFound = true;
+        break;
+      }
+    }
+  }
+
+  // ── Fallback 4: Google favicon (GUARANTEED — always returns something) ──
+  if (!logoFound) {
+    const googleFav = await fetchGoogleFavicon(input.url);
+    if (googleFav && googleFav.data_uri) {
+      logos.push({
+        type: "logomark",
+        source: "web",
+        confidence: "low",
+        variants: [{ name: "default", data_uri: googleFav.data_uri }],
+      });
+      logoFound = true;
     }
   }
 

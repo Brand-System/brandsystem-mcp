@@ -300,6 +300,73 @@ export async function probeCommonLogoPaths(baseUrl: string): Promise<ExtractedLo
 }
 
 /**
+ * Google's favicon service — GUARANTEED to return something for any domain.
+ * Returns a 256x256 favicon. This is the floor — we always get at least this.
+ */
+export async function fetchGoogleFavicon(domain: string): Promise<ExtractedLogo | null> {
+  const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
+  const url = `https://www.google.com/s2/favicons?domain=${cleanDomain}&sz=256`;
+
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(5000),
+      headers: { "User-Agent": `brandsystem-mcp/${getVersion()}` },
+    });
+
+    if (!response.ok) return null;
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length < 100) return null;
+
+    const contentType = response.headers.get("content-type") || "image/png";
+    const base64 = buffer.toString("base64");
+    const mimeType = contentType.split(";")[0].trim();
+
+    return {
+      url,
+      type: "favicon",
+      confidence: "low",
+      data_uri: `data:${mimeType};base64,${base64}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch any logo candidate URL and convert to a data URI.
+ * Works for SVG, PNG, JPG, ICO — anything fetchable.
+ * Returns both the raw content (for file writing) and a data_uri (for embedding).
+ */
+export async function fetchAndEncodeLogo(
+  url: string
+): Promise<{ content: Buffer; contentType: string; data_uri: string } | null> {
+  if (url.startsWith("inline:")) return null;
+
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(10000),
+      headers: { "User-Agent": `brandsystem-mcp/${getVersion()}` },
+    });
+
+    if (!response.ok) return null;
+
+    const contentType = response.headers.get("content-type") || "";
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    if (buffer.length > 500_000) return null;
+
+    const base64 = buffer.toString("base64");
+    const mimeType = contentType.split(";")[0].trim() || "image/png";
+    const data_uri = `data:${mimeType};base64,${base64}`;
+
+    return { content: buffer, contentType, data_uri };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch a logo URL and return its content.
  * Returns null if fetch fails or content is too large (>500KB).
  */
