@@ -5,7 +5,9 @@ export interface ExtractedColor {
   value: string; // hex
   property: string; // CSS property or custom property name
   frequency: number;
-  source_type: "css-variable" | "computed";
+  source_type: "css-variable" | "structural" | "computed";
+  /** CSS selector context — helps distinguish brand colors from content colors */
+  selector_context?: string;
 }
 
 export interface ExtractedFont {
@@ -106,6 +108,22 @@ function normalizeToHex(value: string): string | null {
   return null;
 }
 
+// ── Structural selector detection ────────────────────────────────
+// Colors found in these selectors are the brand's structural colors (chrome).
+// Colors only in content selectors are likely from showcased content.
+
+const STRUCTURAL_SELECTORS = /^(html|body|:root|\*|header|nav|footer|\.header|\.nav|\.footer|\.navbar|\.site-header|\.site-footer|\.topbar|\.sidebar|\.menu|\.brand|a|a:hover|a:visited|button|\.btn|\.button|input|select|textarea|h[1-6]|p|\.text|\.heading|\.title)/i;
+
+const CONTENT_SELECTORS = /\.(case-study|portfolio|project|article|post|blog|story|card|hero-image|featured|showcase|editorial|gallery|client|work-item|testimonial)/i;
+
+function isStructuralSelector(selector: string): boolean {
+  return STRUCTURAL_SELECTORS.test(selector.trim());
+}
+
+function isContentSelector(selector: string): boolean {
+  return CONTENT_SELECTORS.test(selector.trim());
+}
+
 /** Parse CSS text and extract colors + fonts */
 export function extractFromCSS(cssText: string): {
   colors: ExtractedColor[];
@@ -121,12 +139,21 @@ export function extractFromCSS(cssText: string): {
     return { colors: [], fonts: [] };
   }
 
+  // Track current rule's selector for context
+  let currentSelector = "";
+
   csstree.walk(ast, {
-    visit: "Declaration",
-    enter(node) {
+    enter(node: csstree.CssNode) {
+      // Track the selector of the current rule
+      if (node.type === "Rule" && node.prelude) {
+        currentSelector = csstree.generate(node.prelude);
+      }
+
+      if (node.type !== "Declaration") return;
+
       const property = node.property;
 
-      // CSS custom properties that look like colors
+      // CSS custom properties that look like colors (HIGHEST priority — always brand)
       if (property.startsWith("--")) {
         const raw = csstree.generate(node.value);
         const hex = normalizeToHex(raw);
@@ -134,12 +161,18 @@ export function extractFromCSS(cssText: string): {
           const existing = colorMap.get(hex);
           if (existing) {
             existing.frequency++;
+            // CSS variables are always brand colors — upgrade to css-variable
+            if (existing.source_type !== "css-variable") {
+              existing.source_type = "css-variable";
+              existing.property = property;
+            }
           } else {
             colorMap.set(hex, {
               value: hex,
               property,
               frequency: 1,
               source_type: "css-variable",
+              selector_context: currentSelector,
             });
           }
         }
@@ -150,15 +183,26 @@ export function extractFromCSS(cssText: string): {
         const raw = csstree.generate(node.value);
         const hex = normalizeToHex(raw);
         if (hex && hex !== "#00000000") {
+          // Determine if this is a structural or content color
+          const isStructural = isStructuralSelector(currentSelector);
+          const isContent = isContentSelector(currentSelector);
+
           const existing = colorMap.get(hex);
           if (existing) {
             existing.frequency++;
+            // Upgrade to structural if found in structural selector
+            if (isStructural && existing.source_type === "computed") {
+              existing.source_type = "structural";
+              existing.property = property;
+              existing.selector_context = currentSelector;
+            }
           } else {
             colorMap.set(hex, {
               value: hex,
               property,
-              frequency: 1,
-              source_type: "computed",
+              frequency: isContent ? 0 : 1, // Content colors start at 0 frequency (deprioritized)
+              source_type: isStructural ? "structural" : "computed",
+              selector_context: currentSelector,
             });
           }
         }
@@ -179,8 +223,10 @@ export function extractFromCSS(cssText: string): {
     },
   });
 
+  // Sort with priority: css-variable > structural > computed, then by frequency
+  const sourceWeight = (t: string) => t === "css-variable" ? 100 : t === "structural" ? 50 : 0;
   const colors = Array.from(colorMap.values()).sort(
-    (a, b) => b.frequency - a.frequency
+    (a, b) => (sourceWeight(b.source_type) + b.frequency) - (sourceWeight(a.source_type) + a.frequency)
   );
 
   const fonts = Array.from(fontMap.entries())
@@ -302,6 +348,8 @@ export function inferColorConfidence(
 ): Confidence {
   if (color.source_type === "css-variable" && color.frequency >= 3) return "high";
   if (color.source_type === "css-variable") return "medium";
+  if (color.source_type === "structural" && color.frequency >= 3) return "high";
+  if (color.source_type === "structural") return "medium";
   if (color.frequency >= 5) return "medium";
   return "low";
 }
