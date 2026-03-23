@@ -29,28 +29,39 @@ export function createServer(): McpServer {
     version: getVersion(),
   });
 
-  registerStart(server);
-  registerInit(server);
-  registerStatus(server);
-  registerExtractWeb(server);
-  registerExtractFigma(server);
-  registerCompile(server);
-  registerAudit(server);
-  registerReport(server);
-  registerClarify(server);
+  // ── Entry points (register first — agents see these first) ──
+  registerStart(server);       // #1: Entry point for new brands
+  registerStatus(server);      // #2: "What can I do?" / resume point
+
+  // ── Session 1: Core Identity ──
+  registerExtractWeb(server);  // Extract from website
+  registerExtractFigma(server);// Extract from Figma
+  registerSetLogo(server);     // Add/replace logo manually
+  registerCompile(server);     // Generate tokens + VIM
+  registerClarify(server);     // Resolve ambiguous values
+  registerAudit(server);       // Validate .brand/ directory
+  registerReport(server);      // Generate HTML report
+  registerInit(server);        // Low-level init (prefer brand_start)
+
+  // ── Session 2: Visual Identity ──
   registerDeepenIdentity(server);
   registerIngestAssets(server);
   registerPreflight(server);
+
+  // ── Session 3: Messaging ──
   registerExtractMessaging(server);
-  registerWrite(server);
   registerCompileMessaging(server);
-  registerBuildJourney(server);
+
+  // ── Session 4: Content Strategy ──
   registerBuildPersonas(server);
-  registerBuildMatrix(server);
+  registerBuildJourney(server);
   registerBuildThemes(server);
-  registerExport(server);
-  registerSetLogo(server);
-  registerFeedback(server);
+  registerBuildMatrix(server);
+
+  // ── Cross-session utilities ──
+  registerWrite(server);       // Load brand context for content gen
+  registerExport(server);      // Generate portable brand files
+  registerFeedback(server);    // Bug reports + feature ideas
 
   return server;
 }

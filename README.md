@@ -1,10 +1,12 @@
 # @brandsystem/mcp
 
-MCP server for progressive brand identity extraction. Scan a website, get your brand system.
+Extract and manage brand identity for AI tools -- logo, colors, typography, voice, and visual rules.
 
-Most brand guidelines live in PDFs that no tool can read. This MCP server extracts your brand identity from live sources (websites, Figma files), compiles it into structured design tokens, and makes it available to any AI coding or content tool through the [Model Context Protocol](https://modelcontextprotocol.io).
+## What It Solves
 
-The result is a `.brand/` directory in your repo with your colors, fonts, logos, and DTCG tokens -- portable, version-controlled, and ready for any AI tool to consume.
+AI tools produce generic output because they have no brand context. Brand guidelines live in PDFs, Figma files, and people's heads -- none of which AI tools can read.
+
+This MCP server extracts brand identity from live sources (websites, Figma files), compiles it into structured design tokens, and makes it available to any AI tool through the [Model Context Protocol](https://modelcontextprotocol.io). The result is a `.brand/` directory with your colors, fonts, logos, voice rules, and DTCG tokens -- portable, version-controlled, and ready for any AI tool to consume.
 
 ---
 
@@ -12,7 +14,7 @@ The result is a `.brand/` directory in your repo with your colors, fonts, logos,
 
 ### 1. Add to your MCP config
 
-Add this to your `.mcp.json` (Claude Code, Cursor, Windsurf):
+Copy this into `.mcp.json` (Claude Code), `.cursor/mcp.json` (Cursor), or Windsurf MCP settings:
 
 ```json
 {
@@ -25,81 +27,102 @@ Add this to your `.mcp.json` (Claude Code, Cursor, Windsurf):
 }
 ```
 
-### 2. Initialize your brand system
+### 2. Create your brand system
 
 Tell your AI tool:
 
-> Run brand_init for "Acme Corp" with website https://acme.com
+> Run brand_start for "Acme Corp" with website https://acme.com in auto mode
 
-### 3. Extract, compile, report
+That single command extracts colors, fonts, and logo from the website, compiles DTCG tokens, and generates a portable HTML brand report -- all in under 60 seconds.
 
-> Run brand_extract_web, then brand_compile, then brand_report
+### 3. Use it
 
-You now have a `.brand/` directory with your full brand identity, DTCG design tokens, and a portable HTML report.
+> Run brand_write for a social-graphic about "Q3 product launch"
+
+The AI now has your full brand context -- colors, typography, logo, anti-patterns, voice rules -- and generates on-brand content.
 
 ---
 
 ## What It Does
 
-The server implements a four-stage pipeline:
+**Session 1: Core Identity** -- Extract colors, fonts, and logo from a website or Figma file. Compile into DTCG tokens. Generate a portable HTML report.
 
-```
-Extract --> Compile --> Audit --> Report
-```
+**Session 2: Visual Identity** -- Define composition rules, pattern language, illustration style, and anti-patterns through a guided interview. Anti-patterns become enforceable compliance rules.
 
-**Extract** -- Pull brand identity from live sources. Web extraction parses CSS for colors, font stacks, and logo candidates. Figma extraction reads variables and text styles for higher-accuracy tokens. Both sources are confidence-scored and merged, with Figma overriding web data when available.
+**Session 3: Messaging** -- Audit existing website voice, then define perspective, voice codex (tone, vocabulary, AI-ism detection), and brand story through a guided interview.
 
-**Compile** -- Transform raw identity data into DTCG-format `tokens.json`. Only values with medium or higher confidence are promoted to tokens. Low-confidence values are surfaced in `needs-clarification.yaml` for human review.
+**Session 4: Content Strategy** -- Build buyer personas, journey stages, editorial themes, and a persona x stage messaging matrix.
 
-**Audit** -- Validate the `.brand/` directory against schema requirements. Checks file existence, schema validity, primary color assignment, typography coverage, logo embedding, and confidence distribution.
-
-**Report** -- Generate a self-contained HTML brand identity report. Embeds logos inline, displays color swatches with roles, lists typography, and includes the compiled tokens. The HTML is portable -- paste it into any AI conversation as brand guidelines.
+Each session builds on the previous. Stop anywhere -- you get value immediately.
 
 ---
 
 ## Tools Reference
 
+### Entry Points
+
+| Tool | What it does |
+|------|-------------|
+| `brand_start` | **Begin here.** Creates a brand system from a website URL in under 60 seconds. Use `mode='auto'` for one-call setup. |
+| `brand_status` | Check progress, get next steps, or see a getting-started guide if no brand exists yet. |
+
 ### Session 1: Core Identity
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `brand_start` | **Entry point.** Creates brand system or resumes existing one. Presents source menu and interview questions. | `client_name` (required), `website_url`, `industry` |
-| `brand_init` | Initialize a new `.brand/` directory with config scaffold and empty identity | `client_name` (required), `industry`, `website_url`, `figma_file_key` |
-| `brand_extract_web` | Extract colors, fonts, and logos from a website by parsing HTML and CSS | `url` (required) |
-| `brand_extract_figma` | Extract brand identity from Figma (two-phase: plan then ingest) | `mode` (`plan` or `ingest`), `figma_file_key`, `variables`, `styles`, `logo_svg` |
-| `brand_compile` | Compile core-identity into DTCG tokens. Generates VIM when Session 2 data exists. | No parameters |
-| `brand_clarify` | Resolve clarification items interactively (color roles, font confirmations) | `id` (required), `answer` (required) |
-| `brand_audit` | Validate the `.brand/` directory against schema requirements | No parameters |
-| `brand_status` | Show current state with session progression and next steps | No parameters |
-| `brand_report` | Generate a portable HTML brand identity report with embedded assets | No parameters |
+| Tool | What it does |
+|------|-------------|
+| `brand_extract_web` | Extract logo (SVG/PNG), colors, and fonts from any website URL. |
+| `brand_extract_figma` | Extract from Figma design files (higher accuracy). Two-phase: plan then ingest. |
+| `brand_set_logo` | Add/replace logo via SVG markup, URL, or data URI. |
+| `brand_compile` | Generate DTCG design tokens and Visual Identity Manifest from extracted data. |
+| `brand_clarify` | Resolve ambiguous brand values interactively (color roles, font confirmations). |
+| `brand_audit` | Validate .brand/ directory for completeness and correctness. |
+| `brand_report` | Generate portable HTML brand report. Upload to any AI chat as instant guidelines. |
+| `brand_init` | Low-level directory scaffolding. Prefer `brand_start` instead. |
 
 ### Session 2: Visual Identity
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `brand_deepen_identity` | Visual identity interview — composition, patterns, illustration, photography, signature, anti-patterns | `mode` (`interview` or `record`), `section`, `answers` |
-| `brand_ingest_assets` | Scan and catalog brand assets, generate manifests | `mode` (`scan` or `tag`), `file`, `description`, `usage`, `theme` |
-| `brand_preflight` | Check HTML content against brand compliance rules | `html` (required), `mode` (`check` or `rules`) |
+| Tool | What it does |
+|------|-------------|
+| `brand_deepen_identity` | Define composition rules, patterns, illustration style, and anti-patterns (6 interview sections). |
+| `brand_ingest_assets` | Scan and catalog brand assets with MANIFEST.yaml metadata. |
+| `brand_preflight` | Check HTML/CSS against brand rules -- catches off-brand colors, wrong fonts, anti-pattern violations. |
 
-### Session 3: Core Messaging
+### Session 3: Messaging
 
-| Tool | Description | Key Parameters |
-|------|-------------|----------------|
-| `brand_extract_messaging` | Audit existing website voice — fingerprint, vocabulary, claims, contradictions, AI-isms | `url` (required), `pages` (optional) |
-| `brand_compile_messaging` | Guided interview for perspective, voice codex, and brand story | `mode` (`interview` or `record`), `section`, `answers` |
-| `brand_write` | Load full brand context for content generation. Routes visual vs written vs mixed types. | `content_type` (required), `topic`, `channel`, `theme` |
+| Tool | What it does |
+|------|-------------|
+| `brand_extract_messaging` | Audit existing website voice -- fingerprint, vocabulary, claims, AI-isms, gaps. |
+| `brand_compile_messaging` | Define perspective, voice codex (tone, vocabulary, AI-ism detection), and brand story. |
+
+### Session 4: Content Strategy
+
+| Tool | What it does |
+|------|-------------|
+| `brand_build_personas` | Build buyer personas through a 7-question guided interview. |
+| `brand_build_journey` | Define buyer journey stages (ships with 4 proven defaults). |
+| `brand_build_themes` | Define editorial content themes balanced across awareness, engagement, and conversion. |
+| `brand_build_matrix` | Generate messaging variants for every persona x journey stage combination. |
+
+### Cross-Session Utilities
+
+| Tool | What it does |
+|------|-------------|
+| `brand_write` | Load full brand context (visual + voice + strategy) for content generation. |
+| `brand_export` | Generate portable brand files for Chat, Code, team sharing, or email. |
+| `brand_feedback` | Report bugs, friction, or feature ideas to the brandsystem team. |
 
 ### Tool Flow
 
-The tools auto-chain — each tool's response tells the LLM what to run next:
+Tools auto-chain -- each tool's response tells the LLM what to run next:
 
 ```
 Session 1: brand_start → brand_extract_web → brand_compile → brand_clarify → brand_report
-Session 2: brand_deepen_identity (interview × 6 sections) → brand_compile (generates VIM)
-Session 3: brand_extract_messaging → brand_compile_messaging (interview × 3 sections) → brand_write
+Session 2: brand_deepen_identity (interview x 6) → brand_compile (generates VIM)
+Session 3: brand_extract_messaging → brand_compile_messaging (interview x 3) → brand_write
+Session 4: brand_build_personas → brand_build_journey → brand_build_themes → brand_build_matrix
 ```
 
-`brand_status` can be called at any point. `brand_preflight` runs after any content generation. `brand_audit` validates the system at any stage.
+`brand_status` can be called at any point. `brand_preflight` runs after any content generation.
 
 ---
 
@@ -341,23 +364,30 @@ npm start
 ```
 src/
   index.ts              # Entry point -- stdio transport
-  server.ts             # MCP server creation and tool registration (16 tools)
-  tools/                # One file per tool
-    brand-start.ts              # Onboarding router (entry point)
-    brand-init.ts               # Directory scaffolding
+  server.ts             # MCP server creation and tool registration (24 tools)
+  tools/                # One file per tool (24 files)
+    brand-start.ts              # Entry point (Session 1)
+    brand-status.ts             # Progress dashboard
     brand-extract-web.ts        # Website extraction
     brand-extract-figma.ts      # Figma extraction (plan/ingest)
+    brand-set-logo.ts           # Manual logo add/replace
     brand-compile.ts            # Token + VIM compilation
     brand-clarify.ts            # Interactive clarification
     brand-audit.ts              # Schema validation
-    brand-status.ts             # Progress dashboard
     brand-report.ts             # HTML report generation
+    brand-init.ts               # Low-level directory scaffolding
     brand-deepen-identity.ts    # Session 2: visual identity interview
     brand-ingest-assets.ts      # Session 2: asset cataloging
     brand-preflight.ts          # Session 2: HTML compliance checking
     brand-extract-messaging.ts  # Session 3: voice/messaging audit
     brand-compile-messaging.ts  # Session 3: perspective + voice interview
-    brand-write.ts              # Session 3: content generation context
+    brand-build-personas.ts     # Session 4: buyer personas
+    brand-build-journey.ts      # Session 4: buyer journey stages
+    brand-build-themes.ts       # Session 4: editorial themes
+    brand-build-matrix.ts       # Session 4: messaging matrix
+    brand-write.ts              # Content generation context loader
+    brand-export.ts             # Portable brand file export
+    brand-feedback.ts           # Bug reports + feedback
   lib/                  # Shared utilities
     brand-dir.ts        # .brand/ directory I/O (YAML, JSON, markdown, assets)
     confidence.ts       # Confidence scoring and source precedence

@@ -1,7 +1,7 @@
 {
   "name": "@brandsystem/mcp",
   "version": "0.2.0",
-  "description": "MCP server for progressive brand governance — extract, compile, and audit brand identity systems",
+  "description": "Extract and manage brand identity for AI tools — logo, colors, typography, voice, and visual rules via MCP",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -39,7 +39,20 @@
   "keywords": [
     "mcp",
     "brand",
+    "brand-identity",
     "design-tokens",
+    "visual-identity",
+    "brand-guidelines",
+    "logo",
+    "colors",
+    "typography",
+    "voice",
+    "ai-tools",
+    "claude",
+    "cursor",
+    "windsurf",
+    "dtcg",
+    "brand-system",
     "figma",
     "brand-governance"
   ],
