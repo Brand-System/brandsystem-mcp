@@ -5,7 +5,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
 import { extractFromCSS, inferColorConfidence, inferColorRole, promotePrimaryColor, getTopChromaticCandidates } from "../lib/css-parser.js";
-import { extractLogos, fetchLogo } from "../lib/logo-extractor.js";
+import { extractLogos, fetchLogo, fetchClearbitLogo, probeCommonLogoPaths, fetchGoogleFavicon, fetchAndEncodeLogo } from "../lib/logo-extractor.js";
 import { resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { mergeColor, mergeTypography, needsClarification } from "../lib/confidence.js";
 import { getVersion } from "../lib/version.js";
@@ -327,6 +327,62 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
       });
       logoFound = true;
       break;
+    }
+  }
+
+  // ── Fallback 1: Clearbit Logo API ──
+  if (!logoFound) {
+    const clearbitLogo = await fetchClearbitLogo(websiteUrl);
+    if (clearbitLogo && clearbitLogo.data_uri) {
+      logos.push({
+        type: "wordmark",
+        source: "web",
+        confidence: "medium",
+        variants: [{ name: "default", data_uri: clearbitLogo.data_uri }],
+      });
+      logoFound = true;
+    }
+  }
+
+  // ── Fallback 2: Common logo paths ──
+  if (!logoFound) {
+    const probedLogo = await probeCommonLogoPaths(websiteUrl);
+    if (probedLogo) {
+      const fetched = await fetchLogo(probedLogo.url);
+      if (fetched) {
+        const isSvg = fetched.contentType.includes("svg") || fetched.content.toString("utf-8").trim().startsWith("<");
+        if (isSvg) {
+          const svgContent = fetched.content.toString("utf-8");
+          const { inline_svg, data_uri } = resolveSvg(svgContent);
+          logos.push({ type: "wordmark", source: "web", confidence: "medium", variants: [{ name: "default", inline_svg, data_uri }] });
+        } else {
+          const { data_uri } = resolveImage(fetched.content, fetched.contentType);
+          logos.push({ type: "wordmark", source: "web", confidence: "low", variants: [{ name: "default", data_uri }] });
+        }
+        logoFound = true;
+      }
+    }
+  }
+
+  // ── Fallback 3: Fetch + encode apple-touch-icon or OG image ──
+  if (!logoFound) {
+    const fallbackCandidates = logoCandidates.filter(c => c.type === "apple-touch-icon" || c.type === "og-image");
+    for (const candidate of fallbackCandidates) {
+      const encoded = await fetchAndEncodeLogo(candidate.url);
+      if (encoded && encoded.data_uri) {
+        logos.push({ type: candidate.type === "apple-touch-icon" ? "logomark" : "wordmark", source: "web", confidence: "low", variants: [{ name: "default", data_uri: encoded.data_uri }] });
+        logoFound = true;
+        break;
+      }
+    }
+  }
+
+  // ── Fallback 4: Google favicon (GUARANTEED) ──
+  if (!logoFound) {
+    const googleFav = await fetchGoogleFavicon(websiteUrl);
+    if (googleFav && googleFav.data_uri) {
+      logos.push({ type: "logomark", source: "web", confidence: "low", variants: [{ name: "default", data_uri: googleFav.data_uri }] });
+      logoFound = true;
     }
   }
 
