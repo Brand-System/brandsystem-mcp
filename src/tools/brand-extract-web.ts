@@ -4,7 +4,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { extractFromCSS, inferColorConfidence, inferColorRole, promotePrimaryColor, getTopChromaticCandidates } from "../lib/css-parser.js";
-import { extractLogos, fetchLogo } from "../lib/logo-extractor.js";
+import { extractLogos, fetchLogo, fetchClearbitLogo, probeCommonLogoPaths } from "../lib/logo-extractor.js";
 import { resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { mergeColor, mergeTypography } from "../lib/confidence.js";
 import { getVersion } from "../lib/version.js";
@@ -266,6 +266,50 @@ async function handler(input: { url: string; logo_url?: string }) {
     }
   }
 
+  // ── Fallback 1: Clearbit Logo API (free, high-quality PNGs) ──
+  if (!logoFound) {
+    const clearbitLogo = await fetchClearbitLogo(input.url);
+    if (clearbitLogo && clearbitLogo.data_uri) {
+      logos.push({
+        type: "wordmark",
+        source: "web",
+        confidence: "medium",
+        variants: [{ name: "default", data_uri: clearbitLogo.data_uri }],
+      });
+      logoFound = true;
+    }
+  }
+
+  // ── Fallback 2: Probe common logo file paths ─────────────────
+  if (!logoFound) {
+    const probedLogo = await probeCommonLogoPaths(input.url);
+    if (probedLogo) {
+      const fetched = await fetchLogo(probedLogo.url);
+      if (fetched) {
+        const isSvg = fetched.contentType.includes("svg") || fetched.content.toString("utf-8").trim().startsWith("<");
+        if (isSvg) {
+          const svgContent = fetched.content.toString("utf-8");
+          const { inline_svg, data_uri } = resolveSvg(svgContent);
+          logos.push({
+            type: "wordmark",
+            source: "web",
+            confidence: "medium",
+            variants: [{ name: "default", inline_svg, data_uri }],
+          });
+        } else {
+          const { data_uri } = resolveImage(fetched.content, fetched.contentType);
+          logos.push({
+            type: "wordmark",
+            source: "web",
+            confidence: "low",
+            variants: [{ name: "default", data_uri }],
+          });
+        }
+        logoFound = true;
+      }
+    }
+  }
+
   const updated: CoreIdentity = {
     schema_version: identity.schema_version,
     colors,
@@ -387,10 +431,12 @@ async function handler(input: { url: string; logo_url?: string }) {
           "After showing extraction results, CONFIRM THREE THINGS with the user before compiling:",
           "",
           "1. LOGO: If a logo was found, show it and ask 'Is this your logo?' If no logo was found, say:",
-          "   'I couldn't find your logo automatically. Here are 3 ways to add it:",
-          "   A) Share a direct URL to your logo file (e.g., yoursite.com/logo.svg)",
+          "   'I couldn't find your logo automatically. Here are ways to add it:",
+          "   A) Share a direct URL to your logo file (e.g., yoursite.com/logo.svg or a PNG)",
           "   B) Paste the SVG code if you have it",
-          "   C) Connect to Figma — I can pull it directly from your design file",
+          "   C) Upload a transparent PNG of your logo (works great for Chat artifacts)",
+          "   D) Connect to Figma — I can pull it directly from your design file",
+          "   E) I can search the web for your logo — just say 'search for my logo'",
           "   D) Upload the logo file (if your AI tool supports file uploads)'",
           "",
           "2. PRIMARY COLOR: Show the top 3-4 chromatic colors extracted and ask 'Which of these is your primary brand color?' Do NOT auto-assign. List them with hex values.",
