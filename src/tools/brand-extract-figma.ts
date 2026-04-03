@@ -113,7 +113,7 @@ async function handleIngest(input: Params) {
 
   if (input.logo_svg) {
     const { inline_svg, data_uri } = resolveSvg(input.logo_svg);
-    await brandDir.writeAsset("logo/logo-figma.svg", input.logo_svg);
+    await brandDir.writeAsset("logo/logo-figma.svg", inline_svg);
     logos = logos.filter((l) => l.source !== "web");
     logos.push({
       type: "wordmark",

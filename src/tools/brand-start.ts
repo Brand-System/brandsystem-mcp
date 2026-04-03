@@ -272,7 +272,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
     if (candidate.inline_svg) {
       const { inline_svg, data_uri } = resolveSvg(candidate.inline_svg);
       const filename = `logo-${candidate.type}.svg`;
-      await brandDir.writeAsset(`logo/${filename}`, candidate.inline_svg);
+      await brandDir.writeAsset(`logo/${filename}`, inline_svg);
 
       logos.push({
         type: "wordmark",
@@ -298,7 +298,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
       const svgContent = fetched.content.toString("utf-8");
       const { inline_svg, data_uri } = resolveSvg(svgContent);
       const filename = `logo-${candidate.type}.svg`;
-      await brandDir.writeAsset(`logo/${filename}`, svgContent);
+      await brandDir.writeAsset(`logo/${filename}`, inline_svg);
 
       logos.push({
         type: "wordmark",
