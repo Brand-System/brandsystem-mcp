@@ -66,7 +66,7 @@ describe('BrandDir', () => {
 
   it('readTokens() returns data written by writeTokens()', async () => {
     await bd.scaffold();
-    const tokens = { color: { primary: { $value: '#ff0000' } } };
+    const tokens = { $name: 'Test Brand', brand: { color: { primary: { $value: '#ff0000', $type: 'color' } } } };
     await bd.writeTokens(tokens);
     const result = await bd.readTokens();
     expect(result).toEqual(tokens);
@@ -90,7 +90,16 @@ describe('BrandDir', () => {
 
   it('readRuntime() returns data written by writeRuntime()', async () => {
     await bd.scaffold();
-    const runtime = { version: '1.0.0', features: ['logo', 'colors'] };
+    const runtime = {
+      version: '0.1.0',
+      client_name: 'Test Brand',
+      compiled_at: '2026-04-03T00:00:00.000Z',
+      sessions_completed: 1,
+      identity: { colors: { primary: '#ff0000' }, typography: { heading: 'Inter' }, logo: null },
+      visual: null,
+      voice: null,
+      strategy: null,
+    };
     await bd.writeRuntime(runtime);
     const result = await bd.readRuntime();
     expect(result).toEqual(runtime);
@@ -98,7 +107,13 @@ describe('BrandDir', () => {
 
   it('readPolicy() returns data written by writePolicy()', async () => {
     await bd.scaffold();
-    const policy = { allow: ['logo'], deny: ['custom-fonts'] };
+    const policy = {
+      version: '0.1.0',
+      compiled_at: '2026-04-03T00:00:00.000Z',
+      visual_rules: [],
+      voice_rules: { never_say: [], ai_ism_patterns: [], tone_constraints: null, sentence_patterns: null },
+      content_rules: { claims_policies: [], persona_count: 0 },
+    };
     await bd.writePolicy(policy);
     const result = await bd.readPolicy();
     expect(result).toEqual(policy);

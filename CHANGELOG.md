@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.0 (2026-04-03)
+
+### Security
+- SVG sanitizer rewritten: Cheerio DOM whitelist replaces regex blocklist. Blocks entity-encoded XSS, `<style>` injection, `<foreignObject>`, external `<use>` refs, and unknown elements.
+- Zod input validation on all 28 tool inputs and all BrandDir YAML/JSON reads. Malformed input returns structured errors, never crashes.
+- 10MB asset size limit on writeAsset().
+- npm audit clean (0 vulnerabilities).
+
+### Added
+- `brand_runtime` tool: read compiled brand runtime contract.
+- Runtime compiler: `brand_compile` now produces `brand-runtime.json` and `interaction-policy.json`.
+- Interaction policy compiler: enforceable rules from visual anti-patterns, voice constraints, and content claims.
+- MCP smoke tests for all 28 tools via InMemoryTransport.
+- CI pipeline (GitHub Actions): build + lint + test across Node 18/20/22.
+
+### Improved
+- Tool descriptions rewritten for agent clarity.
+- `brand_status` returns full getting-started guide when no `.brand/` exists.
+- README: troubleshooting section, Claude Desktop/Windsurf/Cursor MCP configs.
+- 216 tests across 15 files (up from 85 at 0.2.0).
+
 ## 0.1.0 (2026-03-22)
 
 ### Session 1: Core Identity

@@ -1,8 +1,9 @@
 import { readFile, writeFile, mkdir, access, readdir, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { stringify, parse } from "yaml";
-import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualIdentityData, MessagingData, ContentStrategyData } from "../schemas/index.js";
-import { SCHEMA_VERSION, BrandConfigSchema, CoreIdentitySchema, NeedsClarificationSchema, VisualIdentitySchema, MessagingSchema, ContentStrategySchema } from "../schemas/index.js";
+import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualIdentityData, MessagingData, ContentStrategyData, BrandRuntimeData, InteractionPolicyData } from "../schemas/index.js";
+import { SCHEMA_VERSION, BrandConfigSchema, CoreIdentitySchema, NeedsClarificationSchema, VisualIdentitySchema, MessagingSchema, ContentStrategySchema, TokensFileSchema, BrandRuntimeSchema, InteractionPolicySchema } from "../schemas/index.js";
+import type { TokensFileData } from "../schemas/index.js";
 import type { AssetManifestEntry } from "../types/index.js";
 
 export interface AssetManifest {
@@ -123,9 +124,9 @@ export class BrandDir {
 
   // --- Tokens ---
 
-  async readTokens(): Promise<Record<string, unknown>> {
-    // TODO: add schema validation
-    return await this.readJson("tokens.json") as Record<string, unknown>;
+  async readTokens(): Promise<TokensFileData> {
+    const raw = await this.readJson("tokens.json");
+    return TokensFileSchema.parse(raw);
   }
 
   async writeTokens(data: Record<string, unknown>): Promise<void> {
@@ -215,18 +216,18 @@ export class BrandDir {
 
   // --- Runtime + Policy ---
 
-  async readRuntime(): Promise<Record<string, unknown>> {
-    // TODO: add schema validation
-    return await this.readJson("brand-runtime.json") as Record<string, unknown>;
+  async readRuntime(): Promise<BrandRuntimeData> {
+    const raw = await this.readJson("brand-runtime.json");
+    return BrandRuntimeSchema.parse(raw);
   }
 
   async writeRuntime(data: unknown): Promise<void> {
     await this.writeJson("brand-runtime.json", data);
   }
 
-  async readPolicy(): Promise<Record<string, unknown>> {
-    // TODO: add schema validation
-    return await this.readJson("interaction-policy.json") as Record<string, unknown>;
+  async readPolicy(): Promise<InteractionPolicyData> {
+    const raw = await this.readJson("interaction-policy.json");
+    return InteractionPolicySchema.parse(raw);
   }
 
   async writePolicy(data: unknown): Promise<void> {
