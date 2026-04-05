@@ -1,6 +1,6 @@
 {
   "name": "@brandsystem/mcp",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "MCP server for brand identity extraction, management, and AI enforcement. Extract logos, colors, fonts, voice from any website. Enforce brand guidelines in Claude, ChatGPT, Cursor, and any MCP-compatible tool.",
   "type": "module",
   "main": "dist/index.js",
@@ -8,11 +8,16 @@
     "brandsystem-mcp": "bin/brandsystem-mcp.mjs"
   },
   "scripts": {
+    "verify:release-metadata": "node tools/check-release-metadata.mjs",
+    "prebuild": "npm run verify:release-metadata",
     "build": "tsc",
     "dev": "tsc --watch",
+    "prestart": "npm run verify:release-metadata",
     "start": "node dist/index.js",
+    "pretest": "npm run verify:release-metadata",
     "test": "vitest run",
     "test:watch": "vitest",
+    "prelint": "npm run verify:release-metadata",
     "lint": "tsc --noEmit"
   },
   "engines": {

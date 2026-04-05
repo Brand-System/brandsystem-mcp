@@ -88,6 +88,11 @@ describe('BrandDir', () => {
     await expect(bd.writeAsset('../../etc/passwd', 'bad')).rejects.toThrow(/Path traversal blocked/);
   });
 
+  it('path traversal blocks escapes to sibling paths that share the .brand prefix', async () => {
+    await bd.scaffold();
+    await expect(bd.writeAsset('../../../.brand-evil/owned.txt', 'bad')).rejects.toThrow(/Path traversal blocked/);
+  });
+
   it('readRuntime() returns data written by writeRuntime()', async () => {
     await bd.scaffold();
     const runtime = {

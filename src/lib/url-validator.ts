@@ -1,6 +1,7 @@
 import dns from "node:dns/promises";
-import { Agent } from "node:http";
-import { Agent as HttpsAgent } from "node:https";
+import http from "node:http";
+import https from "node:https";
+import type { RequestOptions as NodeRequestOptions } from "node:http";
 
 /** CIDR ranges that must never be reached by outbound fetches. */
 const PRIVATE_RANGES_V4: Array<{ base: number; mask: number }> = [
@@ -35,15 +36,21 @@ export function isPrivateIPv6(ip: string): boolean {
   return false;
 }
 
-function isPrivateIP(ip: string, family: 4 | 6): boolean {
-  return family === 4 ? isPrivateIPv4(ip) : isPrivateIPv6(ip);
-}
-
 /**
  * Validate that a URL is safe to fetch (not targeting private/reserved IPs).
  * Throws if the URL uses a non-http(s) protocol or resolves to a private IP.
  */
 export async function validateUrl(url: string): Promise<void> {
+  await resolveValidatedAddress(url);
+}
+
+type ResolvedAddress = {
+  address: string;
+  family: 4 | 6;
+  hostname: string;
+};
+
+async function resolveValidatedAddress(url: string): Promise<ResolvedAddress> {
   const parsed = new URL(url); // throws on malformed URLs
 
   if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
@@ -57,25 +64,36 @@ export async function validateUrl(url: string): Promise<void> {
     if (isPrivateIPv4(hostname)) {
       throw new Error(`SSRF blocked: ${hostname} is a private IP`);
     }
-    return;
+    return { address: hostname, family: 4, hostname };
   }
   if (hostname.includes(":")) {
     // IPv6 literal
     if (isPrivateIPv6(hostname)) {
       throw new Error(`SSRF blocked: ${hostname} is a private IP`);
     }
-    return;
+    return { address: hostname, family: 6, hostname };
   }
 
-  // DNS resolution
-  const { address, family } = await dns.lookup(hostname);
+  const records = await dns.lookup(hostname, { all: true, verbatim: true });
+  if (records.length === 0) {
+    throw new Error(`SSRF blocked: ${hostname} did not resolve to any IP`);
+  }
 
-  if (family === 4 && isPrivateIPv4(address)) {
-    throw new Error(`SSRF blocked: ${hostname} resolves to private IP ${address}`);
+  for (const { address, family } of records) {
+    if (family === 4 && isPrivateIPv4(address)) {
+      throw new Error(`SSRF blocked: ${hostname} resolves to private IP ${address}`);
+    }
+    if (family === 6 && isPrivateIPv6(address)) {
+      throw new Error(`SSRF blocked: ${hostname} resolves to private IP ${address}`);
+    }
   }
-  if (family === 6 && isPrivateIPv6(address)) {
-    throw new Error(`SSRF blocked: ${hostname} resolves to private IP ${address}`);
-  }
+
+  const selected = records[0];
+  return {
+    address: selected.address,
+    family: selected.family as 4 | 6,
+    hostname,
+  };
 }
 
 const MAX_REDIRECTS = 3;
@@ -117,24 +135,22 @@ export async function readResponseWithLimit(response: Response, maxBytes: number
 
 /**
  * Fetch a URL after validating it is not a private/reserved IP.
- * Follows redirects manually (up to 3 hops), validating each target.
+ * Follows redirects manually (up to 3 hops), validating and pinning each target.
  *
- * SECURITY: Uses a custom DNS lookup callback to prevent DNS rebinding (TOCTOU).
- * The lookup callback validates the resolved IP BEFORE the connection is made,
- * closing the window between validateUrl() and the actual TCP connection.
+ * SECURITY: Each request resolves DNS up front, rejects private/reserved
+ * addresses, and then passes a fixed lookup callback into the underlying
+ * HTTP(S) client so the socket connects to that vetted IP. Redirects repeat
+ * the same validation and pinning on every hop.
  */
 export async function safeFetch(
   url: string,
   options?: RequestInit,
 ): Promise<Response> {
-  // Pre-validate (catches protocol issues and IP literals early)
-  await validateUrl(url);
-
   let currentUrl = url;
   let hops = 0;
 
   while (true) {
-    const response = await fetch(currentUrl, { ...options, redirect: "manual" });
+    const response = await pinnedRequest(currentUrl, options);
 
     if (![301, 302, 307, 308].includes(response.status)) {
       return response;
@@ -152,6 +168,75 @@ export async function safeFetch(
 
     // Resolve relative redirects
     currentUrl = new URL(location, currentUrl).href;
-    await validateUrl(currentUrl);
   }
+}
+
+async function pinnedRequest(url: string, options?: RequestInit): Promise<Response> {
+  const parsed = new URL(url);
+  const resolved = await resolveValidatedAddress(url);
+  const transport = parsed.protocol === "https:" ? https : http;
+  const method = options?.method ?? "GET";
+  const headers = new Headers(options?.headers);
+
+  return await new Promise<Response>((resolve, reject) => {
+    const requestOptions: NodeRequestOptions & { servername?: string } = {
+      protocol: parsed.protocol,
+      hostname: resolved.hostname,
+      port: parsed.port || undefined,
+      path: `${parsed.pathname}${parsed.search}`,
+      method,
+      headers: Object.fromEntries(headers.entries()),
+      lookup(_hostname, _requestOptions, callback) {
+        callback(null, resolved.address, resolved.family);
+      },
+      signal: options?.signal ?? undefined,
+    };
+
+    if (parsed.protocol === "https:") {
+      requestOptions.servername = resolved.hostname;
+    }
+
+    const req = transport.request(
+      requestOptions,
+      (res) => {
+        const chunks: Uint8Array[] = [];
+
+        res.on("data", (chunk) => {
+          chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+        });
+        res.on("end", () => {
+          const body = Buffer.concat(chunks);
+          const responseHeaders = new Headers();
+
+          for (const [key, value] of Object.entries(res.headers)) {
+            if (Array.isArray(value)) {
+              for (const entry of value) responseHeaders.append(key, entry);
+            } else if (typeof value === "string") {
+              responseHeaders.set(key, value);
+            }
+          }
+
+          resolve(new Response(body, {
+            status: res.statusCode ?? 200,
+            statusText: res.statusMessage,
+            headers: responseHeaders,
+          }));
+        });
+      },
+    );
+
+    req.on("error", reject);
+
+    if (options?.body == null) {
+      req.end();
+      return;
+    }
+
+    if (typeof options.body === "string" || options.body instanceof Uint8Array) {
+      req.end(options.body);
+      return;
+    }
+
+    reject(new Error("safeFetch only supports string or Uint8Array request bodies"));
+  });
 }

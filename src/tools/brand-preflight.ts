@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
+import { isPathWithinBase } from "../lib/path-security.js";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import * as cheerio from "cheerio";
@@ -686,7 +687,7 @@ async function handler(input: Params) {
     (html.endsWith(".html") || html.endsWith(".htm") || html.startsWith("/"))
   ) {
     const resolvedPath = resolve(process.cwd(), html);
-    if (!resolvedPath.startsWith(resolve(process.cwd()))) {
+    if (!isPathWithinBase(resolvedPath, process.cwd())) {
       return buildResponse({
         what_happened: "File path must be within the current working directory",
         next_steps: ["Provide an HTML string or a file path within your project"],

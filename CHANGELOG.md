@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 (2026-04-05)
+
+- Harden outbound fetches against DNS rebinding by pinning requests to the validated IP address on every hop.
+- Centralize path containment checks and apply them to `.brand/` writes plus cwd-scoped local file readers.
+- Add regression coverage for pinned transport behavior and sibling-prefix traversal escapes.
+
 ## 0.3.1 (2026-04-05)
 
 ### Security

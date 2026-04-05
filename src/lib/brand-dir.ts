@@ -5,6 +5,7 @@ import type { BrandConfigData, CoreIdentityData, NeedsClarificationData, VisualI
 import { SCHEMA_VERSION, BrandConfigSchema, CoreIdentitySchema, NeedsClarificationSchema, VisualIdentitySchema, MessagingSchema, ContentStrategySchema, TokensFileSchema, BrandRuntimeSchema, InteractionPolicySchema } from "../schemas/index.js";
 import type { TokensFileData } from "../schemas/index.js";
 import type { AssetManifestEntry } from "../types/index.js";
+import { assertPathWithinBase } from "./path-security.js";
 
 export interface AssetManifest {
   assets: AssetManifestEntry[];
@@ -33,12 +34,13 @@ export class BrandDir {
     }
   }
 
+  private assertWithinBase(targetPath: string, basePath: string, label: string): string {
+    return assertPathWithinBase(targetPath, basePath, label);
+  }
+
   private path(...segments: string[]): string {
     const full = join(this.brandPath, ...segments);
-    const resolved = resolve(full);
-    if (!resolved.startsWith(resolve(this.brandPath))) {
-      throw new Error(`Path traversal blocked: ${segments.join("/")}`);
-    }
+    this.assertWithinBase(full, this.brandPath, segments.join("/"));
     return full;
   }
 
@@ -282,13 +284,7 @@ export class BrandDir {
     }
     await this.withLock(`asset:${relativePath}`, async () => {
       const fullPath = join(this.brandPath, "assets", relativePath);
-      const resolved = resolve(fullPath);
-      const assetsDir = resolve(this.brandPath, "assets");
-      // Allow writing to .brand/ root for specific files
-      const brandDir = resolve(this.brandPath);
-      if (!resolved.startsWith(assetsDir) && !resolved.startsWith(brandDir)) {
-        throw new Error(`Path traversal blocked: ${relativePath} resolves outside .brand/`);
-      }
+      const resolved = this.assertWithinBase(fullPath, this.brandPath, relativePath);
       const dir = resolved.substring(0, resolved.lastIndexOf("/"));
       await mkdir(dir, { recursive: true });
       await writeFile(resolved, content, typeof content === "string" ? "utf-8" : undefined);

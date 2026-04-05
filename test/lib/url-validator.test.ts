@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { Readable } from "node:stream";
+import http from "node:http";
+import https from "node:https";
 
 // Mock dns.promises.lookup before importing the module under test
 vi.mock("node:dns/promises", () => ({
@@ -12,6 +15,46 @@ import { validateUrl, safeFetch } from "../../src/lib/url-validator.js";
 
 const mockLookup = vi.mocked(dns.lookup);
 
+function makeResponse(
+  body: string,
+  statusCode = 200,
+  headers: Record<string, string> = {},
+  statusMessage = "OK",
+) {
+  const stream = Readable.from(body) as Readable & {
+    statusCode?: number;
+    statusMessage?: string;
+    headers?: Record<string, string>;
+  };
+  stream.statusCode = statusCode;
+  stream.statusMessage = statusMessage;
+  stream.headers = headers;
+  return stream;
+}
+
+function mockTransportRequest(
+  transport: typeof http | typeof https,
+  responses: Array<Readable & { statusCode?: number; statusMessage?: string; headers?: Record<string, string> }>,
+) {
+  return vi.spyOn(transport, "request").mockImplementation(((options: any, callback: any) => {
+    const response = responses.shift();
+    if (!response) throw new Error("No mocked response available");
+
+    const req = {
+      on: vi.fn().mockReturnThis(),
+      end: vi.fn((body?: unknown) => {
+        void body;
+        callback(response);
+        response.resume?.();
+        return req;
+      }),
+      destroy: vi.fn(),
+    };
+
+    return req as any;
+  }) as any);
+}
+
 beforeEach(() => {
   vi.restoreAllMocks();
 });
@@ -20,12 +63,12 @@ beforeEach(() => {
 
 describe("validateUrl", () => {
   it("allows https://example.com (public)", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
     await expect(validateUrl("https://example.com")).resolves.toBeUndefined();
   });
 
   it("allows http://example.com (public, non-TLS)", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
     await expect(validateUrl("http://example.com")).resolves.toBeUndefined();
   });
 
@@ -48,7 +91,7 @@ describe("validateUrl", () => {
   });
 
   it("rejects http://localhost (resolves to loopback)", async () => {
-    mockLookup.mockResolvedValue({ address: "127.0.0.1", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "127.0.0.1", family: 4 }] as any);
     await expect(validateUrl("http://localhost")).rejects.toThrow(
       "SSRF blocked: localhost resolves to private IP 127.0.0.1"
     );
@@ -85,7 +128,7 @@ describe("validateUrl", () => {
   });
 
   it("rejects hostname resolving to private IPv6", async () => {
-    mockLookup.mockResolvedValue({ address: "::1", family: 6 } as any);
+    mockLookup.mockResolvedValue([{ address: "::1", family: 6 }] as any);
     await expect(validateUrl("http://evil.test")).rejects.toThrow(
       "SSRF blocked: evil.test resolves to private IP ::1"
     );
@@ -96,108 +139,98 @@ describe("validateUrl", () => {
       "SSRF blocked: 0.0.0.0 is a private IP"
     );
   });
+
+  it("rejects hostnames when any resolved address is private", async () => {
+    mockLookup.mockResolvedValue([
+      { address: "93.184.216.34", family: 4 },
+      { address: "127.0.0.1", family: 4 },
+    ] as any);
+    await expect(validateUrl("https://example.com")).rejects.toThrow(
+      "SSRF blocked: example.com resolves to private IP 127.0.0.1"
+    );
+  });
 });
 
 // ── safeFetch ────────────────────────────────────────────────────
 
 describe("safeFetch", () => {
   it("fetches a public URL successfully", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
 
-    const mockResponse = new Response("ok", { status: 200 });
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse);
+    const requestSpy = mockTransportRequest(https, [
+      makeResponse("ok", 200, { "content-type": "text/plain" }),
+    ]);
 
     const result = await safeFetch("https://example.com");
     expect(result.status).toBe(200);
-    expect(fetchSpy).toHaveBeenCalledOnce();
-
-    fetchSpy.mockRestore();
+    expect(await result.text()).toBe("ok");
+    expect(requestSpy).toHaveBeenCalledOnce();
+    expect(requestSpy.mock.calls[0][0]).toMatchObject({
+      hostname: "example.com",
+      path: "/",
+      method: "GET",
+      servername: "example.com",
+    });
   });
 
   it("rejects a private IP URL without making the request", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const requestSpy = vi.spyOn(http, "request");
 
     await expect(safeFetch("http://169.254.169.254/latest/meta-data/")).rejects.toThrow(
       "SSRF blocked"
     );
-    expect(fetchSpy).not.toHaveBeenCalled();
-
-    fetchSpy.mockRestore();
+    expect(requestSpy).not.toHaveBeenCalled();
   });
 
   it("follows redirects and validates each hop", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
 
-    const redirect1 = new Response(null, {
-      status: 302,
-      headers: { Location: "https://example.com/step2" },
-    });
-    const redirect2 = new Response(null, {
-      status: 301,
-      headers: { Location: "https://example.com/final" },
-    });
-    const finalResponse = new Response("done", { status: 200 });
-
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(redirect1)
-      .mockResolvedValueOnce(redirect2)
-      .mockResolvedValueOnce(finalResponse);
+    const requestSpy = mockTransportRequest(https, [
+      makeResponse("", 302, { location: "https://example.com/step2" }, "Found"),
+      makeResponse("", 301, { location: "https://example.com/final" }, "Moved Permanently"),
+      makeResponse("done", 200),
+    ]);
 
     const result = await safeFetch("https://example.com/start");
     expect(result.status).toBe(200);
-    expect(fetchSpy).toHaveBeenCalledTimes(3);
-
-    fetchSpy.mockRestore();
+    expect(await result.text()).toBe("done");
+    expect(requestSpy).toHaveBeenCalledTimes(3);
   });
 
   it("blocks redirect to a private IP", async () => {
-    mockLookup.mockResolvedValueOnce({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValueOnce([{ address: "93.184.216.34", family: 4 }] as any);
 
-    const redirect = new Response(null, {
-      status: 302,
-      headers: { Location: "http://169.254.169.254/latest/meta-data/" },
-    });
-
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(redirect);
+    const requestSpy = mockTransportRequest(https, [
+      makeResponse("", 302, { location: "http://169.254.169.254/latest/meta-data/" }, "Found"),
+    ]);
 
     await expect(safeFetch("https://example.com/redir")).rejects.toThrow(
       "SSRF blocked"
     );
     // Only one fetch made (the initial), the redirect target was blocked before fetching
-    expect(fetchSpy).toHaveBeenCalledOnce();
-
-    fetchSpy.mockRestore();
+    expect(requestSpy).toHaveBeenCalledOnce();
   });
 
   it("rejects after exceeding max redirect hops", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
 
-    const makeRedirect = (n: number) =>
-      new Response(null, {
-        status: 302,
-        headers: { Location: `https://example.com/hop${n}` },
-      });
-
-    const fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(makeRedirect(1))
-      .mockResolvedValueOnce(makeRedirect(2))
-      .mockResolvedValueOnce(makeRedirect(3))
-      .mockResolvedValueOnce(makeRedirect(4));
+    const requestSpy = mockTransportRequest(https, [
+      makeResponse("", 302, { location: "https://example.com/hop1" }, "Found"),
+      makeResponse("", 302, { location: "https://example.com/hop2" }, "Found"),
+      makeResponse("", 302, { location: "https://example.com/hop3" }, "Found"),
+      makeResponse("", 302, { location: "https://example.com/hop4" }, "Found"),
+    ]);
 
     await expect(safeFetch("https://example.com/start")).rejects.toThrow(
       "too many redirects"
     );
-
-    fetchSpy.mockRestore();
+    expect(requestSpy).toHaveBeenCalledTimes(4);
   });
 
   it("passes through existing options including signal", async () => {
-    mockLookup.mockResolvedValue({ address: "93.184.216.34", family: 4 } as any);
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
 
-    const mockResponse = new Response("ok", { status: 200 });
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(mockResponse);
+    const requestSpy = mockTransportRequest(https, [makeResponse("ok", 200)]);
 
     const signal = AbortSignal.timeout(5000);
     await safeFetch("https://example.com", {
@@ -205,12 +238,41 @@ describe("safeFetch", () => {
       headers: { "User-Agent": "test" },
     });
 
-    expect(fetchSpy).toHaveBeenCalledWith("https://example.com", {
+    expect(requestSpy).toHaveBeenCalledWith(expect.objectContaining({
       signal,
-      headers: { "User-Agent": "test" },
-      redirect: "manual",
+      headers: { "user-agent": "test" },
+    }), expect.any(Function));
+  });
+
+  it("pins DNS lookup results through the request lookup callback", async () => {
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
+
+    const requestSpy = mockTransportRequest(https, [makeResponse("ok", 200)]);
+
+    await safeFetch("https://example.com/path?q=1");
+
+    const requestOptions = requestSpy.mock.calls[0][0] as {
+      lookup: (hostname: string, options: unknown, callback: (err: Error | null, address: string, family: number) => void) => void;
+    };
+    const callback = vi.fn();
+    requestOptions.lookup("example.com", {}, callback);
+    expect(callback).toHaveBeenCalledWith(null, "93.184.216.34", 4);
+  });
+
+  it("uses the http transport for plain http URLs", async () => {
+    mockLookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }] as any);
+
+    const requestSpy = mockTransportRequest(http, [makeResponse("ok", 200)]);
+
+    const result = await safeFetch("http://example.com/logo.png", {
+      method: "HEAD",
     });
 
-    fetchSpy.mockRestore();
+    expect(result.status).toBe(200);
+    expect(requestSpy).toHaveBeenCalledOnce();
+    expect(requestSpy.mock.calls[0][0]).toMatchObject({
+      method: "HEAD",
+      path: "/logo.png",
+    });
   });
 });
