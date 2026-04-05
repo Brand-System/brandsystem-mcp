@@ -4,6 +4,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import type { ContentStrategyData } from "../schemas/index.js";
 import type { MessagingData } from "../schemas/messaging.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { MessagingVariant, Persona, JourneyStage } from "../types/index.js";
 
 // ---------------------------------------------------------------------------
@@ -219,7 +220,7 @@ async function handleGenerate(brandDir: BrandDir) {
         "Run brand_build_strategy first to create personas and journey stages",
         "The messaging matrix requires both personas and journey_stages to exist",
       ],
-      data: { error: "no_strategy" },
+      data: { error: ERROR_CODES.NO_STRATEGY },
     });
   }
 
@@ -231,7 +232,7 @@ async function handleGenerate(brandDir: BrandDir) {
         "Run brand_build_strategy to define personas first",
         "The messaging matrix generates one variant per persona × journey stage",
       ],
-      data: { error: "no_personas" },
+      data: { error: ERROR_CODES.NO_PERSONAS },
     });
   }
 
@@ -242,7 +243,7 @@ async function handleGenerate(brandDir: BrandDir) {
         "Run brand_build_strategy to define journey stages first",
         "The messaging matrix generates one variant per persona × journey stage",
       ],
-      data: { error: "no_journey_stages" },
+      data: { error: ERROR_CODES.NO_JOURNEY_STAGES },
     });
   }
 
@@ -334,7 +335,7 @@ async function handleGenerate(brandDir: BrandDir) {
       matrix_grid: grid,
       voice_grounded: !!perspective,
       ...(warnings.length > 0 ? { warnings } : {}),
-      conversation_guide: `Present the generated matrix as a grid. Say: 'I've generated ${variantCount} message variants — one for each persona at each journey stage. These are drafts. Want to review and refine any of them?' If they say yes, show variants one at a time and let them edit.`,
+      conversation_guide: { instruction: `Present the generated matrix as a grid. Say: 'I've generated ${variantCount} message variants — one for each persona at each journey stage. These are drafts. Want to review and refine any of them?' If they say yes, show variants one at a time and let them edit.` },
     },
   });
 }
@@ -351,7 +352,7 @@ async function handleView(brandDir: BrandDir) {
     return buildResponse({
       what_happened: "No strategy.yaml found",
       next_steps: ["Run brand_build_matrix mode='generate' to create the matrix first"],
-      data: { error: "no_strategy" },
+      data: { error: ERROR_CODES.NO_STRATEGY },
     });
   }
 
@@ -359,7 +360,7 @@ async function handleView(brandDir: BrandDir) {
     return buildResponse({
       what_happened: "Messaging matrix is empty",
       next_steps: ["Run brand_build_matrix mode='generate' to populate it"],
-      data: { error: "empty_matrix" },
+      data: { error: ERROR_CODES.EMPTY_MATRIX },
     });
   }
 
@@ -447,7 +448,7 @@ async function handleEdit(brandDir: BrandDir, variantId: string, answersRaw: str
     return buildResponse({
       what_happened: "Failed to parse answers — invalid JSON",
       next_steps: ["Provide answers as a valid JSON string with keys: core_message, tone_shift, proof_points, status"],
-      data: { error: "invalid_json" },
+      data: { error: ERROR_CODES.INVALID_JSON },
     });
   }
 
@@ -458,7 +459,7 @@ async function handleEdit(brandDir: BrandDir, variantId: string, answersRaw: str
     return buildResponse({
       what_happened: "No strategy.yaml found",
       next_steps: ["Run brand_build_matrix mode='generate' first"],
-      data: { error: "no_strategy" },
+      data: { error: ERROR_CODES.NO_STRATEGY },
     });
   }
 
@@ -472,7 +473,7 @@ async function handleEdit(brandDir: BrandDir, variantId: string, answersRaw: str
         "Check the variant ID and try again",
         `Available IDs: ${availableIds.join(", ")}`,
       ],
-      data: { error: "variant_not_found", available_ids: availableIds },
+      data: { error: ERROR_CODES.VARIANT_NOT_FOUND, available_ids: availableIds },
     });
   }
 
@@ -520,7 +521,7 @@ async function handleEdit(brandDir: BrandDir, variantId: string, answersRaw: str
       next_steps: [
         "Provide at least one of: core_message, tone_shift, proof_points, supporting_claims, status",
       ],
-      data: { error: "no_changes", variant_id: variantId },
+      data: { error: ERROR_CODES.NO_CHANGES, variant_id: variantId },
     });
   }
 
@@ -568,7 +569,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start first to create a brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -584,7 +585,7 @@ async function handler(input: Params) {
         return buildResponse({
           what_happened: "Missing required parameter: variant_id",
           next_steps: ["Provide variant_id (e.g. MV-001) to identify which variant to edit"],
-          data: { error: "missing_variant_id" },
+          data: { error: ERROR_CODES.MISSING_VARIANT_ID },
         });
       }
       if (!input.answers) {
@@ -593,7 +594,7 @@ async function handler(input: Params) {
           next_steps: [
             "Provide answers as a JSON string with fields to update: core_message, tone_shift, proof_points, status",
           ],
-          data: { error: "missing_answers" },
+          data: { error: ERROR_CODES.MISSING_ANSWERS },
         });
       }
       return handleEdit(brandDir, input.variant_id, input.answers);

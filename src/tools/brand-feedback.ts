@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
+import { ERROR_CODES } from "../types/index.js";
 import { mkdir, writeFile, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -342,7 +343,7 @@ async function triageHandler(input: TriageParams) {
   return buildResponse({
     what_happened: `Feedback ID not found: ${input.feedback_id}`,
     next_steps: ["Use brand_feedback_review to list all feedback and get valid IDs"],
-    data: { error: "not_found" },
+    data: { error: ERROR_CODES.NOT_FOUND },
   });
 }
 

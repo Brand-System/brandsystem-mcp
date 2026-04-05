@@ -12,7 +12,7 @@ import { getVersion } from "../lib/version.js";
 import { generateColorName, isCssArtifactName } from "../lib/color-namer.js";
 import { compileDTCG } from "../lib/dtcg-compiler.js";
 import { generateReportHTML, generateBrandInstructions } from "../lib/report-html.js";
-import type { ColorEntry, TypographyEntry, LogoSpec, CoreIdentity, ClarificationItem } from "../types/index.js";
+import { ERROR_CODES, type ColorEntry, type TypographyEntry, type LogoSpec, type CoreIdentity, type ClarificationItem } from "../types/index.js";
 
 const paramsShape = {
   client_name: z.string().describe("Company or brand name (e.g. 'Acme Corp')"),
@@ -164,7 +164,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
           "Check the URL is correct and publicly accessible",
           "Try brand_extract_web manually with a different URL, or use brand_extract_figma",
         ],
-        data: { error: "auto_fetch_failed", status: response.status, fallback: "interactive" },
+        data: { error: ERROR_CODES.AUTO_FETCH_FAILED, status: response.status, fallback: "interactive" },
       });
     }
     html = await response.text();
@@ -175,7 +175,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
         "Check the URL is correct and publicly accessible",
         "Try brand_extract_web manually with a different URL, or use brand_extract_figma",
       ],
-      data: { error: "auto_fetch_failed", details: String(err), fallback: "interactive" },
+      data: { error: ERROR_CODES.AUTO_FETCH_FAILED, details: String(err), fallback: "interactive" },
     });
   }
 
@@ -690,7 +690,6 @@ async function handler(input: Params) {
       source_menu: sourceMenu,
       recommended,
       conversation_guide: {
-        design_principle: "Get just enough to make the extraction smart, then show results fast. The user should see their brand reflected back within 5 minutes of starting.",
         instruction: [
           `Welcome the user and confirm the brand system was created for "${input.client_name}".`,
           "",
@@ -720,6 +719,9 @@ async function handler(input: Params) {
           "  3. Show the report as an artifact (in Chat) or write to .brand/ (in Code)",
           "  4. Ask: 'Does this look right? If anything's off, I can help fix it.'",
         ].join("\n"),
+        conditionals: {
+          design_principle: "Get just enough to make the extraction smart, then show results fast. The user should see their brand reflected back within 5 minutes of starting.",
+        },
       },
     },
   });

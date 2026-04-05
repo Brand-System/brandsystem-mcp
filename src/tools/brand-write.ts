@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { CoreIdentityData, ContentStrategyData } from "../schemas/index.js";
 import type { VisualIdentityData, MessagingData } from "../schemas/index.js";
 
@@ -252,7 +253,7 @@ async function handler(input: WriteParams) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -267,7 +268,7 @@ async function handler(input: WriteParams) {
       next_steps: [
         "Run brand_extract_web to populate core identity first",
       ],
-      data: { error: "no_core_identity" },
+      data: { error: ERROR_CODES.NO_CORE_IDENTITY },
     });
   }
 

@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
-import type { Confidence } from "../types/index.js";
+import { ERROR_CODES, type Confidence } from "../types/index.js";
 
 async function handler() {
   const brandDir = new BrandDir(process.cwd());
@@ -13,7 +13,7 @@ async function handler() {
         "Run brand_start with a client_name and website_url to create a brand system in under 60 seconds",
       ],
       data: {
-        error: "not_found",
+        error: ERROR_CODES.NOT_FOUND,
         getting_started: {
           what_is_brandsystem: "brandsystem extracts and manages brand identity (logo, colors, fonts, voice, visual rules) so AI tools produce on-brand output. It creates a .brand/ directory with structured YAML, DTCG tokens, and a portable HTML report.",
           quickstart: "Run brand_start with client_name='Your Brand' and website_url='https://yourbrand.com' and mode='auto'. This extracts colors, fonts, and logo from the website, compiles DTCG tokens, and generates a portable brand report — all in one call.",

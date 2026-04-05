@@ -4,6 +4,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
 import type { ContentStrategyData } from "../schemas/index.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { Persona } from "../types/index.js";
 
 // ─── Parameters ──────────────────────────────────────────────────────────────
@@ -192,7 +193,7 @@ async function handleInterview(brandDir: BrandDir) {
       ...(perspectiveContext
         ? { brand_context: { one_liner: perspectiveContext } }
         : {}),
-      conversation_guide: [
+      conversation_guide: { instruction: [
         `You are building buyer personas for "${clientName}".`,
         "",
         "HOW TO RUN THIS INTERVIEW:",
@@ -214,7 +215,7 @@ async function handleInterview(brandDir: BrandDir) {
         "KEY INSIGHT FOR Q4 (information_needs):",
         "Walk through the four stages: first_touch (what catches attention), context_and_meaning (what builds understanding),",
         "validation_and_proof (what builds confidence), decision_support (what closes the deal).",
-      ].join("\n"),
+      ].join("\n") },
     },
   });
 }
@@ -233,7 +234,7 @@ async function handleRecord(
     return buildResponse({
       what_happened: "Failed to parse answers — invalid JSON",
       next_steps: ["Provide answers as a valid JSON string"],
-      data: { error: "invalid_json", raw: answersRaw },
+      data: { error: ERROR_CODES.INVALID_JSON, raw: answersRaw },
     });
   }
 
@@ -262,7 +263,7 @@ async function handleRecord(
           "Check the persona ID — use brand_build_personas mode='list' to see existing personas",
         ],
         data: {
-          error: "persona_not_found",
+          error: ERROR_CODES.PERSONA_NOT_FOUND,
           valid_ids: strategy.personas.map((p) => p.id),
         },
       });
@@ -403,8 +404,8 @@ async function handleRecord(
         status: p.status,
       })),
       conversation_guide: isUpdate
-        ? `Persona "${name}" updated. Ask if any other personas need changes, or if they want to add a new one.`
-        : `Persona "${name}" recorded. Ask: "Want to add another persona? Most brands have 3-5." Suggest marking unvalidated personas as 'Hypothesis'.`,
+        ? { instruction: `Persona "${name}" updated. Ask if any other personas need changes, or if they want to add a new one.` }
+        : { instruction: `Persona "${name}" recorded. Ask: "Want to add another persona? Most brands have 3-5." Suggest marking unvalidated personas as 'Hypothesis'.` },
     },
   });
 }
@@ -467,7 +468,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start first to create a brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -486,7 +487,7 @@ async function handler(input: Params) {
       next_steps: [
         "Provide answers as a JSON string with persona fields (role_tag, core_tension, key_objections, etc.)",
       ],
-      data: { error: "missing_answers" },
+      data: { error: ERROR_CODES.MISSING_ANSWERS },
     });
   }
 

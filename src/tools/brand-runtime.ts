@@ -1,6 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
+import { ERROR_CODES } from "../types/index.js";
 
 async function handler() {
   const brandDir = new BrandDir(process.cwd());
@@ -9,7 +10,7 @@ async function handler() {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -20,7 +21,7 @@ async function handler() {
         "Run brand_compile to generate the runtime contract",
         "The runtime is automatically compiled from your brand data each time you compile",
       ],
-      data: { error: "not_compiled" },
+      data: { error: ERROR_CODES.NOT_COMPILED },
     });
   }
 

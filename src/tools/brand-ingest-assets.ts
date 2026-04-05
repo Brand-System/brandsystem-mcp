@@ -3,7 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import type { AssetManifest } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
-import type { AssetManifestEntry } from "../types/index.js";
+import { ERROR_CODES, type AssetManifestEntry } from "../types/index.js";
 
 const paramsShape = {
   mode: z
@@ -161,7 +161,7 @@ async function handleTag(brandDir: BrandDir, input: Params) {
       next_steps: [
         'Provide the "file" parameter with a path relative to .brand/assets/ (e.g. "illustrations/hero-abstract-01.png")',
       ],
-      data: { error: "missing_file" },
+      data: { error: ERROR_CODES.MISSING_FILE },
     });
   }
 
@@ -173,7 +173,7 @@ async function handleTag(brandDir: BrandDir, input: Params) {
       next_steps: [
         'Provide a path like "illustrations/hero-abstract-01.png" (directory/file)',
       ],
-      data: { error: "invalid_path" },
+      data: { error: ERROR_CODES.INVALID_PATH },
     });
   }
 
@@ -191,7 +191,7 @@ async function handleTag(brandDir: BrandDir, input: Params) {
         `Available files in ${subdir}/: ${files.length > 0 ? files.join(", ") : "(none)"}`,
         "Run brand_ingest_assets in scan mode to see all available assets",
       ],
-      data: { error: "file_not_found", available: files },
+      data: { error: ERROR_CODES.FILE_NOT_FOUND, available: files },
     });
   }
 
@@ -256,7 +256,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start or brand_init first to create the brand system"],
-      data: { error: "no_brand_dir" },
+      data: { error: ERROR_CODES.NO_BRAND_DIR },
     });
   }
 

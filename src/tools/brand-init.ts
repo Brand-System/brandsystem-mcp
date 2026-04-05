@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
+import { ERROR_CODES } from "../types/index.js";
 
 const paramsShape = {
   client_name: z.string().describe("Company or brand name"),
@@ -24,7 +25,7 @@ async function handler(input: Params) {
         "Run brand_status to see current state",
         "Delete .brand/ manually if you want to start over",
       ],
-      data: { error: "already_exists" },
+      data: { error: ERROR_CODES.ALREADY_EXISTS },
     });
   }
 

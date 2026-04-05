@@ -306,3 +306,72 @@ export interface McpResponseData {
   next_steps: string[];
   data?: Record<string, unknown>;
 }
+
+// --- Error Codes ---
+
+export const ERROR_CODES = {
+  // General
+  VALIDATION_FAILED: "validation_failed",
+  NOT_INITIALIZED: "not_initialized",
+  NOT_FOUND: "not_found",
+
+  // Input errors
+  NO_INPUT: "no_input",
+  INVALID_PROTOCOL: "invalid_protocol",
+  INVALID_JSON: "invalid_json",
+  INVALID_FORMAT: "invalid_format",
+  INVALID_PATH: "invalid_path",
+  INVALID_PAGES_PARAM: "invalid_pages_param",
+  EMPTY_CONTENT: "empty_content",
+
+  // Fetch errors
+  FETCH_FAILED: "fetch_failed",
+  AUTO_FETCH_FAILED: "auto_fetch_failed",
+
+  // Brand state errors
+  ALREADY_EXISTS: "already_exists",
+  NO_CORE_IDENTITY: "no_core_identity",
+  NO_BRAND_DIR: "no_brand_dir",
+  NO_BRAND_DATA: "no_brand_data",
+  NOT_COMPILED: "not_compiled",
+  NO_CONTENT: "no_content",
+  NO_STRATEGY: "no_strategy",
+  NO_PERSONAS: "no_personas",
+  NO_JOURNEY_STAGES: "no_journey_stages",
+  NO_CLARIFICATIONS: "no_clarifications",
+  EMPTY_MATRIX: "empty_matrix",
+
+  // Missing data
+  MISSING_SECTION: "missing_section",
+  MISSING_ANSWERS: "missing_answers",
+  MISSING_FILE: "missing_file",
+  MISSING_FIGMA_FILE_KEY: "missing_figma_file_key",
+  MISSING_VARIANT_ID: "missing_variant_id",
+  MISSING_NAME: "missing_name",
+
+  // Not found (specific entities)
+  ITEM_NOT_FOUND: "item_not_found",
+  PERSONA_NOT_FOUND: "persona_not_found",
+  VARIANT_NOT_FOUND: "variant_not_found",
+  THEME_NOT_FOUND: "theme_not_found",
+  FILE_NOT_FOUND: "file_not_found",
+
+  // Processing errors
+  PARSE_FAILED: "parse_failed",
+  PATH_OUTSIDE_CWD: "path_outside_cwd",
+  NO_CHANGES: "no_changes",
+
+  // Validation-specific
+  INVALID_ITEMS: "invalid_items",
+  EMPTY_ITEMS: "empty_items",
+  ALL_EMPTY: "all_empty",
+} as const;
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
+
+// --- Conversation Guide ---
+
+export interface ConversationGuide {
+  instruction: string;
+  conditionals?: Record<string, string>;
+}

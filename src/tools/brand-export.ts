@@ -9,6 +9,7 @@ import type {
   VisualIdentityData,
   MessagingData,
 } from "../schemas/index.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { BrandConfig } from "../types/index.js";
 import { cleanColorName } from "../lib/color-namer.js";
 
@@ -751,7 +752,7 @@ async function handler(input: ExportParams) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -762,7 +763,7 @@ async function handler(input: ExportParams) {
     return buildResponse({
       what_happened: "Could not read brand data",
       next_steps: ["Run brand_extract_web to populate core identity first"],
-      data: { error: "no_brand_data" },
+      data: { error: ERROR_CODES.NO_BRAND_DATA },
     });
   }
 

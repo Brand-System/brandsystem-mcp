@@ -9,7 +9,7 @@ import { resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { mergeColor, mergeTypography } from "../lib/confidence.js";
 import { getVersion } from "../lib/version.js";
 import { generateColorName, isCssArtifactName } from "../lib/color-namer.js";
-import type { ColorEntry, TypographyEntry, LogoSpec, CoreIdentity } from "../types/index.js";
+import { ERROR_CODES, type ColorEntry, type TypographyEntry, type LogoSpec, type CoreIdentity } from "../types/index.js";
 
 const paramsShape = {
   url: z.string().url().describe("Website URL to scan (e.g. 'https://acme.com'). The homepage usually has the best logo and color data."),
@@ -26,7 +26,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first to create the brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -34,7 +34,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "Only http:// and https:// URLs are supported",
       next_steps: ["Provide a URL starting with https://"],
-      data: { error: "invalid_protocol" },
+      data: { error: ERROR_CODES.INVALID_PROTOCOL },
     });
   }
 
@@ -53,7 +53,7 @@ async function handler(input: Params) {
           "Try brand_extract_figma instead if you have a Figma file",
           "If this keeps happening, run brand_feedback to report the issue.",
         ],
-        data: { error: "fetch_failed", status: response.status, statusText: response.statusText },
+        data: { error: ERROR_CODES.FETCH_FAILED, status: response.status, statusText: response.statusText },
       });
     }
     html = await response.text();
@@ -66,7 +66,7 @@ async function handler(input: Params) {
         "Try brand_extract_figma instead if you have a Figma file",
         "If this keeps happening, run brand_feedback to report the issue.",
       ],
-      data: { error: "fetch_failed", details: String(err) },
+      data: { error: ERROR_CODES.FETCH_FAILED, details: String(err) },
     });
   }
 
@@ -476,8 +476,7 @@ async function handler(input: Params) {
         fonts: typography.map((t) => t.family),
       },
       conversation_guide: {
-        extraction_quality_guidance: `Extraction quality: ${qualityScore} (${qualityPoints}/10 points). ${qualityRecommendation} Communicate this to the user before confirming details.`,
-        confirm_before_compile: [
+        instruction: [
           "After showing extraction results, CONFIRM THREE THINGS with the user before compiling:",
           "",
           "1. LOGO: If a logo was found, show it and ask 'Is this your logo?' If no logo was found, say:",
@@ -499,8 +498,11 @@ async function handler(input: Params) {
           "",
           "After the user confirms (or provides corrections), THEN run brand_compile.",
         ].join("\n"),
-        figma_check: "Check if you have access to Figma MCP tools (get_design_context, get_variable_defs, get_screenshot). If yes, tell the user: 'I also have access to Figma — if you share a file URL, I can pull higher-accuracy colors, typography, and your logo directly from the source design file.' If they provide a Figma URL, use the Figma MCP tools alongside brand_extract_figma.",
-        logo_missing_tools: "If the user wants to add a logo: use brand_set_logo with SVG markup, a URL, or a data URI. If they provide a direct URL, you can also re-run brand_extract_web with the logo_url parameter.",
+        conditionals: {
+          extraction_quality_guidance: `Extraction quality: ${qualityScore} (${qualityPoints}/10 points). ${qualityRecommendation} Communicate this to the user before confirming details.`,
+          figma_check: "Check if you have access to Figma MCP tools (get_design_context, get_variable_defs, get_screenshot). If yes, tell the user: 'I also have access to Figma — if you share a file URL, I can pull higher-accuracy colors, typography, and your logo directly from the source design file.' If they provide a Figma URL, use the Figma MCP tools alongside brand_extract_figma.",
+          logo_missing_tools: "If the user wants to add a logo: use brand_set_logo with SVG markup, a URL, or a data URI. If they provide a direct URL, you can also re-run brand_extract_web with the logo_url parameter.",
+        },
       },
     },
   });

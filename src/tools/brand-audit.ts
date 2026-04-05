@@ -4,6 +4,7 @@ import { buildResponse } from "../lib/response.js";
 import { BrandConfigSchema, CoreIdentitySchema } from "../schemas/index.js";
 import { access } from "node:fs/promises";
 import { join } from "node:path";
+import { ERROR_CODES } from "../types/index.js";
 
 interface AuditResult {
   check: string;
@@ -21,7 +22,7 @@ async function handler() {
         "Run brand_init first to create the .brand/ directory",
         "If this keeps happening, run brand_feedback to report the issue.",
       ],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -147,7 +148,7 @@ function formatResults(results: AuditResult[]) {
 export function register(server: McpServer) {
   server.tool(
     "brand_audit",
-    "Validate the .brand/ directory for completeness and correctness. Checks file existence, YAML schema validity, primary color assignment, typography coverage, logo embedding (SVG well-formedness), and confidence distribution. Use after brand_compile to verify readiness, or anytime to diagnose issues. Returns pass/warn/fail for each check with actionable details.",
+    "Validate the .brand/ directory for completeness and correctness. Checks file existence, YAML schema validity, primary color assignment, typography coverage, logo embedding (SVG well-formedness), and confidence distribution. Use after brand_compile to verify readiness, or anytime to diagnose issues. Returns pass/warn/fail for each check with actionable details. NOT for checking content copy — use brand_audit_content. NOT for checking HTML/CSS — use brand_preflight.",
     async () => handler()
   );
 }

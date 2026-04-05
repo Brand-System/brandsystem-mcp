@@ -10,6 +10,7 @@ import {
   type ContentScore,
   type ContentIssue,
 } from "../lib/content-scorer.js";
+import { ERROR_CODES } from "../types/index.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -206,7 +207,7 @@ async function handler(input: AuditDriftParams) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -217,7 +218,7 @@ async function handler(input: AuditDriftParams) {
     return buildResponse({
       what_happened: "Could not read brand identity data",
       next_steps: ["Run brand_extract_web to populate core identity"],
-      data: { error: "no_core_identity" },
+      data: { error: ERROR_CODES.NO_CORE_IDENTITY },
     });
   }
 
@@ -236,7 +237,7 @@ async function handler(input: AuditDriftParams) {
       next_steps: [
         'Provide items as a JSON array: [{"content": "...", "label": "Homepage"}, ...]',
       ],
-      data: { error: "invalid_items" },
+      data: { error: ERROR_CODES.INVALID_ITEMS },
     });
   }
 
@@ -244,7 +245,7 @@ async function handler(input: AuditDriftParams) {
     return buildResponse({
       what_happened: "No items to audit",
       next_steps: ["Provide at least one content item"],
-      data: { error: "empty_items" },
+      data: { error: ERROR_CODES.EMPTY_ITEMS },
     });
   }
 
@@ -266,7 +267,7 @@ async function handler(input: AuditDriftParams) {
     return buildResponse({
       what_happened: "All items were empty — nothing to audit",
       next_steps: ["Provide content items with actual text or HTML"],
-      data: { error: "all_empty" },
+      data: { error: ERROR_CODES.ALL_EMPTY },
     });
   }
 

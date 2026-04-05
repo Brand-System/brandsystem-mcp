@@ -6,7 +6,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import * as cheerio from "cheerio";
 import type { CoreIdentityData } from "../schemas/index.js";
-import type { AntiPatternRule } from "../types/index.js";
+import { ERROR_CODES, type AntiPatternRule } from "../types/index.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -669,7 +669,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -690,7 +690,7 @@ async function handler(input: Params) {
       return buildResponse({
         what_happened: "File path must be within the current working directory",
         next_steps: ["Provide an HTML string or a file path within your project"],
-        data: { error: "path_outside_cwd" },
+        data: { error: ERROR_CODES.PATH_OUTSIDE_CWD },
       });
     }
     try {
@@ -699,7 +699,7 @@ async function handler(input: Params) {
       return buildResponse({
         what_happened: `Could not read file: ${input.html}`,
         next_steps: ["Provide valid HTML content or a readable file path"],
-        data: { error: "file_not_found", path: input.html },
+        data: { error: ERROR_CODES.FILE_NOT_FOUND, path: input.html },
       });
     }
   }
@@ -710,7 +710,7 @@ async function handler(input: Params) {
 export function register(server: McpServer) {
   server.tool(
     "brand_preflight",
-    "Check HTML/CSS against brand rules — catches off-brand colors, wrong fonts, missing logo, and anti-pattern violations (drop shadows, gradients, etc.). Pass an HTML string or file path. Mode 'check' (default) runs all compliance checks and returns pass/warn/fail per rule. Mode 'rules' lists all active preflight rules without checking content. Use after generating any visual content to validate brand compliance. Returns overall status and per-check details.",
+    "Check HTML/CSS against brand rules — catches off-brand colors, wrong fonts, missing logo, and anti-pattern violations (drop shadows, gradients, etc.). Pass an HTML string or file path. Mode 'check' (default) runs all compliance checks and returns pass/warn/fail per rule. Mode 'rules' lists all active preflight rules without checking content. Use after generating any visual content to validate brand compliance. Returns overall status and per-check details. NOT for scoring content copy — use brand_audit_content. NOT for brand directory validation — use brand_audit.",
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);

@@ -5,6 +5,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { loadBrandContext, isHtmlContent } from "../lib/content-scorer.js";
 import * as cheerio from "cheerio";
+import { ERROR_CODES } from "../types/index.js";
 
 // ---------------------------------------------------------------------------
 // Inline utilities (fast-path versions — no full scoring overhead)
@@ -123,7 +124,7 @@ async function handler(input: CheckComplianceParams) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -134,7 +135,7 @@ async function handler(input: CheckComplianceParams) {
     return buildResponse({
       what_happened: "Could not read brand identity data",
       next_steps: ["Run brand_extract_web to populate core identity"],
-      data: { error: "no_core_identity" },
+      data: { error: ERROR_CODES.NO_CORE_IDENTITY },
     });
   }
 
@@ -264,7 +265,7 @@ type CheckComplianceParams = z.infer<typeof ParamsSchema>;
 export function register(server: McpServer) {
   server.tool(
     "brand_check_compliance",
-    "Quick pass/fail compliance gate — checks critical brand rules before publishing. Verifies on-palette colors, brand fonts, hard anti-pattern rules, and never-say words. Fast and binary: returns PASS or FAIL with specific failures listed. Use in production workflows and CI/CD pipelines as a publish gate. Enable strict mode to also check soft anti-patterns. For detailed scoring, use brand_audit_content instead.",
+    "Quick pass/fail compliance gate — checks critical brand rules before publishing. Verifies on-palette colors, brand fonts, hard anti-pattern rules, and never-say words. Fast and binary: returns PASS or FAIL with specific failures listed. Use in production workflows and CI/CD pipelines as a publish gate. Enable strict mode to also check soft anti-patterns. For detailed scoring, use brand_audit_content instead. NOT for scoring content quality — use brand_audit_content. NOT for HTML/CSS rule checking — use brand_preflight.",
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);

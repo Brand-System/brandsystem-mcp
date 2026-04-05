@@ -4,7 +4,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { sanitizeSvg, resolveSvg, resolveImage } from "../lib/svg-resolver.js";
 import { fetchLogo } from "../lib/logo-extractor.js";
-import type { LogoSpec } from "../types/index.js";
+import { ERROR_CODES, type LogoSpec } from "../types/index.js";
 
 const paramsShape = {
   svg: z.string().optional().describe("Raw SVG markup to use as the logo"),
@@ -23,7 +23,7 @@ async function handler(input: SetLogoInput) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first to create the brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -35,7 +35,7 @@ async function handler(input: SetLogoInput) {
       next_steps: [
         "Provide one of: svg (raw SVG markup), url (link to SVG/PNG), or data_uri (base64 data URI)",
       ],
-      data: { error: "no_input" },
+      data: { error: ERROR_CODES.NO_INPUT },
     });
   }
 
@@ -58,7 +58,7 @@ async function handler(input: SetLogoInput) {
       return buildResponse({
         what_happened: "Only http:// and https:// URLs are supported",
         next_steps: ["Provide a logo URL starting with http:// or https://"],
-        data: { error: "invalid_protocol" },
+        data: { error: ERROR_CODES.INVALID_PROTOCOL },
       });
     }
     const fetched = await fetchLogo(input.url);
@@ -69,7 +69,7 @@ async function handler(input: SetLogoInput) {
           "Check the URL is correct and accessible",
           "Try providing the SVG markup directly with the svg parameter",
         ],
-        data: { error: "fetch_failed", url: input.url },
+        data: { error: ERROR_CODES.FETCH_FAILED, url: input.url },
       });
     }
 
@@ -167,7 +167,7 @@ async function handler(input: SetLogoInput) {
       ...(inline_svg && { inline_svg }),
       ...(data_uri && { data_uri }),
       conversation_guide: {
-        show_logo: "Show the logo to the user and confirm it looks right. If they say it's wrong, ask them to provide a different logo using brand_set_logo again.",
+        instruction: "Show the logo to the user and confirm it looks right. If they say it's wrong, ask them to provide a different logo using brand_set_logo again.",
       },
     },
   });

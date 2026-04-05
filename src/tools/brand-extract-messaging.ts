@@ -4,7 +4,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { getVersion } from "../lib/version.js";
-import type { MessagingAuditResult } from "../types/index.js";
+import { ERROR_CODES, type MessagingAuditResult } from "../types/index.js";
 
 // ─── Parameters ──────────────────────────────────────────────────────────────
 
@@ -563,7 +563,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first to create the brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -571,7 +571,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "Only http:// and https:// URLs are supported",
       next_steps: ["Provide a URL starting with https://"],
-      data: { error: "invalid_protocol" },
+      data: { error: ERROR_CODES.INVALID_PROTOCOL },
     });
   }
 
@@ -588,7 +588,7 @@ async function handler(input: Params) {
       return buildResponse({
         what_happened: "Invalid pages parameter — must be a JSON array of URL strings",
         next_steps: ["Fix the pages parameter and try again"],
-        data: { error: "invalid_pages_param" },
+        data: { error: ERROR_CODES.INVALID_PAGES_PARAM },
       });
     }
   }
@@ -628,7 +628,7 @@ async function handler(input: Params) {
         "Try a different page on the same domain (e.g. /about or /services)",
         "If this keeps happening, run brand_feedback to report the issue.",
       ],
-      data: { error: "no_content", urls },
+      data: { error: ERROR_CODES.NO_CONTENT, urls },
     });
   }
 
@@ -694,7 +694,7 @@ async function handler(input: Params) {
       gaps: gaps,
       report_file: ".brand/messaging-audit.md",
       conversation_guide: {
-        present_findings: "Present the key findings to the user: voice fingerprint scores, top vocabulary patterns, any contradictions or claims issues, and gaps. Then say: 'This is how your brand sounds today. Now let's define how it *should* sound. I'll walk you through defining your perspective, voice, and brand story.' Then run brand_compile_messaging.",
+        instruction: "Present the key findings to the user: voice fingerprint scores, top vocabulary patterns, any contradictions or claims issues, and gaps. Then say: 'This is how your brand sounds today. Now let's define how it *should* sound. I'll walk you through defining your perspective, voice, and brand story.' Then run brand_compile_messaging.",
       },
     },
   });

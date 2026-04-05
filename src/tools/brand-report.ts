@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { generateReportHTML, generateBrandInstructions } from "../lib/report-html.js";
-import type { NeedsClarification } from "../types/index.js";
+import { ERROR_CODES, type NeedsClarification } from "../types/index.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
 import { access } from "node:fs/promises";
 import { join } from "node:path";
@@ -14,7 +14,7 @@ async function handler() {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first to create the brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -128,15 +128,17 @@ async function handler() {
           "Then run brand_deepen_identity to start the visual identity interview.",
           "Also check: do you have access to Figma MCP tools? If yes, mention: 'I can also connect to your Figma file for higher-accuracy data — share a URL anytime.'",
         ].join("\n"),
-        if_looks_right: {
-          say: "Great — your core identity is locked in. Let's go deeper into your visual identity. I'll ask a few questions about how your brand expresses itself — composition, patterns, signature moves, and what to never do.",
-          next_action: "Run brand_deepen_identity immediately",
-          also_mention: looksRightActions,
-        },
-        if_looks_wrong: {
-          say: "No problem — let's get it right. What's off?",
-          actions: looksWrongActions,
-          follow_up: "Which of these would be easiest for you? Or tell me what specifically looks wrong and I'll help fix it.",
+        conditionals: {
+          if_looks_right: [
+            "Say: Great — your core identity is locked in. Let's go deeper into your visual identity. I'll ask a few questions about how your brand expresses itself — composition, patterns, signature moves, and what to never do.",
+            "Next action: Run brand_deepen_identity immediately",
+            "Also mention: " + looksRightActions.join("; "),
+          ].join(" "),
+          if_looks_wrong: [
+            "Say: No problem — let's get it right. What's off?",
+            "Actions: " + looksWrongActions.join("; "),
+            "Follow up: Which of these would be easiest for you? Or tell me what specifically looks wrong and I'll help fix it.",
+          ].join(" "),
         },
       },
       brand_instructions: brandInstructions,
