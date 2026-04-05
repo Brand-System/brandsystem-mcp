@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { McpResponseData } from "../types/index.js";
+import { ERROR_CODES } from "../types/index.js";
 
 const MAX_RESPONSE_CHARS = 50000;
 
@@ -23,7 +24,7 @@ export function safeParseParams<T extends z.ZodTypeAny>(
     response: buildResponse({
       what_happened: `Invalid input: ${issues.join(", ")}`,
       next_steps: ["Check the parameter types and try again"],
-      data: { error: "validation_failed", issues },
+      data: { error: ERROR_CODES.VALIDATION_FAILED, issues },
     }),
   };
 }

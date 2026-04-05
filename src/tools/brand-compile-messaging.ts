@@ -4,12 +4,13 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import type { MessagingData } from "../schemas/messaging.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
-import type {
-  Perspective,
-  VoiceCodex,
-  BrandStory,
-  AnchorTerm,
-  NeverSayTerm,
+import {
+  ERROR_CODES,
+  type Perspective,
+  type VoiceCodex,
+  type BrandStory,
+  type AnchorTerm,
+  type NeverSayTerm,
 } from "../types/index.js";
 
 const SECTIONS = ["perspective", "voice", "brand_story"] as const;
@@ -471,7 +472,7 @@ async function handleRecord(brandDir: BrandDir, section: Section, answersRaw: st
         "Provide answers as a valid JSON string",
         "If this keeps happening, run brand_feedback to report the issue.",
       ],
-      data: { error: "invalid_json", raw: answersRaw },
+      data: { error: ERROR_CODES.INVALID_JSON, raw: answersRaw },
     });
   }
 
@@ -849,7 +850,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start first to create a brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -864,7 +865,7 @@ async function handler(input: Params) {
       next_steps: [
         `Provide section as one of: ${SECTIONS.join(", ")}`,
       ],
-      data: { error: "missing_section" },
+      data: { error: ERROR_CODES.MISSING_SECTION },
     });
   }
 
@@ -874,7 +875,7 @@ async function handler(input: Params) {
       next_steps: [
         "Provide answers as a JSON string with keys matching the section's question keys",
       ],
-      data: { error: "missing_answers" },
+      data: { error: ERROR_CODES.MISSING_ANSWERS },
     });
   }
 

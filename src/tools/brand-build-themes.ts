@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { ContentTheme, ContentStrategy } from "../types/index.js";
 
 const paramsShape = {
@@ -309,7 +310,7 @@ async function handleRecord(
     return buildResponse({
       what_happened: "Failed to parse answers — invalid JSON",
       next_steps: ["Provide answers as a valid JSON string"],
-      data: { error: "invalid_json", raw: answersRaw },
+      data: { error: ERROR_CODES.INVALID_JSON, raw: answersRaw },
     });
   }
 
@@ -334,7 +335,7 @@ async function handleRecord(
           "Check the theme ID with brand_build_themes mode='list'",
           "Or omit theme_id to create a new theme",
         ],
-        data: { error: "theme_not_found", theme_id: themeId },
+        data: { error: ERROR_CODES.THEME_NOT_FOUND, theme_id: themeId },
       });
     }
     targetId = themeId;
@@ -350,7 +351,7 @@ async function handleRecord(
       next_steps: [
         "Provide at least a 'name' field in the answers JSON",
       ],
-      data: { error: "missing_name" },
+      data: { error: ERROR_CODES.MISSING_NAME },
     });
   }
 
@@ -550,7 +551,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start first to create a brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -566,7 +567,7 @@ async function handler(input: Params) {
           next_steps: [
             "Provide answers as a JSON string with at least: name, content_intent, strategic_priority, target_personas",
           ],
-          data: { error: "missing_answers" },
+          data: { error: ERROR_CODES.MISSING_ANSWERS },
         });
       }
       return handleRecord(brandDir, input.theme_id, input.answers);

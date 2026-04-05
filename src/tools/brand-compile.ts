@@ -6,7 +6,7 @@ import { needsClarification } from "../lib/confidence.js";
 import { generateVIM, generateSystemIntegration } from "../lib/vim-generator.js";
 import { compileRuntime } from "../lib/runtime-compiler.js";
 import { compileInteractionPolicy } from "../lib/interaction-policy-compiler.js";
-import type { ClarificationItem } from "../types/index.js";
+import { ERROR_CODES, type ClarificationItem } from "../types/index.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
 
 async function handler() {
@@ -19,7 +19,7 @@ async function handler() {
         "Run brand_init first to create the .brand/ directory",
         "If this keeps happening, run brand_feedback to report the issue.",
       ],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -156,23 +156,29 @@ async function handler() {
   filesWritten.push("interaction-policy.json");
 
   // Session transition guidance
-  const conversationGuide: Record<string, string> = {};
+  let conversationGuide: { instruction: string; conditionals?: Record<string, string> } | null = null;
   if (hasVisual && !hasMessaging) {
-    conversationGuide.session_3_transition = [
-      "Session 2 (Visual Identity) is complete. Now transition to Session 3.",
-      "Tell the user: 'Your visual identity is locked in — composition, patterns, signature moves, and anti-patterns. Now let's capture how your brand *sounds*. This is where output goes from color-correct to distinctively yours.'",
-      "Suggest: 'I can start by auditing what your brand currently sounds like on your website. Want me to run that analysis?'",
-      "If yes: run brand_extract_messaging. If they want to skip the audit: run brand_compile_messaging directly.",
-    ].join("\n");
+    conversationGuide = {
+      instruction: [
+        "Session 2 (Visual Identity) is complete. Now transition to Session 3.",
+        "Tell the user: 'Your visual identity is locked in — composition, patterns, signature moves, and anti-patterns. Now let's capture how your brand *sounds*. This is where output goes from color-correct to distinctively yours.'",
+        "Suggest: 'I can start by auditing what your brand currently sounds like on your website. Want me to run that analysis?'",
+        "If yes: run brand_extract_messaging. If they want to skip the audit: run brand_compile_messaging directly.",
+      ].join("\n"),
+    };
   } else if (!hasVisual && clarifications.length === 0) {
-    conversationGuide.session_2_transition = [
-      "Session 1 (Core Identity) is complete. Now transition to Session 2.",
-      "Tell the user: 'Your core identity is set — colors, fonts, logo, and tokens are ready. Now let's go deeper into your visual identity. This captures what makes your brand *recognizable* beyond just the correct colors — composition rules, patterns, illustration style, and anti-patterns.'",
-      "Then immediately run brand_deepen_identity to start the visual identity interview.",
-      "Do NOT wait for the user to ask — this is the natural next step.",
-    ].join("\n");
+    conversationGuide = {
+      instruction: [
+        "Session 1 (Core Identity) is complete. Now transition to Session 2.",
+        "Tell the user: 'Your core identity is set — colors, fonts, logo, and tokens are ready. Now let's go deeper into your visual identity. This captures what makes your brand *recognizable* beyond just the correct colors — composition rules, patterns, illustration style, and anti-patterns.'",
+        "Then immediately run brand_deepen_identity to start the visual identity interview.",
+        "Do NOT wait for the user to ask — this is the natural next step.",
+      ].join("\n"),
+    };
   } else if (!hasVisual && clarifications.length > 0) {
-    conversationGuide.after_clarify = "After resolving all clarification items, recompile (brand_compile), then generate the report (brand_report). Once the report is done, transition to Session 2 by running brand_deepen_identity.";
+    conversationGuide = {
+      instruction: "After resolving all clarification items, recompile (brand_compile), then generate the report (brand_report). Once the report is done, transition to Session 2 by running brand_deepen_identity.",
+    };
   }
 
   return buildResponse({
@@ -190,7 +196,7 @@ async function handler() {
       },
       runtime_compiled: true,
       ...(hasVisual && { vim_generated: true }),
-      ...(Object.keys(conversationGuide).length > 0 && { conversation_guide: conversationGuide }),
+      ...(conversationGuide && { conversation_guide: conversationGuide }),
     },
   });
 }

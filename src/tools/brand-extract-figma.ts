@@ -4,6 +4,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { mergeColor, mergeTypography } from "../lib/confidence.js";
 import { resolveSvg } from "../lib/svg-resolver.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { ColorEntry, TypographyEntry } from "../types/index.js";
 
 const paramsShape = {
@@ -56,7 +57,7 @@ async function handleIngest(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -174,7 +175,7 @@ export function register(server: McpServer) {
           return buildResponse({
             what_happened: "Figma file key is required for plan mode",
             next_steps: ["Provide a Figma file key (from the URL: figma.com/file/YOUR_KEY/...)"],
-            data: { error: "missing_figma_file_key" },
+            data: { error: ERROR_CODES.MISSING_FIGMA_FILE_KEY },
           });
         }
         return handlePlan(parsed.figma_file_key);

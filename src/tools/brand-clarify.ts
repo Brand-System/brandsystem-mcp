@@ -4,7 +4,7 @@ import { access } from "node:fs/promises";
 import { join } from "node:path";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
-import type { ColorEntry, ClarificationItem } from "../types/index.js";
+import { ERROR_CODES, type ColorEntry, type ClarificationItem } from "../types/index.js";
 import type { NeedsClarificationData } from "../schemas/index.js";
 import type { CoreIdentityData } from "../schemas/index.js";
 
@@ -282,7 +282,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_init first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -295,7 +295,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No needs-clarification.yaml found",
       next_steps: ["Run brand_compile first to generate clarification items"],
-      data: { error: "no_clarifications" },
+      data: { error: ERROR_CODES.NO_CLARIFICATIONS },
     });
   }
 
@@ -311,7 +311,7 @@ async function handler(input: Params) {
           : "No clarification items remain — run brand_compile to check for new ones",
       ],
       data: {
-        error: "item_not_found",
+        error: ERROR_CODES.ITEM_NOT_FOUND,
         valid_items: validIds,
       },
     });
@@ -337,7 +337,7 @@ async function handler(input: Params) {
           `Available colors: ${colorList.join(", ")}`,
           "If this keeps happening, run brand_feedback to report the issue.",
         ],
-        data: { error: "parse_failed", answer: input.answer },
+        data: { error: ERROR_CODES.PARSE_FAILED, answer: input.answer },
       });
     }
 
@@ -508,18 +508,22 @@ async function handler(input: Params) {
   const remaining = clarifications.items.length;
 
   const nextSteps: string[] = [];
-  const conversationGuide: Record<string, string> = {};
+  let conversationGuide: { instruction: string; conditionals?: Record<string, string> };
 
   if (remaining > 0) {
     const nextItem = clarifications.items[0];
     nextSteps.push(
       `${remaining} clarification(s) remaining — next: brand_clarify id="${nextItem.id}" (${nextItem.question})`
     );
-    conversationGuide.auto_chain = `Immediately ask the user about the next clarification item: "${nextItem.question}" (id: ${nextItem.id}). Don't wait for them to ask.`;
+    conversationGuide = {
+      instruction: `Immediately ask the user about the next clarification item: "${nextItem.question}" (id: ${nextItem.id}). Don't wait for them to ask.`,
+    };
   } else {
     nextSteps.push("All clarifications resolved — run brand_compile to regenerate tokens with confirmed values");
     nextSteps.push("Then run brand_report to generate the updated report");
-    conversationGuide.auto_chain = "All clarifications resolved. Immediately run brand_compile (don't wait for the user to ask). After compile, run brand_report. After the report, transition to Session 2 by running brand_deepen_identity.";
+    conversationGuide = {
+      instruction: "All clarifications resolved. Immediately run brand_compile (don't wait for the user to ask). After compile, run brand_report. After the report, transition to Session 2 by running brand_deepen_identity.",
+    };
   }
 
   return buildResponse({

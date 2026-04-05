@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { SCHEMA_VERSION } from "../schemas/index.js";
+import { ERROR_CODES } from "../types/index.js";
 import type { JourneyStage, ContentStrategy } from "../types/index.js";
 
 const paramsShape = {
@@ -171,7 +172,7 @@ async function handleRecord(brandDir: BrandDir, answersRaw?: string) {
       return buildResponse({
         what_happened: "Failed to parse answers -- invalid JSON",
         next_steps: ["Provide answers as a valid JSON string (array of stage objects or a single stage object)"],
-        data: { error: "invalid_json", raw: answersRaw },
+        data: { error: ERROR_CODES.INVALID_JSON, raw: answersRaw },
       });
     }
 
@@ -221,7 +222,7 @@ async function handleRecord(brandDir: BrandDir, answersRaw?: string) {
         next_steps: [
           "Provide answers as a JSON array of stage objects, or a single stage object with an 'id' field",
         ],
-        data: { error: "invalid_format" },
+        data: { error: ERROR_CODES.INVALID_FORMAT },
       });
     }
   }
@@ -279,7 +280,7 @@ async function handleView(brandDir: BrandDir) {
       next_steps: [
         "Run brand_build_journey with mode='interview' to define buyer journey stages",
       ],
-      data: { error: "no_strategy" },
+      data: { error: ERROR_CODES.NO_STRATEGY },
     });
   }
 
@@ -319,7 +320,7 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start first to create a brand system"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 

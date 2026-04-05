@@ -8,6 +8,7 @@ import {
   scoreContent,
   isHtmlContent,
 } from "../lib/content-scorer.js";
+import { ERROR_CODES } from "../types/index.js";
 
 // ---------------------------------------------------------------------------
 // Content resolution
@@ -37,7 +38,7 @@ async function handler(input: AuditContentParams) {
     return buildResponse({
       what_happened: "No .brand/ directory found",
       next_steps: ["Run brand_start to create a brand system first"],
-      data: { error: "not_initialized" },
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
     });
   }
 
@@ -48,7 +49,7 @@ async function handler(input: AuditContentParams) {
     return buildResponse({
       what_happened: "Could not read brand identity data",
       next_steps: ["Run brand_extract_web to populate core identity"],
-      data: { error: "no_core_identity" },
+      data: { error: ERROR_CODES.NO_CORE_IDENTITY },
     });
   }
 
@@ -58,7 +59,7 @@ async function handler(input: AuditContentParams) {
     return buildResponse({
       what_happened: "Empty content — nothing to audit",
       next_steps: ["Provide content to audit (text, HTML, or file path)"],
-      data: { error: "empty_content" },
+      data: { error: ERROR_CODES.EMPTY_CONTENT },
     });
   }
 
@@ -99,7 +100,7 @@ async function handler(input: AuditContentParams) {
       issues: result.issues.slice(0, 15),
       content_type_detected: isHtml ? "html" : "text",
       conversation_guide: {
-        present_findings: "Present the overall score, then break down by dimension. Lead with critical issues. For each dimension, show the score and top findings.",
+        instruction: "Present the overall score prominently, then walk through each dimension. For low-scoring dimensions, show specific examples from the content and suggest rewrites.",
       },
     } as unknown as Record<string, unknown>,
   });
@@ -129,7 +130,7 @@ type AuditContentParams = z.infer<typeof ParamsSchema>;
 export function register(server: McpServer) {
   server.tool(
     "brand_audit_content",
-    "Score content against your brand identity — checks color/font compliance, voice alignment, anti-pattern violations, and message coverage. Use after generating any content to check how on-brand it is. Works progressively: Session 1 data gives token scores, Session 2 adds visual compliance, Session 3 adds voice and messaging scores. Returns a 0-100 score with per-dimension breakdown and specific issues. Different from brand_audit (which validates the .brand/ directory) and brand_preflight (which checks HTML compliance rules).",
+    "Score content against your brand identity — checks color/font compliance, voice alignment, anti-pattern violations, and message coverage. Use after generating any content to check how on-brand it is. Works progressively: Session 1 data gives token scores, Session 2 adds visual compliance, Session 3 adds voice and messaging scores. Returns a 0-100 score with per-dimension breakdown and specific issues. Different from brand_audit (which validates the .brand/ directory) and brand_preflight (which checks HTML compliance rules). NOT for brand directory validation — use brand_audit. NOT for HTML/CSS rule checking — use brand_preflight.",
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);
