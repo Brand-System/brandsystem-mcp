@@ -16,7 +16,7 @@
     "lint": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.18.1"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",

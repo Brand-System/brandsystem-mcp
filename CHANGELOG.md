@@ -13,7 +13,7 @@
 - Runtime compiler: `brand_compile` now produces `brand-runtime.json` and `interaction-policy.json`.
 - Interaction policy compiler: enforceable rules from visual anti-patterns, voice constraints, and content claims.
 - MCP smoke tests for all 28 tools via InMemoryTransport.
-- CI pipeline (GitHub Actions): build + lint + test across Node 18/20/22.
+- CI pipeline (GitHub Actions): build + lint + test across Node 20/22.
 
 ### Improved
 - Tool descriptions rewritten for agent clarity.
