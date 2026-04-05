@@ -8,7 +8,7 @@ Extract and manage brand identity for AI tools -- logo, colors, typography, voic
 
 ## What It Solves
 
-AI tools produce generic output because they have no brand context. Brand guidelines live in PDFs, Figma files, and people's heads -- none of which AI tools can read.
+AI tools produce generic output because they have no brand context. Brand guidelines live in PDFs, Figma files, and people's heads -- none of which are readily surfaced at the moment of creation in other tools.
 
 This MCP server extracts brand identity from live sources (websites, Figma files), compiles it into structured design tokens, and makes it available to any AI tool through the [Model Context Protocol](https://modelcontextprotocol.io). The result is a `.brand/` directory with your colors, fonts, logos, voice rules, and DTCG tokens -- portable, version-controlled, and ready for any AI tool to consume.
 
