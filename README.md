@@ -1,3 +1,5 @@
+[![CI](https://github.com/zk-xyz/brandsystem-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/zk-xyz/brandsystem-mcp/actions/workflows/ci.yml)
+
 # @brandsystem/mcp
 
 Extract and manage brand identity for AI tools -- logo, colors, typography, voice, and visual rules.

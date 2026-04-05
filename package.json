@@ -1,6 +1,6 @@
 {
   "name": "@brandsystem/mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Extract and manage brand identity for AI tools — logo, colors, typography, voice, and visual rules via MCP",
   "type": "module",
   "main": "dist/index.js",
@@ -16,7 +16,7 @@
     "lint": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.18.1"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",

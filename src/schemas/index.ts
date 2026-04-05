@@ -43,3 +43,11 @@ export {
   ContentThemeSchema,
   type ContentStrategyData,
 } from "./strategy.js";
+export {
+  BrandRuntimeSchema,
+  type BrandRuntimeData,
+} from "./brand-runtime.js";
+export {
+  InteractionPolicySchema,
+  type InteractionPolicyData,
+} from "./interaction-policy.js";
