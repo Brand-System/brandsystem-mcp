@@ -172,15 +172,28 @@ async function handler(server: McpServer) {
   } else if (!hasVisual && clarifications.length === 0) {
     conversationGuide = {
       instruction: [
-        "Session 1 (Core Identity) is complete. Now transition to Session 2.",
-        "Tell the user: 'Your core identity is set — colors, fonts, logo, and tokens are ready. Now let's go deeper into your visual identity. This captures what makes your brand *recognizable* beyond just the correct colors — composition rules, patterns, illustration style, and anti-patterns.'",
-        "Then immediately run brand_deepen_identity to start the visual identity interview.",
-        "Do NOT wait for the user to ask — this is the natural next step.",
+        "Session 1 is complete. Your brand-runtime.json is compiled and ready to use — any agent you give it to will produce on-brand content with the right colors, fonts, and logo.",
+        "",
+        "Before moving on, mention what Session 2 unlocks:",
+        "'Right now your brand runtime has identity (colors, fonts, logo). Session 2 adds *visual rules* — composition guidelines, anti-patterns your agents will reject, illustration direction, and signature moves. It makes your brand-runtime dramatically more useful because agents won't just use the right colors, they'll use them *the right way*.'",
+        "",
+        "Then ask: 'Want to go deeper, or is this enough for now?'",
+        "If yes: run brand_deepen_identity.",
+        "If no: that's fine. The Session 1 runtime is already valuable.",
       ].join("\n"),
     };
   } else if (!hasVisual && clarifications.length > 0) {
     conversationGuide = {
-      instruction: "After resolving all clarification items, recompile (brand_compile), then generate the report (brand_report). Once the report is done, transition to Session 2 by running brand_deepen_identity.",
+      instruction: [
+        "Session 1 compiled successfully but some values need confirmation.",
+        `There are ${clarifications.length} clarification items (${clarifications.filter((c) => c.priority === "high").length} high priority).`,
+        "",
+        "Present the high-priority items to the user for quick confirmation. Use brand_clarify to resolve each one.",
+        "After clarifications are resolved, recompile with brand_compile to update the runtime.",
+        "",
+        "Meanwhile, mention what Session 2 adds to the runtime:",
+        "'Session 2 captures visual rules — composition, anti-patterns, illustration style. Your sub-agents will know not just *what* colors to use, but *how* to use them. Want to do that after we confirm these values?'",
+      ].join("\n"),
     };
   }
 

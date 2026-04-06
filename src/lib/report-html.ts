@@ -351,7 +351,7 @@ function buildSessionProgression(): string {
         </div>
         <div class="session-content">
           <div class="session-name">Core Identity</div>
-          <div class="session-desc">Colors, typography, logo, design tokens. The basics every AI tool needs.</div>
+          <div class="session-desc">Colors, typography, logo, design tokens. Your brand-runtime.json gives every agent the basics.</div>
         </div>
       </div>
       <div class="session-step session-next">
@@ -361,7 +361,7 @@ function buildSessionProgression(): string {
         </div>
         <div class="session-content">
           <div class="session-name">Full Visual Identity</div>
-          <div class="session-desc">Composition rules, patterns, illustration language, anti-patterns, automated preflight. Makes output <em>recognizable</em>, not just color-correct.</div>
+          <div class="session-desc">Adds anti-pattern rules and composition guidelines to the runtime. Your agents will reject off-brand layouts and enforce visual consistency, not just use the right hex values.</div>
         </div>
       </div>
       <div class="session-step session-future">
@@ -371,7 +371,7 @@ function buildSessionProgression(): string {
         </div>
         <div class="session-content">
           <div class="session-name">Brand Voice &amp; Messaging</div>
-          <div class="session-desc">Voice profile, key messages, audience personas. Written content sounds like you, not like AI.</div>
+          <div class="session-desc">Adds voice constraints, never-say words, and tone rules to the runtime. Written content sounds like your brand, not like AI.</div>
         </div>
       </div>
       <div class="session-step session-future">
@@ -381,7 +381,7 @@ function buildSessionProgression(): string {
         </div>
         <div class="session-content">
           <div class="session-name">Claims &amp; Evidence</div>
-          <div class="session-desc">Proof points with confidence scores. What you can say, what needs qualification, what to never claim.</div>
+          <div class="session-desc">Adds proof points and claim policies to the runtime. Agents know what to assert, what to hedge, and what to never say.</div>
         </div>
       </div>
       <div class="session-step session-future">

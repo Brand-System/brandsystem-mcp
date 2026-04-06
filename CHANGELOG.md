@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.5 (2026-04-06)
+
+### Improved
+- **Session progression framing:** Rewrote all session transition guidance based on agent feedback. Session 2+ is now pitched by what it adds to the runtime ("agents will reject off-brand layouts") rather than as checklist completion ("run brand_deepen_identity"). Agents are told what they get, not what to do next.
+- **Reduced clarification gate:** Clarification items no longer block the Session 2 transition. The compile conversation guide presents clarifications and Session 2 in parallel, not as a sequential prerequisite chain.
+- **brand_write gap surfacing:** When content is requested with only Session 1 data, warnings explain what the runtime is missing in concrete terms ("agents would know not just the right colors but how to use them") instead of clinical notes.
+- **Report session descriptions:** HTML report session timeline now describes each session's concrete output artifact and what it adds to the brand-runtime.json.
+
 ## 0.3.4 (2026-04-06)
 
 ### Fixed

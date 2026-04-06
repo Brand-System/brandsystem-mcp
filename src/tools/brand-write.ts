@@ -539,12 +539,12 @@ async function handler(input: WriteParams) {
   const warnings: string[] = [];
   if (!visual && needsVisual(ct)) {
     warnings.push(
-      "No visual identity data (Session 2) — composition rules, signature moves, and anti-patterns are unavailable. Run brand_deepen_identity to add them."
+      "Your brand runtime only has core identity (colors, fonts, logo). Session 2 adds anti-pattern rules and composition guidelines — agents would know not just the right colors but how to use them. Run brand_deepen_identity to add visual rules to the runtime."
     );
   }
   if (!messaging && needsVoice(ct)) {
     warnings.push(
-      "No messaging data (Session 3) — voice codex, vocabulary, and perspective are unavailable. Complete Session 3 to add them."
+      "Your brand runtime has no voice constraints. Session 3 adds tone rules, never-say words, and messaging — content would sound like your brand, not like AI. Run brand_compile_messaging to add voice to the runtime."
     );
   }
   if (identity.colors.length === 0) {
