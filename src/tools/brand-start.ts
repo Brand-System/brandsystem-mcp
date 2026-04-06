@@ -12,6 +12,8 @@ import { getVersion } from "../lib/version.js";
 import { generateColorName, isCssArtifactName } from "../lib/color-namer.js";
 import { safeFetch, readResponseWithLimit, MAX_HTML_BYTES, MAX_CSS_BYTES } from "../lib/url-validator.js";
 import { compileDTCG } from "../lib/dtcg-compiler.js";
+import { compileRuntime } from "../lib/runtime-compiler.js";
+import { compileInteractionPolicy } from "../lib/interaction-policy-compiler.js";
 import { generateReportHTML, generateBrandInstructions } from "../lib/report-html.js";
 import { ERROR_CODES, type ColorEntry, type TypographyEntry, type LogoSpec, type CoreIdentity, type ClarificationItem } from "../types/index.js";
 
@@ -545,6 +547,13 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
   const typoTokenCount = Object.keys((brandTokens.typography as Record<string, unknown>) || {}).length;
   const tokenCount = colorTokenCount + typoTokenCount;
 
+  // --- Step 2b: Compile runtime + interaction policy (same logic as brand_compile) ---
+  const runtime = compileRuntime(config, freshIdentity, null, null, null);
+  await brandDir.writeRuntime(runtime);
+
+  const policy = compileInteractionPolicy(config.schema_version, null, null, null);
+  await brandDir.writePolicy(policy);
+
   // --- Step 3: Generate report (same logic as brand_report) ---
   let pass = 0, warn = 0, fail = 0;
   if (freshIdentity.colors.length > 0) pass++; else warn++;
@@ -574,6 +583,8 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
     "brand.config.yaml",
     "core-identity.yaml",
     "tokens.json",
+    "brand-runtime.json",
+    "interaction-policy.json",
     "needs-clarification.yaml",
     "brand-report.html",
   ];
