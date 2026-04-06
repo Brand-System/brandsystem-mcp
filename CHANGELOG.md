@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.11 (2026-04-06)
+
+### Fixed
+- **Removed phantom Sessions 5-6 from status.** `brand_status` no longer shows "Session 5: Full Governance ○ Not started" and "Session 6: Content Operations ○ Not started" which had no corresponding tools. The MCP brand system is complete at Session 4. Governance and operations live in Brandcode Studio.
+- **Completion message.** When all 4 sessions are done, status now shows "Brand system complete" with actionable next steps: generate content, run audit, or connect to Brandcode Studio.
+
 ## 0.3.10 (2026-04-06)
 
 ### Fixed

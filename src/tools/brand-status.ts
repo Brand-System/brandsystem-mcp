@@ -121,8 +121,13 @@ async function handler() {
   lines.push(`Session 2: Full Visual Identity ${s2Status}`);
   lines.push(`Session 3: Core Messaging       ${s3Status}`);
   lines.push(`Session 4: Content Strategy     ${s4Status}`);
-  lines.push("Session 5: Full Governance      ○ Not started");
-  lines.push("Session 6: Content Operations   ○ Not started");
+  if (hasStrategy && s1Done && hasVisual && hasMessaging) {
+    lines.push("");
+    lines.push("✓ Brand system complete. All 4 sessions finished.");
+    lines.push("  Your brand-runtime.json has identity, visual rules, voice, and strategy.");
+    lines.push("  For governance (claims, evidence, application rules) and content operations,");
+    lines.push("  connect to Brandcode Studio: run brand_brandcode_connect.");
+  }
 
   if (hasVisual) {
     const visual = await brandDir.readVisualIdentity();
@@ -200,7 +205,9 @@ async function handler() {
   } else if (!hasStrategy) {
     nextSteps.push("Run brand_build_personas to start Session 4 — define target audiences, then brand_build_journey, brand_build_themes, brand_build_matrix");
   } else {
-    nextSteps.push("Run brand_write to generate audience-targeted content using your full brand system");
+    nextSteps.push("Brand system complete! Run brand_write to generate audience-targeted content using your full brand system");
+    nextSteps.push("Run brand_audit to validate your .brand/ directory");
+    nextSteps.push("Run brand_brandcode_connect to save your brand on Brandcode Studio and share with your team");
   }
 
   if (config.figma_file_key && identity.colors.every((c) => c.source !== "figma")) {
