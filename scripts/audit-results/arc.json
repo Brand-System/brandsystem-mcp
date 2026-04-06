@@ -1,0 +1,95 @@
+{
+  "brand": "Arc",
+  "url": "https://arc.net",
+  "category": "Browser",
+  "css_pattern": "Modern CSS",
+  "duration_ms": 754,
+  "error": null,
+  "extraction_quality": {
+    "score": "MEDIUM",
+    "points": 5,
+    "reasons": [
+      "Logo found but not as inline SVG",
+      "4 colors extracted",
+      "5 fonts extracted",
+      "Both surface and text color roles detected"
+    ],
+    "recommendation": "Decent extraction but some gaps. Consider Figma extraction for higher accuracy."
+  },
+  "extraction_summary": {
+    "colors": 4,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 9,
+    "stylesheets_parsed": 2
+  },
+  "colors": [
+    {
+      "name": "Text",
+      "hex": "#000000",
+      "role": "text",
+      "confidence": "high"
+    },
+    {
+      "name": "Surface",
+      "hex": "#ffffff",
+      "role": "surface",
+      "confidence": "high"
+    },
+    {
+      "name": "Primary",
+      "hex": "#3139fb",
+      "role": "primary",
+      "confidence": "high"
+    },
+    {
+      "name": "Secondary",
+      "hex": "#00eae7",
+      "role": "secondary",
+      "confidence": "medium"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "var(--fonts-softSans)",
+      "confidence": "high"
+    },
+    {
+      "family": "Marlin Soft SQ",
+      "confidence": "high"
+    },
+    {
+      "family": "var(--fonts-body)",
+      "confidence": "high"
+    },
+    {
+      "family": "Space Mono",
+      "confidence": "high"
+    },
+    {
+      "family": "ABC Favorit Mono",
+      "confidence": "high"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 0,
+    "high_priority": 0
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-og-image.png"
+  ],
+  "token_count": 9,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

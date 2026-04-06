@@ -1,0 +1,69 @@
+{
+  "brand": "Basecamp",
+  "url": "https://basecamp.com",
+  "category": "Project mgmt",
+  "css_pattern": "Traditional CSS",
+  "duration_ms": 778,
+  "error": null,
+  "extraction_quality": {
+    "score": "LOW",
+    "points": 2,
+    "reasons": [
+      "Logo found but not as inline SVG",
+      "Fewer than 2 colors extracted",
+      "5 fonts extracted"
+    ],
+    "recommendation": "Limited extraction. Try a different page URL, connect to Figma, or add your brand assets manually."
+  },
+  "extraction_summary": {
+    "colors": 0,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 2,
+    "stylesheets_parsed": 6
+  },
+  "colors": [],
+  "fonts": [
+    {
+      "family": "Graphik",
+      "confidence": "high"
+    },
+    {
+      "family": "var(--font-family-graphik)",
+      "confidence": "medium"
+    },
+    {
+      "family": "Sharpie",
+      "confidence": "low"
+    },
+    {
+      "family": "Monaspace Radon",
+      "confidence": "low"
+    },
+    {
+      "family": "Monaspace Neon",
+      "confidence": "low"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 4,
+    "high_priority": 1
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-apple-touch-icon.png"
+  ],
+  "token_count": 2,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

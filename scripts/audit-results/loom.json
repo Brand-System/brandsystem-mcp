@@ -1,0 +1,150 @@
+{
+  "brand": "Loom",
+  "url": "https://loom.com",
+  "category": "Video",
+  "css_pattern": "Mixed",
+  "duration_ms": 497,
+  "error": null,
+  "extraction_quality": {
+    "score": "HIGH",
+    "points": 9,
+    "reasons": [
+      "Logo found with inline SVG",
+      "13 colors extracted",
+      "5 fonts extracted",
+      "Primary color candidate identified",
+      "Both surface and text color roles detected"
+    ],
+    "recommendation": "Strong extraction. Ready to confirm and compile."
+  },
+  "extraction_summary": {
+    "colors": 13,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 15,
+    "stylesheets_parsed": 4
+  },
+  "colors": [
+    {
+      "name": "Surface",
+      "hex": "#ffffff",
+      "role": "surface",
+      "confidence": "high"
+    },
+    {
+      "name": "Text",
+      "hex": "#000000",
+      "role": "text",
+      "confidence": "high"
+    },
+    {
+      "name": "thd color blue 70",
+      "hex": "#1868db",
+      "role": "primary",
+      "confidence": "high"
+    },
+    {
+      "name": "thd color green 50",
+      "hex": "#82b536",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "Blue",
+      "hex": "#3b82f6",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color grey 50",
+      "hex": "#8c8f97",
+      "role": "neutral",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color violet 30",
+      "hex": "#d8a0f7",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color violet 50",
+      "hex": "#bf63f3",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color violet 60",
+      "hex": "#af59e1",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color violet 80",
+      "hex": "#803fa5",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color yellow 50",
+      "hex": "#eb9100",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color green 60",
+      "hex": "#6a9a23",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "thd color record",
+      "hex": "#ff613d",
+      "role": "unknown",
+      "confidence": "medium"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Charlie Display",
+      "confidence": "high"
+    },
+    {
+      "family": "Charlie Text",
+      "confidence": "high"
+    },
+    {
+      "family": "Roboto",
+      "confidence": "low"
+    },
+    {
+      "family": "Helvetica Neue",
+      "confidence": "low"
+    },
+    {
+      "family": "Arial",
+      "confidence": "low"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 4,
+    "high_priority": 0
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-selector-svg.svg"
+  ],
+  "token_count": 15,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

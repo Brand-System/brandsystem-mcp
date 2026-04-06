@@ -1,0 +1,132 @@
+{
+  "brand": "Vercel",
+  "url": "https://vercel.com",
+  "category": "Developer tools",
+  "css_pattern": "Tailwind/CSS vars",
+  "duration_ms": 1183,
+  "error": null,
+  "extraction_quality": {
+    "score": "HIGH",
+    "points": 9,
+    "reasons": [
+      "Logo found with inline SVG",
+      "10 colors extracted",
+      "5 fonts extracted",
+      "Primary color candidate identified",
+      "Both surface and text color roles detected"
+    ],
+    "recommendation": "Strong extraction. Ready to confirm and compile."
+  },
+  "extraction_summary": {
+    "colors": 10,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 15,
+    "stylesheets_parsed": 6
+  },
+  "colors": [
+    {
+      "name": "badge color",
+      "hex": "#ffffff",
+      "role": "surface",
+      "confidence": "high"
+    },
+    {
+      "name": "scroller end",
+      "hex": "#0000",
+      "role": "primary",
+      "confidence": "high"
+    },
+    {
+      "name": "accents 8",
+      "hex": "#111111",
+      "role": "accent",
+      "confidence": "high"
+    },
+    {
+      "name": "geist violet",
+      "hex": "#7928ca",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "geist console text color pink",
+      "hex": "#eb367f",
+      "role": "text",
+      "confidence": "high"
+    },
+    {
+      "name": "scroller 4",
+      "hex": "#fff0",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "geist success light",
+      "hex": "#3291ff",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "geist success",
+      "hex": "#0070f3",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "geist violet light",
+      "hex": "#8a63d2",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "geist highlight pink",
+      "hex": "#ff0080",
+      "role": "highlight",
+      "confidence": "medium"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Geist Mono",
+      "confidence": "high"
+    },
+    {
+      "family": "var(--font-mono)",
+      "confidence": "high"
+    },
+    {
+      "family": "DejaVu Sans Mono",
+      "confidence": "high"
+    },
+    {
+      "family": "var(--font-sans)",
+      "confidence": "high"
+    },
+    {
+      "family": "Geist",
+      "confidence": "medium"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 1,
+    "high_priority": 0
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-selector-img.svg"
+  ],
+  "token_count": 15,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

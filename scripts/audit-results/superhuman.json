@@ -1,0 +1,126 @@
+{
+  "brand": "Superhuman",
+  "url": "https://superhuman.com",
+  "category": "Email",
+  "css_pattern": "Custom",
+  "duration_ms": 982,
+  "error": null,
+  "extraction_quality": {
+    "score": "HIGH",
+    "points": 9,
+    "reasons": [
+      "Logo found with inline SVG",
+      "9 colors extracted",
+      "5 fonts extracted",
+      "Primary color candidate identified",
+      "Both surface and text color roles detected"
+    ],
+    "recommendation": "Strong extraction. Ready to confirm and compile."
+  },
+  "extraction_summary": {
+    "colors": 9,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 12,
+    "stylesheets_parsed": 6
+  },
+  "colors": [
+    {
+      "name": "white",
+      "hex": "#ffffff",
+      "role": "surface",
+      "confidence": "medium"
+    },
+    {
+      "name": "neutral 0",
+      "hex": "#fcfaf7",
+      "role": "neutral",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 10",
+      "hex": "#ffdcf3",
+      "role": "primary",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 20",
+      "hex": "#f6aadd",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 30",
+      "hex": "#da7cb4",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 40",
+      "hex": "#bf6193",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 60",
+      "hex": "#8d3d62",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 80",
+      "hex": "#792d4b",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "mulberry 90",
+      "hex": "#602639",
+      "role": "text",
+      "confidence": "medium"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "var(--font-family-sans)",
+      "confidence": "high"
+    },
+    {
+      "family": "Super Sans VF",
+      "confidence": "medium"
+    },
+    {
+      "family": "Super Serif VF",
+      "confidence": "medium"
+    },
+    {
+      "family": "Super Sans Mono VF",
+      "confidence": "low"
+    },
+    {
+      "family": "var(--_button-font-family",
+      "confidence": "low"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 3,
+    "high_priority": 0
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-selector-svg.svg"
+  ],
+  "token_count": 12,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

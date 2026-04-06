@@ -1,0 +1,120 @@
+{
+  "brand": "Cal.com",
+  "url": "https://cal.com",
+  "category": "Scheduling",
+  "css_pattern": "Tailwind",
+  "duration_ms": 1908,
+  "error": null,
+  "extraction_quality": {
+    "score": "MEDIUM",
+    "points": 6,
+    "reasons": [
+      "Logo found but not as inline SVG",
+      "8 colors extracted",
+      "5 fonts extracted",
+      "Primary color candidate identified",
+      "Both surface and text color roles detected"
+    ],
+    "recommendation": "Decent extraction but some gaps. Consider Figma extraction for higher accuracy."
+  },
+  "extraction_summary": {
+    "colors": 8,
+    "typography": 5,
+    "logos": 1,
+    "tokens": 13,
+    "stylesheets_parsed": 1
+  },
+  "colors": [
+    {
+      "name": "token dfc22ccd cb7d 477e 862b 97507724854f",
+      "hex": "#ffffff",
+      "role": "surface",
+      "confidence": "high"
+    },
+    {
+      "name": "token b0fc30d9 714a 4075 bf2f ce4a3cb5f664",
+      "hex": "#0099ff",
+      "role": "primary",
+      "confidence": "high"
+    },
+    {
+      "name": "framer link current text color",
+      "hex": "#111111",
+      "role": "text",
+      "confidence": "high"
+    },
+    {
+      "name": "token 73a9b904 5ed0 4590 a8cc d5ddf2346358",
+      "hex": "#898989",
+      "role": "neutral",
+      "confidence": "medium"
+    },
+    {
+      "name": "token f30c123d 1686 4848 be4d a9b5f266a6f3",
+      "hex": "#6349ea",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "token 7b021206 bfa6 4696 bc89 f1e80240dc7d",
+      "hex": "#875fe0",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "token a46d5d83 ff86 4525 9854 f2504a9bd4e4",
+      "hex": "#c292ff",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "token 5700359e e9dc 4038 a244 8925d2052c19",
+      "hex": "#19a874",
+      "role": "unknown",
+      "confidence": "medium"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Inter",
+      "confidence": "high"
+    },
+    {
+      "family": "Inter Display",
+      "confidence": "high"
+    },
+    {
+      "family": "Inter Variable",
+      "confidence": "high"
+    },
+    {
+      "family": "Inter Placeholder",
+      "confidence": "high"
+    },
+    {
+      "family": "var(--framer-font-family",
+      "confidence": "high"
+    }
+  ],
+  "logo_found": true,
+  "clarifications": {
+    "total": 1,
+    "high_priority": 0
+  },
+  "files_written": [
+    "assets",
+    "brand-report.html",
+    "brand-runtime.json",
+    "brand.config.yaml",
+    "core-identity.yaml",
+    "interaction-policy.json",
+    "needs-clarification.yaml",
+    "tokens.json",
+    "assets/logo",
+    "assets/logo/logo-og-image.png"
+  ],
+  "token_count": 13,
+  "runtime_sessions": 1,
+  "has_runtime": true,
+  "has_policy": true
+}

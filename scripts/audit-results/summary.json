@@ -1,0 +1,1174 @@
+{
+  "version": "0.3.12",
+  "date": "2026-04-06T22:17:49.809Z",
+  "brands_tested": 10,
+  "totals": {
+    "colors": 72,
+    "fonts": 50,
+    "logos": 10
+  },
+  "avg_quality": "7.3",
+  "avg_duration_ms": 1399,
+  "logo_detection_rate": 100,
+  "issues": [
+    {
+      "brand": "Basecamp",
+      "issue": "Zero colors extracted"
+    },
+    {
+      "brand": "Superhuman",
+      "issue": "5/9 colors have unknown role (>50%)"
+    },
+    {
+      "brand": "Loom",
+      "issue": "9/13 colors have unknown role (>50%)"
+    }
+  ],
+  "results": [
+    {
+      "brand": "Linear",
+      "url": "https://linear.app",
+      "category": "SaaS",
+      "css_pattern": "Tailwind/CSS-in-JS",
+      "duration_ms": 3022,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 8,
+        "reasons": [
+          "Logo found with inline SVG",
+          "6 colors extracted",
+          "5 fonts extracted",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 6,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 8,
+        "stylesheets_parsed": 6
+      },
+      "colors": [
+        {
+          "name": "transparent",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "mask visible",
+          "hex": "#000000",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "Blue",
+          "hex": "#5e6ad2",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Primary",
+          "hex": "#08090a",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "Secondary",
+          "hex": "#b4bcd0",
+          "role": "secondary",
+          "confidence": "high"
+        },
+        {
+          "name": "Accent",
+          "hex": "#7170ff",
+          "role": "accent",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "var(--font-monospace)",
+          "confidence": "high"
+        },
+        {
+          "family": "Inter Variable",
+          "confidence": "medium"
+        },
+        {
+          "family": "Berkeley Mono",
+          "confidence": "low"
+        },
+        {
+          "family": "var(--font-regular)",
+          "confidence": "low"
+        },
+        {
+          "family": "var(--x13sdql6)",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 4,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 8,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Stripe",
+      "url": "https://stripe.com",
+      "category": "Fintech",
+      "css_pattern": "Custom CSS",
+      "duration_ms": 1423,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 8,
+        "reasons": [
+          "Logo found with inline SVG",
+          "12 colors extracted",
+          "5 fonts extracted",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 12,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 12,
+        "stylesheets_parsed": 6
+      },
+      "colors": [
+        {
+          "name": "cardBackground",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "suite color",
+          "hex": "#ff6118",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "gradient color",
+          "hex": "#533afd",
+          "role": "gradient",
+          "confidence": "high"
+        },
+        {
+          "name": "hds color core neutral 990",
+          "hex": "#061b31",
+          "role": "neutral",
+          "confidence": "high"
+        },
+        {
+          "name": "suite color",
+          "hex": "#ea2261",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "suite color",
+          "hex": "#ffcc55",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "hds color shadow xs bottom",
+          "hex": "#003b89",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "bento right blob",
+          "hex": "#f363f3",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "stats border color",
+          "hex": "#8129df",
+          "role": "border",
+          "confidence": "high"
+        },
+        {
+          "name": "hds color core brand 200",
+          "hex": "#b9b9f9",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "stop color",
+          "hex": "#fb76fa",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "suite color",
+          "hex": "#f44bcc",
+          "role": "unknown",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "var(--hds-font-family)",
+          "confidence": "high"
+        },
+        {
+          "family": "sohne-var",
+          "confidence": "medium"
+        },
+        {
+          "family": "var(--hds-font-family-code)",
+          "confidence": "medium"
+        },
+        {
+          "family": "SourceCodePro",
+          "confidence": "low"
+        },
+        {
+          "family": "Roboto",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 3,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 12,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Notion",
+      "url": "https://notion.so",
+      "category": "Productivity",
+      "css_pattern": "CSS modules",
+      "duration_ms": 1737,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 9,
+        "reasons": [
+          "Logo found with inline SVG",
+          "6 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 6,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 10,
+        "stylesheets_parsed": 6
+      },
+      "colors": [
+        {
+          "name": "Primary",
+          "hex": "#0000",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "Text",
+          "hex": "#000000",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "Surface",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "Neutral",
+          "hex": "#f9f9f8",
+          "role": "neutral",
+          "confidence": "medium"
+        },
+        {
+          "name": "Light Red",
+          "hex": "#fdd3cd",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "Coral",
+          "hex": "#ff8b7c",
+          "role": "unknown",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "NotionInter",
+          "confidence": "high"
+        },
+        {
+          "family": "Lyon Text",
+          "confidence": "medium"
+        },
+        {
+          "family": "iA Writer Mono",
+          "confidence": "medium"
+        },
+        {
+          "family": "var(--font-family-sans)",
+          "confidence": "medium"
+        },
+        {
+          "family": "Noto Sans Arabic",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 2,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 10,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Vercel",
+      "url": "https://vercel.com",
+      "category": "Developer tools",
+      "css_pattern": "Tailwind/CSS vars",
+      "duration_ms": 1183,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 9,
+        "reasons": [
+          "Logo found with inline SVG",
+          "10 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 10,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 15,
+        "stylesheets_parsed": 6
+      },
+      "colors": [
+        {
+          "name": "badge color",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "scroller end",
+          "hex": "#0000",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "accents 8",
+          "hex": "#111111",
+          "role": "accent",
+          "confidence": "high"
+        },
+        {
+          "name": "geist violet",
+          "hex": "#7928ca",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "geist console text color pink",
+          "hex": "#eb367f",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "scroller 4",
+          "hex": "#fff0",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "geist success light",
+          "hex": "#3291ff",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "geist success",
+          "hex": "#0070f3",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "geist violet light",
+          "hex": "#8a63d2",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "geist highlight pink",
+          "hex": "#ff0080",
+          "role": "highlight",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Geist Mono",
+          "confidence": "high"
+        },
+        {
+          "family": "var(--font-mono)",
+          "confidence": "high"
+        },
+        {
+          "family": "DejaVu Sans Mono",
+          "confidence": "high"
+        },
+        {
+          "family": "var(--font-sans)",
+          "confidence": "high"
+        },
+        {
+          "family": "Geist",
+          "confidence": "medium"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 1,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-img.svg"
+      ],
+      "token_count": 15,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Figma",
+      "url": "https://figma.com",
+      "category": "Design",
+      "css_pattern": "Custom/complex",
+      "duration_ms": 1705,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 8,
+        "reasons": [
+          "Logo found with inline SVG",
+          "4 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 4,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 8,
+        "stylesheets_parsed": 3
+      },
+      "colors": [
+        {
+          "name": "f bg color",
+          "hex": "#000000",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "f statsig overlay",
+          "hex": "#ffffff",
+          "role": "overlay",
+          "confidence": "high"
+        },
+        {
+          "name": "f form error bg color",
+          "hex": "#972121",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "Neutral",
+          "hex": "#697485",
+          "role": "neutral",
+          "confidence": "low"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "figmaSans",
+          "confidence": "high"
+        },
+        {
+          "family": "figmaSans Fallback",
+          "confidence": "high"
+        },
+        {
+          "family": "helvetica",
+          "confidence": "high"
+        },
+        {
+          "family": "figmaMono",
+          "confidence": "high"
+        },
+        {
+          "family": "figmaMono Fallback",
+          "confidence": "high"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 1,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 8,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Basecamp",
+      "url": "https://basecamp.com",
+      "category": "Project mgmt",
+      "css_pattern": "Traditional CSS",
+      "duration_ms": 778,
+      "error": null,
+      "extraction_quality": {
+        "score": "LOW",
+        "points": 2,
+        "reasons": [
+          "Logo found but not as inline SVG",
+          "Fewer than 2 colors extracted",
+          "5 fonts extracted"
+        ],
+        "recommendation": "Limited extraction. Try a different page URL, connect to Figma, or add your brand assets manually."
+      },
+      "extraction_summary": {
+        "colors": 0,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 2,
+        "stylesheets_parsed": 6
+      },
+      "colors": [],
+      "fonts": [
+        {
+          "family": "Graphik",
+          "confidence": "high"
+        },
+        {
+          "family": "var(--font-family-graphik)",
+          "confidence": "medium"
+        },
+        {
+          "family": "Sharpie",
+          "confidence": "low"
+        },
+        {
+          "family": "Monaspace Radon",
+          "confidence": "low"
+        },
+        {
+          "family": "Monaspace Neon",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 4,
+        "high_priority": 1
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-apple-touch-icon.png"
+      ],
+      "token_count": 2,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Arc",
+      "url": "https://arc.net",
+      "category": "Browser",
+      "css_pattern": "Modern CSS",
+      "duration_ms": 754,
+      "error": null,
+      "extraction_quality": {
+        "score": "MEDIUM",
+        "points": 5,
+        "reasons": [
+          "Logo found but not as inline SVG",
+          "4 colors extracted",
+          "5 fonts extracted",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Decent extraction but some gaps. Consider Figma extraction for higher accuracy."
+      },
+      "extraction_summary": {
+        "colors": 4,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 9,
+        "stylesheets_parsed": 2
+      },
+      "colors": [
+        {
+          "name": "Text",
+          "hex": "#000000",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "Surface",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "Primary",
+          "hex": "#3139fb",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "Secondary",
+          "hex": "#00eae7",
+          "role": "secondary",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "var(--fonts-softSans)",
+          "confidence": "high"
+        },
+        {
+          "family": "Marlin Soft SQ",
+          "confidence": "high"
+        },
+        {
+          "family": "var(--fonts-body)",
+          "confidence": "high"
+        },
+        {
+          "family": "Space Mono",
+          "confidence": "high"
+        },
+        {
+          "family": "ABC Favorit Mono",
+          "confidence": "high"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 0,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-og-image.png"
+      ],
+      "token_count": 9,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Superhuman",
+      "url": "https://superhuman.com",
+      "category": "Email",
+      "css_pattern": "Custom",
+      "duration_ms": 982,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 9,
+        "reasons": [
+          "Logo found with inline SVG",
+          "9 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 9,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 12,
+        "stylesheets_parsed": 6
+      },
+      "colors": [
+        {
+          "name": "white",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "medium"
+        },
+        {
+          "name": "neutral 0",
+          "hex": "#fcfaf7",
+          "role": "neutral",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 10",
+          "hex": "#ffdcf3",
+          "role": "primary",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 20",
+          "hex": "#f6aadd",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 30",
+          "hex": "#da7cb4",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 40",
+          "hex": "#bf6193",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 60",
+          "hex": "#8d3d62",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 80",
+          "hex": "#792d4b",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "mulberry 90",
+          "hex": "#602639",
+          "role": "text",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "var(--font-family-sans)",
+          "confidence": "high"
+        },
+        {
+          "family": "Super Sans VF",
+          "confidence": "medium"
+        },
+        {
+          "family": "Super Serif VF",
+          "confidence": "medium"
+        },
+        {
+          "family": "Super Sans Mono VF",
+          "confidence": "low"
+        },
+        {
+          "family": "var(--_button-font-family",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 3,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 12,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Cal.com",
+      "url": "https://cal.com",
+      "category": "Scheduling",
+      "css_pattern": "Tailwind",
+      "duration_ms": 1908,
+      "error": null,
+      "extraction_quality": {
+        "score": "MEDIUM",
+        "points": 6,
+        "reasons": [
+          "Logo found but not as inline SVG",
+          "8 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Decent extraction but some gaps. Consider Figma extraction for higher accuracy."
+      },
+      "extraction_summary": {
+        "colors": 8,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 13,
+        "stylesheets_parsed": 1
+      },
+      "colors": [
+        {
+          "name": "token dfc22ccd cb7d 477e 862b 97507724854f",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "token b0fc30d9 714a 4075 bf2f ce4a3cb5f664",
+          "hex": "#0099ff",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "framer link current text color",
+          "hex": "#111111",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "token 73a9b904 5ed0 4590 a8cc d5ddf2346358",
+          "hex": "#898989",
+          "role": "neutral",
+          "confidence": "medium"
+        },
+        {
+          "name": "token f30c123d 1686 4848 be4d a9b5f266a6f3",
+          "hex": "#6349ea",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "token 7b021206 bfa6 4696 bc89 f1e80240dc7d",
+          "hex": "#875fe0",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "token a46d5d83 ff86 4525 9854 f2504a9bd4e4",
+          "hex": "#c292ff",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "token 5700359e e9dc 4038 a244 8925d2052c19",
+          "hex": "#19a874",
+          "role": "unknown",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Inter",
+          "confidence": "high"
+        },
+        {
+          "family": "Inter Display",
+          "confidence": "high"
+        },
+        {
+          "family": "Inter Variable",
+          "confidence": "high"
+        },
+        {
+          "family": "Inter Placeholder",
+          "confidence": "high"
+        },
+        {
+          "family": "var(--framer-font-family",
+          "confidence": "high"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 1,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-og-image.png"
+      ],
+      "token_count": 13,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    },
+    {
+      "brand": "Loom",
+      "url": "https://loom.com",
+      "category": "Video",
+      "css_pattern": "Mixed",
+      "duration_ms": 497,
+      "error": null,
+      "extraction_quality": {
+        "score": "HIGH",
+        "points": 9,
+        "reasons": [
+          "Logo found with inline SVG",
+          "13 colors extracted",
+          "5 fonts extracted",
+          "Primary color candidate identified",
+          "Both surface and text color roles detected"
+        ],
+        "recommendation": "Strong extraction. Ready to confirm and compile."
+      },
+      "extraction_summary": {
+        "colors": 13,
+        "typography": 5,
+        "logos": 1,
+        "tokens": 15,
+        "stylesheets_parsed": 4
+      },
+      "colors": [
+        {
+          "name": "Surface",
+          "hex": "#ffffff",
+          "role": "surface",
+          "confidence": "high"
+        },
+        {
+          "name": "Text",
+          "hex": "#000000",
+          "role": "text",
+          "confidence": "high"
+        },
+        {
+          "name": "thd color blue 70",
+          "hex": "#1868db",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "thd color green 50",
+          "hex": "#82b536",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Blue",
+          "hex": "#3b82f6",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color grey 50",
+          "hex": "#8c8f97",
+          "role": "neutral",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color violet 30",
+          "hex": "#d8a0f7",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color violet 50",
+          "hex": "#bf63f3",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color violet 60",
+          "hex": "#af59e1",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color violet 80",
+          "hex": "#803fa5",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color yellow 50",
+          "hex": "#eb9100",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color green 60",
+          "hex": "#6a9a23",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "thd color record",
+          "hex": "#ff613d",
+          "role": "unknown",
+          "confidence": "medium"
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Charlie Display",
+          "confidence": "high"
+        },
+        {
+          "family": "Charlie Text",
+          "confidence": "high"
+        },
+        {
+          "family": "Roboto",
+          "confidence": "low"
+        },
+        {
+          "family": "Helvetica Neue",
+          "confidence": "low"
+        },
+        {
+          "family": "Arial",
+          "confidence": "low"
+        }
+      ],
+      "logo_found": true,
+      "clarifications": {
+        "total": 4,
+        "high_priority": 0
+      },
+      "files_written": [
+        "assets",
+        "brand-report.html",
+        "brand-runtime.json",
+        "brand.config.yaml",
+        "core-identity.yaml",
+        "interaction-policy.json",
+        "needs-clarification.yaml",
+        "tokens.json",
+        "assets/logo",
+        "assets/logo/logo-selector-svg.svg"
+      ],
+      "token_count": 15,
+      "runtime_sessions": 1,
+      "has_runtime": true,
+      "has_policy": true
+    }
+  ]
+}
