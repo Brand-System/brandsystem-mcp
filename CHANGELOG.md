@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.4 (2026-04-06)
+
+### Fixed
+- **Feedback body persistence (B1):** `detail` field expanded from 2,000 to 10,000 characters. Added `message` as an alias field. Agents can use either; both merge if provided. Previously only the 200-char `summary` survived to disk.
+- **Alpha color grouping (F1):** CSS parser now consolidates `#rrggbbaa` variants into their `#rrggbb` parent color. Alpha tints (e.g., `#f48fb133`, `#f48fb11a`) merge into the base color's frequency count instead of appearing as separate `role: unknown` entries.
+- **Feedback schema documented (F2):** README Troubleshooting section now includes a `brand_feedback` usage example with all required and optional fields.
+
+### Known Issues
+- Logo SVG gradient stops may extract with empty `stop-color` attributes, rendering as black rectangles. Workaround: use `brand_set_logo` with the correct SVG. Fix tracked in Lane I (extraction quality audit, ticket I4).
+
 ## 0.3.3 (2026-04-05)
 
 ### Improved
