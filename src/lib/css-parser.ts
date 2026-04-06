@@ -374,7 +374,7 @@ export function inferColorConfidence(
 /** Infer role from CSS property/variable name, then fall back to value heuristics */
 export function inferColorRole(
   color: ExtractedColor & { _promoted_role?: string }
-): "primary" | "secondary" | "accent" | "neutral" | "surface" | "text" | "action" | "unknown" {
+): "primary" | "secondary" | "accent" | "neutral" | "surface" | "text" | "action" | "tint" | "overlay" | "border" | "gradient" | "highlight" | "unknown" {
   // Promotion override from promotePrimaryColor()
   if (color._promoted_role === "primary") return "primary";
 
@@ -388,6 +388,11 @@ export function inferColorRole(
   if (prop.includes("surface") || prop.includes("bg") || prop.includes("background")) return "surface";
   if (prop.includes("text") || prop.includes("foreground")) return "text";
   if (prop.includes("action") || prop.includes("cta") || prop.includes("button")) return "action";
+  if (prop.includes("tint") || prop.includes("alpha") || prop.includes("opacity")) return "tint";
+  if (prop.includes("overlay")) return "overlay";
+  if (prop.includes("border") || prop.includes("divider") || prop.includes("separator")) return "border";
+  if (prop.includes("gradient")) return "gradient";
+  if (prop.includes("highlight") || prop.includes("focus") || prop.includes("selection")) return "highlight";
 
   // Value-based heuristics (when CSS names give no signal)
   if (isNearWhite(color.value)) return "surface";

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.6 (2026-04-06)
+
+### Fixed
+- **Expanded color role enum:** Added `tint`, `overlay`, `border`, `gradient`, `highlight` to the accepted roles in `brand_clarify`, core-identity schema, and CSS role inference. Agents no longer need to map tint/overlay colors to the nearest valid role.
+- **CSS role inference expanded:** The color extractor now detects tint/alpha, overlay, border/divider, gradient, and highlight/focus roles from CSS variable names.
+
+### Improved
+- **brand_clarify param description:** Now lists all 12 valid roles so agents know the full vocabulary.
+
 ## 0.3.5 (2026-04-06)
 
 ### Improved

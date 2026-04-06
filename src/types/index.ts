@@ -4,7 +4,7 @@ export type Source = "web" | "figma" | "manual";
 export interface ColorEntry {
   name: string;
   value: string; // hex
-  role: "primary" | "secondary" | "accent" | "neutral" | "surface" | "text" | "action" | "unknown";
+  role: "primary" | "secondary" | "accent" | "neutral" | "surface" | "text" | "action" | "tint" | "overlay" | "border" | "gradient" | "highlight" | "unknown";
   source: Source;
   confidence: Confidence;
   figma_variable_id?: string;

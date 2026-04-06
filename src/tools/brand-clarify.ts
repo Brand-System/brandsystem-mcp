@@ -10,14 +10,14 @@ import type { CoreIdentityData } from "../schemas/index.js";
 
 const paramsShape = {
   id: z.string().describe("Clarification item ID from needs-clarification.yaml (e.g. 'clarify-1')"),
-  answer: z.string().describe("The user's answer: a hex color (#ff0000), a role name (primary, secondary, accent), a font name, 'yes'/'no', or natural language ('the purple one is accent, the dark one is neutral')"),
+  answer: z.string().describe("The user's answer: a hex color (#ff0000), a role name (primary, secondary, accent, neutral, surface, text, action, tint, overlay, border, gradient, highlight), a font name, 'yes'/'no', or natural language ('the purple one is accent, the pink transparents are tint')"),
 };
 
 const ParamsSchema = z.object(paramsShape);
 type Params = z.infer<typeof ParamsSchema>;
 
 const HEX_RE = /^#[0-9a-fA-F]{3,8}$/;
-const VALID_ROLES = ["primary", "secondary", "accent", "neutral", "surface", "text", "action"] as const;
+const VALID_ROLES = ["primary", "secondary", "accent", "neutral", "surface", "text", "action", "tint", "overlay", "border", "gradient", "highlight"] as const;
 type ColorRole = (typeof VALID_ROLES)[number];
 
 function isValidRole(s: string): s is ColorRole {

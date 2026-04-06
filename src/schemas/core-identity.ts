@@ -8,7 +8,9 @@ export const ColorEntrySchema = z.object({
   value: z.string().regex(/^#[0-9a-fA-F]{3,8}$/, "Must be a valid hex color"),
   role: z.enum([
     "primary", "secondary", "accent", "neutral",
-    "surface", "text", "action", "unknown",
+    "surface", "text", "action",
+    "tint", "overlay", "border", "gradient", "highlight",
+    "unknown",
   ]),
   source: SourceEnum,
   confidence: ConfidenceEnum,
