@@ -240,11 +240,7 @@ async function handleRecord(
 
   // Read or create strategy
   let strategy: ContentStrategyData;
-  if (await brandDir.hasStrategy()) {
-    strategy = await brandDir.readStrategy();
-  } else {
-    strategy = getEmptyStrategy();
-  }
+  strategy = await brandDir.readOrCreateStrategy();
 
   // Ensure personas array exists
   if (!strategy.personas) {
@@ -374,6 +370,14 @@ async function handleRecord(
 
   // Write back
   await brandDir.writeStrategy(strategy);
+
+  try {
+    const config = await brandDir.readConfig();
+    if (config.session < 4) {
+      config.session = 4;
+      await brandDir.writeConfig(config);
+    }
+  } catch { /* non-fatal */ }
 
   const totalPersonas = strategy.personas.length;
 

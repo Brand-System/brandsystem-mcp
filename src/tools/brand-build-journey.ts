@@ -229,21 +229,18 @@ async function handleRecord(brandDir: BrandDir, answersRaw?: string | Record<str
 
   // Read or create strategy.yaml, merging journey_stages without overwriting other fields
   let strategy: ContentStrategy;
-  if (await brandDir.hasStrategy()) {
-    strategy = await brandDir.readStrategy();
-    strategy.journey_stages = stages;
-  } else {
-    strategy = {
-      schema_version: SCHEMA_VERSION,
-      session: 4,
-      personas: [],
-      journey_stages: stages,
-      messaging_matrix: [],
-      themes: [],
-    };
-  }
+  strategy = await brandDir.readOrCreateStrategy();
+  strategy.journey_stages = stages;
 
   await brandDir.writeStrategy(strategy);
+
+  try {
+    const config = await brandDir.readConfig();
+    if (config.session < 4) {
+      config.session = 4;
+      await brandDir.writeConfig(config);
+    }
+  } catch { /* non-fatal */ }
 
   const isDefaults = !answersRaw;
   const stageNames = stages.map((s) => s.name);

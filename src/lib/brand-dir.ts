@@ -216,6 +216,29 @@ export class BrandDir {
     }
   }
 
+  /**
+   * Read existing strategy or create a new empty one atomically.
+   * Prevents race condition where two Session 4 tools both check hasStrategy(),
+   * both get false, and the second write clobbers the first.
+   */
+  async readOrCreateStrategy(): Promise<ContentStrategyData> {
+    return this.withLock("strategy.yaml", async () => {
+      if (await this.hasStrategy()) {
+        return this.readStrategy();
+      }
+      const empty: ContentStrategyData = {
+        schema_version: SCHEMA_VERSION,
+        session: 4,
+        personas: [],
+        journey_stages: [],
+        messaging_matrix: [],
+        themes: [],
+      };
+      await this.writeStrategy(empty);
+      return empty;
+    });
+  }
+
   // --- Runtime + Policy ---
 
   async readRuntime(): Promise<BrandRuntimeData> {

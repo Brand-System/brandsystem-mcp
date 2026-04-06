@@ -302,6 +302,14 @@ async function handleGenerate(brandDir: BrandDir) {
   strategy.messaging_matrix = variants;
   await brandDir.writeStrategy(strategy);
 
+  try {
+    const config = await brandDir.readConfig();
+    if (config.session < 4) {
+      config.session = 4;
+      await brandDir.writeConfig(config);
+    }
+  } catch { /* non-fatal */ }
+
   // Build summary grid for the response
   const grid: Record<string, Record<string, string>> = {};
   for (const v of variants) {
@@ -528,6 +536,14 @@ async function handleEdit(brandDir: BrandDir, variantId: string, answersRaw: str
   // Write back
   strategy.messaging_matrix[idx] = variant;
   await brandDir.writeStrategy(strategy);
+
+  try {
+    const config = await brandDir.readConfig();
+    if (config.session < 4) {
+      config.session = 4;
+      await brandDir.writeConfig(config);
+    }
+  } catch { /* non-fatal */ }
 
   // Get persona/stage names for context
   const personaName = strategy.personas.find((p) => p.id === variant.persona)?.name || variant.persona;

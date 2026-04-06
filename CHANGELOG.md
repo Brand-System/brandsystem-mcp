@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.10 (2026-04-06)
+
+### Fixed
+- **Session 4 counter not advancing:** `brand_build_personas`, `brand_build_journey`, `brand_build_themes`, and `brand_build_matrix` now bump `brand.config.yaml` session to 4 after writing strategy data. Previously the counter stayed at 3 even after Session 4 completion.
+- **Strategy write race condition:** Session 4 tools now use `BrandDir.readOrCreateStrategy()` which reads or creates `strategy.yaml` under a lock. Prevents the second tool in a sequence from clobbering the first tool's data when both check `hasStrategy()` before either writes.
+
 ## 0.3.9 (2026-04-06)
 
 ### Fixed

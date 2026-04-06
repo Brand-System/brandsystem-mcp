@@ -316,11 +316,7 @@ async function handleRecord(
 
   // Read or create strategy
   let strategy: ContentStrategy;
-  if (await brandDir.hasStrategy()) {
-    strategy = await brandDir.readStrategy();
-  } else {
-    strategy = getEmptyStrategy();
-  }
+  strategy = await brandDir.readOrCreateStrategy();
 
   const isEdit = !!themeId;
   let targetId: string;
@@ -405,6 +401,14 @@ async function handleRecord(
   }
 
   await brandDir.writeStrategy(strategy);
+
+  try {
+    const config = await brandDir.readConfig();
+    if (config.session < 4) {
+      config.session = 4;
+      await brandDir.writeConfig(config);
+    }
+  } catch { /* non-fatal */ }
 
   const changes: string[] = [
     isEdit
