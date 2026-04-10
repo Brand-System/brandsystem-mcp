@@ -307,13 +307,26 @@ function analyzeVocabulary(
 
   const sorted = [...freq.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30);
 
+  // Common web/product terms that aren't distinctive even if frequent
+  const WEB_COMMON = new Set([
+    "product", "products", "team", "teams", "company", "companies",
+    "platform", "service", "services", "customers", "customer",
+    "feature", "features", "tool", "tools", "data", "time",
+    "work", "way", "new", "use", "get", "make", "start", "free",
+    "plan", "pricing", "contact", "support", "help", "learn",
+    "read", "more", "see", "try", "sign", "log", "about", "blog",
+    "home", "page", "site", "web", "app", "every", "everywhere",
+  ]);
+
   return sorted.map(([term, count]) => {
     let assessment: string;
     if (OVERUSED_WORDS.has(term)) {
       assessment = "overused-generic";
     } else if (JARGON_TERMS.has(term)) {
       assessment = "industry-jargon";
-    } else if (count >= 5) {
+    } else if (WEB_COMMON.has(term)) {
+      assessment = "neutral"; // frequent but not distinctive
+    } else if (count >= 3) {
       assessment = "potentially-distinctive";
     } else {
       assessment = "neutral";
@@ -678,13 +691,19 @@ async function handler(input: Params) {
       total_words: words.length,
       voice_fingerprint: {
         formality: `${voiceFingerprint.formality}/10`,
+        formality_context: voiceFingerprint.formality >= 7 ? "Formal — similar to enterprise SaaS or professional services"
+          : voiceFingerprint.formality >= 4 ? "Conversational — similar to DTC or consumer tech"
+          : "Casual — similar to community brands or social-first companies",
         avg_sentence_length: `${voiceFingerprint.avg_sentence_length} words`,
         active_voice: `${voiceFingerprint.active_voice_pct}%`,
+        hedging_frequency: voiceFingerprint.hedging_frequency,
+        jargon_density: voiceFingerprint.jargon_density,
         dominant_person: voiceFingerprint.tone_by_channel["dominant_person"] || "n/a",
       },
       vocabulary: {
         distinctive_terms: topDistinctive,
         overused_terms: topOverused,
+        total_unique_terms: vocabularyFrequency.length,
       },
       claims_summary: {
         explicit_count: claims.explicit.length,

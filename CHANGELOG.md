@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.17 (2026-04-10)
+
+### Improved
+- **Voice extraction audit (I6).** `brand_extract_messaging` response now includes hedging frequency, jargon density, formality context ("Formal — similar to enterprise SaaS"), and total unique term count. Distinctive term detection filters common web/product vocabulary ("product", "team", "features") to surface actually distinctive brand language. Lowered threshold from 5 to 3 occurrences for distinctive classification.
+- **Known gap:** Text extraction from HTML DOM can include rendered JavaScript state (e.g., React component names). Deeper HTML text extraction filtering needed for cleaner vocabulary analysis.
+
 ## 0.3.16 (2026-04-10)
 
 ### Improved
