@@ -1,27 +1,27 @@
 {
   "version": "0.3.12",
-  "date": "2026-04-10T00:40:17.176Z",
+  "date": "2026-04-10T00:52:16.483Z",
   "brands_tested": 10,
   "totals": {
-    "colors": 71,
+    "colors": 87,
     "fonts": 49,
     "logos": 10
   },
   "avg_quality": "7.4",
-  "avg_duration_ms": 924,
+  "avg_duration_ms": 886,
   "logo_detection_rate": 100,
   "issues": [
+    {
+      "brand": "Notion",
+      "issue": "10/15 colors have unknown role (>50%)"
+    },
     {
       "brand": "Basecamp",
       "issue": "Zero colors extracted"
     },
     {
       "brand": "Superhuman",
-      "issue": "5/9 colors have unknown role (>50%)"
-    },
-    {
-      "brand": "Loom",
-      "issue": "8/12 colors have unknown role (>50%)"
+      "issue": "9/14 colors have unknown role (>50%)"
     }
   ],
   "results": [
@@ -30,21 +30,21 @@
       "url": "https://linear.app",
       "category": "SaaS",
       "css_pattern": "Tailwind/CSS-in-JS",
-      "duration_ms": 1064,
+      "duration_ms": 1104,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
         "points": 8,
         "reasons": [
           "Logo found with inline SVG",
-          "6 colors extracted",
+          "7 colors extracted",
           "5 fonts extracted",
           "Both surface and text color roles detected"
         ],
         "recommendation": "Strong extraction. Ready to confirm and compile."
       },
       "extraction_summary": {
-        "colors": 6,
+        "colors": 7,
         "typography": 5,
         "logos": 1,
         "tokens": 8,
@@ -85,6 +85,12 @@
           "name": "Accent",
           "hex": "#7170ff",
           "role": "accent",
+          "confidence": "medium"
+        },
+        {
+          "name": "Blue",
+          "hex": "#4ea7fc",
+          "role": "unknown",
           "confidence": "medium"
         }
       ],
@@ -137,7 +143,7 @@
       "url": "https://stripe.com",
       "category": "Fintech",
       "css_pattern": "Custom CSS",
-      "duration_ms": 1157,
+      "duration_ms": 2039,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
@@ -277,14 +283,14 @@
       "url": "https://notion.so",
       "category": "Productivity",
       "css_pattern": "CSS modules",
-      "duration_ms": 1190,
+      "duration_ms": 1814,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
         "points": 9,
         "reasons": [
           "Logo found with inline SVG",
-          "6 colors extracted",
+          "15 colors extracted",
           "5 fonts extracted",
           "Primary color candidate identified",
           "Both surface and text color roles detected"
@@ -292,10 +298,10 @@
         "recommendation": "Strong extraction. Ready to confirm and compile."
       },
       "extraction_summary": {
-        "colors": 6,
+        "colors": 15,
         "typography": 5,
         "logos": 1,
-        "tokens": 10,
+        "tokens": 19,
         "stylesheets_parsed": 6
       },
       "colors": [
@@ -312,6 +318,12 @@
           "confidence": "high"
         },
         {
+          "name": "Blue",
+          "hex": "#394ea3",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
           "name": "Surface",
           "hex": "#ffffff",
           "role": "surface",
@@ -319,19 +331,67 @@
         },
         {
           "name": "Neutral",
-          "hex": "#f9f9f8",
+          "hex": "#78736f",
           "role": "neutral",
-          "confidence": "medium"
-        },
-        {
-          "name": "Light Red",
-          "hex": "#fdd3cd",
-          "role": "unknown",
-          "confidence": "medium"
+          "confidence": "high"
         },
         {
           "name": "Coral",
-          "hex": "#ff8b7c",
+          "hex": "#f64932",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Orange",
+          "hex": "#ff6d00",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Amber",
+          "hex": "#ffb110",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Teal",
+          "hex": "#27918d",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Indigo",
+          "hex": "#9849e8",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Green",
+          "hex": "#1aae39",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Magenta",
+          "hex": "#ff64c8",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Vermilion",
+          "hex": "#9c7054",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "Tint",
+          "hex": "#fff3",
+          "role": "tint",
+          "confidence": "medium"
+        },
+        {
+          "name": "Red",
+          "hex": "#fff0",
           "role": "unknown",
           "confidence": "medium"
         }
@@ -375,7 +435,7 @@
         "assets/logo",
         "assets/logo/logo-selector-svg.svg"
       ],
-      "token_count": 10,
+      "token_count": 19,
       "runtime_sessions": 1,
       "has_runtime": true,
       "has_policy": true
@@ -385,14 +445,14 @@
       "url": "https://vercel.com",
       "category": "Developer tools",
       "css_pattern": "Tailwind/CSS vars",
-      "duration_ms": 666,
+      "duration_ms": 557,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
         "points": 9,
         "reasons": [
           "Logo found with inline SVG",
-          "10 colors extracted",
+          "12 colors extracted",
           "5 fonts extracted",
           "Primary color candidate identified",
           "Both surface and text color roles detected"
@@ -400,10 +460,10 @@
         "recommendation": "Strong extraction. Ready to confirm and compile."
       },
       "extraction_summary": {
-        "colors": 10,
+        "colors": 12,
         "typography": 5,
         "logos": 1,
-        "tokens": 15,
+        "tokens": 17,
         "stylesheets_parsed": 6
       },
       "colors": [
@@ -414,15 +474,15 @@
           "confidence": "high"
         },
         {
-          "name": "scroller end",
-          "hex": "#0000",
-          "role": "primary",
+          "name": "accents 5 (scale: accents, representative)",
+          "hex": "#666666",
+          "role": "accent",
           "confidence": "high"
         },
         {
-          "name": "accents 8",
-          "hex": "#111111",
-          "role": "accent",
+          "name": "scroller end",
+          "hex": "#0000",
+          "role": "primary",
           "confidence": "high"
         },
         {
@@ -432,16 +492,16 @@
           "confidence": "high"
         },
         {
+          "name": "scroller 4 (scale: scroller, representative)",
+          "hex": "#fff0",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
           "name": "geist console text color pink",
           "hex": "#eb367f",
           "role": "text",
           "confidence": "high"
-        },
-        {
-          "name": "scroller 4",
-          "hex": "#fff0",
-          "role": "unknown",
-          "confidence": "medium"
         },
         {
           "name": "geist success light",
@@ -465,6 +525,18 @@
           "name": "geist highlight pink",
           "hex": "#ff0080",
           "role": "highlight",
+          "confidence": "medium"
+        },
+        {
+          "name": "ship end gradient",
+          "hex": "#f9cb28",
+          "role": "gradient",
+          "confidence": "medium"
+        },
+        {
+          "name": "geist violet background secondary",
+          "hex": "#211830",
+          "role": "secondary",
           "confidence": "medium"
         }
       ],
@@ -507,7 +579,7 @@
         "assets/logo",
         "assets/logo/logo-selector-img.svg"
       ],
-      "token_count": 15,
+      "token_count": 17,
       "runtime_sessions": 1,
       "has_runtime": true,
       "has_policy": true
@@ -517,7 +589,7 @@
       "url": "https://figma.com",
       "category": "Design",
       "css_pattern": "Custom/complex",
-      "duration_ms": 568,
+      "duration_ms": 689,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
@@ -612,7 +684,7 @@
       "url": "https://basecamp.com",
       "category": "Project mgmt",
       "css_pattern": "Traditional CSS",
-      "duration_ms": 453,
+      "duration_ms": 509,
       "error": null,
       "extraction_quality": {
         "score": "LOW",
@@ -681,7 +753,7 @@
       "url": "https://arc.net",
       "category": "Browser",
       "css_pattern": "Modern CSS",
-      "duration_ms": 347,
+      "duration_ms": 369,
       "error": null,
       "extraction_quality": {
         "score": "MEDIUM",
@@ -776,14 +848,14 @@
       "url": "https://superhuman.com",
       "category": "Email",
       "css_pattern": "Custom",
-      "duration_ms": 2319,
+      "duration_ms": 655,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
         "points": 9,
         "reasons": [
           "Logo found with inline SVG",
-          "9 colors extracted",
+          "14 colors extracted",
           "5 fonts extracted",
           "Primary color candidate identified",
           "Both surface and text color roles detected"
@@ -791,13 +863,73 @@
         "recommendation": "Strong extraction. Ready to confirm and compile."
       },
       "extraction_summary": {
-        "colors": 9,
+        "colors": 14,
         "typography": 5,
         "logos": 1,
-        "tokens": 12,
+        "tokens": 16,
         "stylesheets_parsed": 6
       },
       "colors": [
+        {
+          "name": "neutral 40 (scale: neutral, representative)",
+          "hex": "#8d8a86",
+          "role": "neutral",
+          "confidence": "high"
+        },
+        {
+          "name": "purple 50 (scale: purple, representative)",
+          "hex": "#8861ca",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "mulberry 40 (scale: mulberry, representative)",
+          "hex": "#bf6193",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "blue 40 (scale: blue, representative)",
+          "hex": "#4198d2",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "green 40 (scale: green, representative)",
+          "hex": "#26a28b",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "orange 40 (scale: orange, representative)",
+          "hex": "#f18333",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "red 40 (scale: red, representative)",
+          "hex": "#f72a42",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "yellow 40 (scale: yellow, representative)",
+          "hex": "#f5c428",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "gold pro 40 (scale: pro, representative)",
+          "hex": "#ffa10a",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "sky 40 (scale: sky, representative)",
+          "hex": "#62abff",
+          "role": "unknown",
+          "confidence": "high"
+        },
         {
           "name": "white",
           "hex": "#ffffff",
@@ -805,52 +937,22 @@
           "confidence": "medium"
         },
         {
-          "name": "neutral 0",
-          "hex": "#fcfaf7",
-          "role": "neutral",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 10",
-          "hex": "#ffdcf3",
-          "role": "primary",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 20",
-          "hex": "#f6aadd",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 30",
-          "hex": "#da7cb4",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 40",
-          "hex": "#bf6193",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 60",
-          "hex": "#8d3d62",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 80",
-          "hex": "#792d4b",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "mulberry 90",
-          "hex": "#602639",
+          "name": "mulberry black",
+          "hex": "#241013",
           "role": "text",
           "confidence": "medium"
+        },
+        {
+          "name": "olive",
+          "hex": "#4f5022",
+          "role": "unknown",
+          "confidence": "medium"
+        },
+        {
+          "name": "neutral 0 (scale: neutral 0, tint of #8d8a86)",
+          "hex": "#fcfaf7",
+          "role": "tint",
+          "confidence": "low"
         }
       ],
       "fonts": [
@@ -877,7 +979,7 @@
       ],
       "logo_found": true,
       "clarifications": {
-        "total": 3,
+        "total": 4,
         "high_priority": 0
       },
       "files_written": [
@@ -892,7 +994,7 @@
         "assets/logo",
         "assets/logo/logo-selector-svg.svg"
       ],
-      "token_count": 12,
+      "token_count": 16,
       "runtime_sessions": 1,
       "has_runtime": true,
       "has_policy": true
@@ -902,7 +1004,7 @@
       "url": "https://cal.com",
       "category": "Scheduling",
       "css_pattern": "Tailwind",
-      "duration_ms": 848,
+      "duration_ms": 553,
       "error": null,
       "extraction_quality": {
         "score": "MEDIUM",
@@ -1022,14 +1124,14 @@
       "url": "https://loom.com",
       "category": "Video",
       "css_pattern": "Mixed",
-      "duration_ms": 632,
+      "duration_ms": 573,
       "error": null,
       "extraction_quality": {
         "score": "HIGH",
         "points": 9,
         "reasons": [
           "Logo found with inline SVG",
-          "12 colors extracted",
+          "11 colors extracted",
           "5 fonts extracted",
           "Primary color candidate identified",
           "Both surface and text color roles detected"
@@ -1037,13 +1139,25 @@
         "recommendation": "Strong extraction. Ready to confirm and compile."
       },
       "extraction_summary": {
-        "colors": 12,
+        "colors": 11,
         "typography": 5,
         "logos": 1,
-        "tokens": 14,
+        "tokens": 11,
         "stylesheets_parsed": 4
       },
       "colors": [
+        {
+          "name": "thd color violet 60 (scale: violet, representative)",
+          "hex": "#af59e1",
+          "role": "primary",
+          "confidence": "high"
+        },
+        {
+          "name": "thd color blue 60 (scale: blue, representative)",
+          "hex": "#357de8",
+          "role": "unknown",
+          "confidence": "high"
+        },
         {
           "name": "thd color white",
           "hex": "#ffffff",
@@ -1051,9 +1165,21 @@
           "confidence": "high"
         },
         {
-          "name": "thd color blue 70",
-          "hex": "#1868db",
-          "role": "primary",
+          "name": "thd color green 60 (scale: green, representative)",
+          "hex": "#6a9a23",
+          "role": "unknown",
+          "confidence": "high"
+        },
+        {
+          "name": "thd color grey 60 (scale: grey, representative)",
+          "hex": "#7d818a",
+          "role": "neutral",
+          "confidence": "high"
+        },
+        {
+          "name": "thd color yellow 60 (scale: yellow, representative)",
+          "hex": "#c77b00",
+          "role": "unknown",
           "confidence": "high"
         },
         {
@@ -1063,58 +1189,28 @@
           "confidence": "high"
         },
         {
-          "name": "thd color green 50",
-          "hex": "#82b536",
-          "role": "unknown",
-          "confidence": "high"
-        },
-        {
-          "name": "thd color grey 50",
-          "hex": "#8c8f97",
-          "role": "neutral",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color violet 30",
-          "hex": "#d8a0f7",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color violet 50",
-          "hex": "#bf63f3",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color violet 60",
-          "hex": "#af59e1",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color violet 80",
-          "hex": "#803fa5",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color yellow 50",
-          "hex": "#eb9100",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
-          "name": "thd color green 60",
-          "hex": "#6a9a23",
-          "role": "unknown",
-          "confidence": "medium"
-        },
-        {
           "name": "thd color record",
           "hex": "#ff613d",
           "role": "unknown",
           "confidence": "medium"
+        },
+        {
+          "name": "thd color button ol",
+          "hex": "#a3c3f1",
+          "role": "action",
+          "confidence": "medium"
+        },
+        {
+          "name": "Border",
+          "hex": "#999999",
+          "role": "border",
+          "confidence": "low"
+        },
+        {
+          "name": "Blue",
+          "hex": "#3b82f6",
+          "role": "unknown",
+          "confidence": "low"
         }
       ],
       "fonts": [
@@ -1141,7 +1237,7 @@
       ],
       "logo_found": true,
       "clarifications": {
-        "total": 4,
+        "total": 6,
         "high_priority": 0
       },
       "files_written": [
@@ -1156,7 +1252,7 @@
         "assets/logo",
         "assets/logo/logo-selector-svg.svg"
       ],
-      "token_count": 14,
+      "token_count": 11,
       "runtime_sessions": 1,
       "has_runtime": true,
       "has_policy": true

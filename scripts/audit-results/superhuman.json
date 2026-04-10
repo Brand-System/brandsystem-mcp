@@ -3,14 +3,14 @@
   "url": "https://superhuman.com",
   "category": "Email",
   "css_pattern": "Custom",
-  "duration_ms": 2319,
+  "duration_ms": 655,
   "error": null,
   "extraction_quality": {
     "score": "HIGH",
     "points": 9,
     "reasons": [
       "Logo found with inline SVG",
-      "9 colors extracted",
+      "14 colors extracted",
       "5 fonts extracted",
       "Primary color candidate identified",
       "Both surface and text color roles detected"
@@ -18,13 +18,73 @@
     "recommendation": "Strong extraction. Ready to confirm and compile."
   },
   "extraction_summary": {
-    "colors": 9,
+    "colors": 14,
     "typography": 5,
     "logos": 1,
-    "tokens": 12,
+    "tokens": 16,
     "stylesheets_parsed": 6
   },
   "colors": [
+    {
+      "name": "neutral 40 (scale: neutral, representative)",
+      "hex": "#8d8a86",
+      "role": "neutral",
+      "confidence": "high"
+    },
+    {
+      "name": "purple 50 (scale: purple, representative)",
+      "hex": "#8861ca",
+      "role": "primary",
+      "confidence": "high"
+    },
+    {
+      "name": "mulberry 40 (scale: mulberry, representative)",
+      "hex": "#bf6193",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "blue 40 (scale: blue, representative)",
+      "hex": "#4198d2",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "green 40 (scale: green, representative)",
+      "hex": "#26a28b",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "orange 40 (scale: orange, representative)",
+      "hex": "#f18333",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "red 40 (scale: red, representative)",
+      "hex": "#f72a42",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "yellow 40 (scale: yellow, representative)",
+      "hex": "#f5c428",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "gold pro 40 (scale: pro, representative)",
+      "hex": "#ffa10a",
+      "role": "unknown",
+      "confidence": "high"
+    },
+    {
+      "name": "sky 40 (scale: sky, representative)",
+      "hex": "#62abff",
+      "role": "unknown",
+      "confidence": "high"
+    },
     {
       "name": "white",
       "hex": "#ffffff",
@@ -32,52 +92,22 @@
       "confidence": "medium"
     },
     {
-      "name": "neutral 0",
-      "hex": "#fcfaf7",
-      "role": "neutral",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 10",
-      "hex": "#ffdcf3",
-      "role": "primary",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 20",
-      "hex": "#f6aadd",
-      "role": "unknown",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 30",
-      "hex": "#da7cb4",
-      "role": "unknown",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 40",
-      "hex": "#bf6193",
-      "role": "unknown",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 60",
-      "hex": "#8d3d62",
-      "role": "unknown",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 80",
-      "hex": "#792d4b",
-      "role": "unknown",
-      "confidence": "medium"
-    },
-    {
-      "name": "mulberry 90",
-      "hex": "#602639",
+      "name": "mulberry black",
+      "hex": "#241013",
       "role": "text",
       "confidence": "medium"
+    },
+    {
+      "name": "olive",
+      "hex": "#4f5022",
+      "role": "unknown",
+      "confidence": "medium"
+    },
+    {
+      "name": "neutral 0 (scale: neutral 0, tint of #8d8a86)",
+      "hex": "#fcfaf7",
+      "role": "tint",
+      "confidence": "low"
     }
   ],
   "fonts": [
@@ -104,7 +134,7 @@
   ],
   "logo_found": true,
   "clarifications": {
-    "total": 3,
+    "total": 4,
     "high_priority": 0
   },
   "files_written": [
@@ -119,7 +149,7 @@
     "assets/logo",
     "assets/logo/logo-selector-svg.svg"
   ],
-  "token_count": 12,
+  "token_count": 16,
   "runtime_sessions": 1,
   "has_runtime": true,
   "has_policy": true

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.14 (2026-04-10)
+
+### Improved
+- **Design token scale grouping (I2).** Detects `{hue} {scale}` patterns in CSS variable names (e.g., `mulberry 30`, `violet-50`, `blue 700`). Groups colors by hue, keeps the median-scale value as the representative, folds the rest as tints. Reduces the number of `unknown` role colors for brands using modern design token systems (Loom: 9/13 unknown → 5/11, Superhuman: scale members consolidated to single representatives).
+
 ## 0.3.13 (2026-04-10)
 
 ### Improved

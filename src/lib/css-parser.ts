@@ -282,6 +282,49 @@ export function extractFromCSS(cssText: string): {
     }
   }
 
+  // Detect design token scale patterns: "mulberry 30", "violet-50", "blue 700"
+  // Group colors by hue name, keep the median-scale value as representative,
+  // fold the rest as tints with boosted frequency on the representative.
+  const scalePattern = /^--[\w-]*?(?:color[- ]?)?(\w+)[- ](\d+)$/i;
+  const hueGroups = new Map<string, Array<{ hex: string; scale: number; color: ExtractedColor }>>();
+
+  for (const [hex, color] of colorMap) {
+    const match = color.property.match(scalePattern);
+    if (match) {
+      const hueName = match[1].toLowerCase();
+      const scale = parseInt(match[2], 10);
+      if (!hueGroups.has(hueName)) hueGroups.set(hueName, []);
+      hueGroups.get(hueName)!.push({ hex, scale, color });
+    }
+  }
+
+  for (const [hueName, group] of hueGroups) {
+    if (group.length < 2) continue; // need 2+ to form a scale
+
+    // Sort by scale number
+    group.sort((a, b) => a.scale - b.scale);
+
+    // Pick the median as the representative color
+    const medianIdx = Math.floor(group.length / 2);
+    const representative = group[medianIdx];
+
+    // Boost representative frequency with all scale members' frequency
+    for (let i = 0; i < group.length; i++) {
+      if (i === medianIdx) continue;
+      const member = group[i];
+      representative.color.frequency += member.color.frequency;
+      // Mark non-representative as tint and reduce to zero frequency
+      // so they sort below the representative
+      member.color.frequency = 0;
+      member.color.source_type = "computed"; // demote from css-variable
+      // Tag the property so inferColorRole can detect it as a tint
+      member.color.property = `${member.color.property} (scale: ${hueName} ${member.scale}, tint of ${representative.hex})`;
+    }
+
+    // Tag the representative so it can be inferred as the hue's role
+    representative.color.property = `${representative.color.property} (scale: ${hueName}, representative)`;
+  }
+
   // Sort with priority: css-variable > structural > computed, then by frequency
   const sourceWeight = (t: string) => t === "css-variable" ? 100 : t === "structural" ? 50 : 0;
   const colors = Array.from(colorMap.values()).sort(
@@ -422,19 +465,25 @@ export function inferColorRole(
 
   const prop = color.property.toLowerCase();
 
-  // CSS variable name heuristics
-  if (prop.includes("primary") || prop.includes("brand")) return "primary";
-  if (prop.includes("secondary")) return "secondary";
-  if (prop.includes("accent")) return "accent";
-  if (prop.includes("neutral") || prop.includes("gray") || prop.includes("grey")) return "neutral";
-  if (prop.includes("surface") || prop.includes("bg") || prop.includes("background")) return "surface";
-  if (prop.includes("text") || prop.includes("foreground")) return "text";
-  if (prop.includes("action") || prop.includes("cta") || prop.includes("button")) return "action";
-  if (prop.includes("tint") || prop.includes("alpha") || prop.includes("opacity")) return "tint";
-  if (prop.includes("overlay")) return "overlay";
-  if (prop.includes("border") || prop.includes("divider") || prop.includes("separator")) return "border";
-  if (prop.includes("gradient")) return "gradient";
-  if (prop.includes("highlight") || prop.includes("focus") || prop.includes("selection")) return "highlight";
+  // Scale grouping: non-representative scale members are tints
+  if (prop.includes("(scale:") && prop.includes("tint of")) return "tint";
+  // Scale representative: strip the tag and continue normal inference
+  const cleanProp = prop.replace(/\s*\(scale:.*\)/, "");
+
+  // CSS variable name heuristics (use cleanProp which strips scale tags)
+  const p = cleanProp || prop;
+  if (p.includes("primary") || p.includes("brand")) return "primary";
+  if (p.includes("secondary")) return "secondary";
+  if (p.includes("accent")) return "accent";
+  if (p.includes("neutral") || p.includes("gray") || p.includes("grey")) return "neutral";
+  if (p.includes("surface") || p.includes("bg") || p.includes("background")) return "surface";
+  if (p.includes("text") || p.includes("foreground")) return "text";
+  if (p.includes("action") || p.includes("cta") || p.includes("button")) return "action";
+  if (p.includes("tint") || p.includes("alpha") || p.includes("opacity")) return "tint";
+  if (p.includes("overlay")) return "overlay";
+  if (p.includes("border") || p.includes("divider") || p.includes("separator")) return "border";
+  if (p.includes("gradient")) return "gradient";
+  if (p.includes("highlight") || p.includes("focus") || p.includes("selection")) return "highlight";
 
   // Value-based heuristics (when CSS names give no signal)
   if (isNearWhite(color.value)) return "surface";
