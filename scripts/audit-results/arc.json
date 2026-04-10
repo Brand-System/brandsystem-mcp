@@ -3,7 +3,7 @@
   "url": "https://arc.net",
   "category": "Browser",
   "css_pattern": "Modern CSS",
-  "duration_ms": 369,
+  "duration_ms": 498,
   "error": null,
   "extraction_quality": {
     "score": "MEDIUM",
@@ -11,16 +11,16 @@
     "reasons": [
       "Logo found but not as inline SVG",
       "4 colors extracted",
-      "5 fonts extracted",
+      "8 fonts extracted",
       "Both surface and text color roles detected"
     ],
     "recommendation": "Decent extraction but some gaps. Consider Figma extraction for higher accuracy."
   },
   "extraction_summary": {
     "colors": 4,
-    "typography": 5,
+    "typography": 8,
     "logos": 1,
-    "tokens": 9,
+    "tokens": 12,
     "stylesheets_parsed": 2
   },
   "colors": [
@@ -46,20 +46,12 @@
       "name": "Secondary",
       "hex": "#00eae7",
       "role": "secondary",
-      "confidence": "medium"
+      "confidence": "high"
     }
   ],
   "fonts": [
     {
-      "family": "var(--fonts-softSans)",
-      "confidence": "high"
-    },
-    {
       "family": "Marlin Soft SQ",
-      "confidence": "high"
-    },
-    {
-      "family": "var(--fonts-body)",
       "confidence": "high"
     },
     {
@@ -69,6 +61,26 @@
     {
       "family": "ABC Favorit Mono",
       "confidence": "high"
+    },
+    {
+      "family": "Inter",
+      "confidence": "medium"
+    },
+    {
+      "family": "Exposure VAR",
+      "confidence": "medium"
+    },
+    {
+      "family": "Marlin Soft Basic",
+      "confidence": "medium"
+    },
+    {
+      "family": "Sohne Breit",
+      "confidence": "medium"
+    },
+    {
+      "family": "ABC Oracle",
+      "confidence": "medium"
     }
   ],
   "logo_found": true,
@@ -88,7 +100,7 @@
     "assets/logo",
     "assets/logo/logo-og-image.png"
   ],
-  "token_count": 9,
+  "token_count": 12,
   "runtime_sessions": 1,
   "has_runtime": true,
   "has_policy": true

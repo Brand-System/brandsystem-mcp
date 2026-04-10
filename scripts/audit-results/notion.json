@@ -3,7 +3,7 @@
   "url": "https://notion.so",
   "category": "Productivity",
   "css_pattern": "CSS modules",
-  "duration_ms": 1814,
+  "duration_ms": 1724,
   "error": null,
   "extraction_quality": {
     "score": "HIGH",
@@ -11,7 +11,7 @@
     "reasons": [
       "Logo found with inline SVG",
       "15 colors extracted",
-      "5 fonts extracted",
+      "6 fonts extracted",
       "Primary color candidate identified",
       "Both surface and text color roles detected"
     ],
@@ -19,9 +19,9 @@
   },
   "extraction_summary": {
     "colors": 15,
-    "typography": 5,
+    "typography": 6,
     "logos": 1,
-    "tokens": 19,
+    "tokens": 18,
     "stylesheets_parsed": 6
   },
   "colors": [
@@ -130,17 +130,21 @@
       "confidence": "medium"
     },
     {
-      "family": "var(--font-family-sans)",
-      "confidence": "medium"
+      "family": "Noto Sans Arabic",
+      "confidence": "low"
     },
     {
-      "family": "Noto Sans Arabic",
+      "family": "Noto Sans Hebrew",
+      "confidence": "low"
+    },
+    {
+      "family": "Permanent Marker",
       "confidence": "low"
     }
   ],
   "logo_found": true,
   "clarifications": {
-    "total": 2,
+    "total": 4,
     "high_priority": 0
   },
   "files_written": [
@@ -155,7 +159,7 @@
     "assets/logo",
     "assets/logo/logo-selector-svg.svg"
   ],
-  "token_count": 19,
+  "token_count": 18,
   "runtime_sessions": 1,
   "has_runtime": true,
   "has_policy": true

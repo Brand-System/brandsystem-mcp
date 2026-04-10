@@ -3,7 +3,7 @@
   "url": "https://basecamp.com",
   "category": "Project mgmt",
   "css_pattern": "Traditional CSS",
-  "duration_ms": 509,
+  "duration_ms": 499,
   "error": null,
   "extraction_quality": {
     "score": "LOW",
@@ -11,15 +11,15 @@
     "reasons": [
       "Logo found but not as inline SVG",
       "Fewer than 2 colors extracted",
-      "5 fonts extracted"
+      "4 fonts extracted"
     ],
     "recommendation": "Limited extraction. Try a different page URL, connect to Figma, or add your brand assets manually."
   },
   "extraction_summary": {
     "colors": 0,
-    "typography": 5,
+    "typography": 4,
     "logos": 1,
-    "tokens": 2,
+    "tokens": 1,
     "stylesheets_parsed": 6
   },
   "colors": [],
@@ -27,10 +27,6 @@
     {
       "family": "Graphik",
       "confidence": "high"
-    },
-    {
-      "family": "var(--font-family-graphik)",
-      "confidence": "medium"
     },
     {
       "family": "Sharpie",
@@ -62,7 +58,7 @@
     "assets/logo",
     "assets/logo/logo-apple-touch-icon.png"
   ],
-  "token_count": 2,
+  "token_count": 1,
   "runtime_sessions": 1,
   "has_runtime": true,
   "has_policy": true

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.16 (2026-04-10)
+
+### Improved
+- **Confidence model recalibrated (I5).** Replaced the simple source-type + frequency model with a multi-signal scoring approach. Confidence now factors in: source type, frequency, semantic role keywords in the property name, structural selector context (header, nav, hero), platform default detection (auto-low), page builder brand variable detection (auto-high), and scale representative status. Platform defaults no longer get `high` confidence just because they appear frequently.
+
 ## 0.3.15 (2026-04-10)
 
 ### Fixed

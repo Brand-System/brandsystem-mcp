@@ -3,7 +3,7 @@
   "url": "https://superhuman.com",
   "category": "Email",
   "css_pattern": "Custom",
-  "duration_ms": 655,
+  "duration_ms": 828,
   "error": null,
   "extraction_quality": {
     "score": "HIGH",
@@ -11,7 +11,7 @@
     "reasons": [
       "Logo found with inline SVG",
       "14 colors extracted",
-      "5 fonts extracted",
+      "3 fonts extracted",
       "Primary color candidate identified",
       "Both surface and text color roles detected"
     ],
@@ -19,7 +19,7 @@
   },
   "extraction_summary": {
     "colors": 14,
-    "typography": 5,
+    "typography": 3,
     "logos": 1,
     "tokens": 16,
     "stylesheets_parsed": 6
@@ -89,7 +89,7 @@
       "name": "white",
       "hex": "#ffffff",
       "role": "surface",
-      "confidence": "medium"
+      "confidence": "high"
     },
     {
       "name": "mulberry black",
@@ -107,14 +107,10 @@
       "name": "neutral 0 (scale: neutral 0, tint of #8d8a86)",
       "hex": "#fcfaf7",
       "role": "tint",
-      "confidence": "low"
+      "confidence": "medium"
     }
   ],
   "fonts": [
-    {
-      "family": "var(--font-family-sans)",
-      "confidence": "high"
-    },
     {
       "family": "Super Sans VF",
       "confidence": "medium"
@@ -126,15 +122,11 @@
     {
       "family": "Super Sans Mono VF",
       "confidence": "low"
-    },
-    {
-      "family": "var(--_button-font-family",
-      "confidence": "low"
     }
   ],
   "logo_found": true,
   "clarifications": {
-    "total": 4,
+    "total": 2,
     "high_priority": 0
   },
   "files_written": [

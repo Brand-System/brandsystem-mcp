@@ -444,15 +444,54 @@ export function getTopChromaticCandidates(colors: ExtractedColor[], max = 4): st
     .map((c) => c.value);
 }
 
-/** Infer confidence from extraction quality */
+/** Infer confidence from extraction quality.
+ *
+ * Confidence signals (weighted):
+ * - Source type: css-variable > structural > computed
+ * - Frequency: how many times the color appears
+ * - Role assignability: does the property name contain a semantic keyword
+ * - Platform default: known framework defaults get penalized
+ * - Position: structural selectors (header, nav, h1-h6) signal brand
+ */
 export function inferColorConfidence(
   color: ExtractedColor
 ): Confidence {
-  if (color.source_type === "css-variable" && color.frequency >= 3) return "high";
-  if (color.source_type === "css-variable") return "medium";
-  if (color.source_type === "structural" && color.frequency >= 3) return "high";
-  if (color.source_type === "structural") return "medium";
-  if (color.frequency >= 5) return "medium";
+  const prop = color.property.toLowerCase();
+
+  // Platform defaults are always low confidence regardless of frequency
+  if (isPlatformDefault(prop)) return "low";
+
+  // Page builder brand variables are high confidence (explicitly marked as brand)
+  if (isPageBuilderBrand(prop)) return "high";
+
+  // Score-based approach: accumulate points
+  let score = 0;
+
+  // Source type
+  if (color.source_type === "css-variable") score += 3;
+  else if (color.source_type === "structural") score += 2;
+  else score += 1; // computed
+
+  // Frequency
+  if (color.frequency >= 5) score += 2;
+  else if (color.frequency >= 2) score += 1;
+
+  // Semantic role keyword in property name (strong signal of intentional branding)
+  const hasRoleKeyword = /primary|secondary|accent|brand|surface|text|action|bg|background|foreground|cta|button|heading|neutral/i.test(prop);
+  if (hasRoleKeyword) score += 2;
+
+  // Structural selector context (header, nav, h1-h6, body)
+  if (color.selector_context) {
+    const ctx = color.selector_context.toLowerCase();
+    if (/^(body|html|:root|header|nav|h[1-6]|\.hero|\.banner)/.test(ctx)) score += 1;
+  }
+
+  // Scale representative gets a boost (it represents a whole hue scale)
+  if (prop.includes("(scale:") && prop.includes("representative)")) score += 1;
+
+  // Map score to confidence
+  if (score >= 5) return "high";
+  if (score >= 3) return "medium";
   return "low";
 }
 

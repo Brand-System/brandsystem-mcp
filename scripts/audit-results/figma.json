@@ -3,7 +3,7 @@
   "url": "https://figma.com",
   "category": "Design",
   "css_pattern": "Custom/complex",
-  "duration_ms": 689,
+  "duration_ms": 734,
   "error": null,
   "extraction_quality": {
     "score": "HIGH",
@@ -11,16 +11,16 @@
     "reasons": [
       "Logo found with inline SVG",
       "4 colors extracted",
-      "5 fonts extracted",
+      "8 fonts extracted",
       "Primary color candidate identified"
     ],
     "recommendation": "Strong extraction. Ready to confirm and compile."
   },
   "extraction_summary": {
     "colors": 4,
-    "typography": 5,
+    "typography": 8,
     "logos": 1,
-    "tokens": 8,
+    "tokens": 11,
     "stylesheets_parsed": 3
   },
   "colors": [
@@ -69,6 +69,18 @@
     {
       "family": "figmaMono Fallback",
       "confidence": "high"
+    },
+    {
+      "family": "sans-serif)",
+      "confidence": "high"
+    },
+    {
+      "family": "monospace)",
+      "confidence": "high"
+    },
+    {
+      "family": "ABCWhytePlusVariable",
+      "confidence": "medium"
     }
   ],
   "logo_found": true,
@@ -88,7 +100,7 @@
     "assets/logo",
     "assets/logo/logo-selector-svg.svg"
   ],
-  "token_count": 8,
+  "token_count": 11,
   "runtime_sessions": 1,
   "has_runtime": true,
   "has_policy": true
