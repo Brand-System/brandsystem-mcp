@@ -3,3 +3,8 @@ dist/
 .brand/
 !test/fixtures/**/.brand/
 *.tsbuildinfo
+
+# Internal — not for public repo
+scripts/audit-results/
+REGISTRIES.md
+specs/brand-extraction-*.md
