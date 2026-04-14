@@ -17,7 +17,7 @@ import { cleanColorName } from "../lib/color-namer.js";
 // Types
 // ---------------------------------------------------------------------------
 
-type ExportTarget = "chat" | "code" | "team" | "email" | "claude-skill";
+type ExportTarget = "chat" | "code" | "team" | "email" | "claude-skill" | "pdf";
 
 // ---------------------------------------------------------------------------
 // Data loading — graceful degradation for all layers
@@ -739,6 +739,7 @@ const TARGET_FILES: Record<ExportTarget, string> = {
   team: "exports/brand-guidelines.md",
   email: "exports/brand-summary.md",
   "claude-skill": "exports/brand-skill.md",
+  pdf: "exports/brand-guide.pdf",
 };
 
 // ---------------------------------------------------------------------------
@@ -773,6 +774,7 @@ async function handler(input: ExportParams) {
   const { target, include_logo: includeLogo } = input;
 
   let content: string;
+  let pdfBytes: Uint8Array | null = null;
   switch (target) {
     case "chat":
       content = generateChat(data, includeLogo);
@@ -789,10 +791,25 @@ async function handler(input: ExportParams) {
     case "claude-skill":
       content = generateClaudeSkill(data, includeLogo);
       break;
+    case "pdf": {
+      const { generateBrandGuidePdf } = await import("../lib/brand-guide-pdf.js");
+      pdfBytes = await generateBrandGuidePdf({
+        config: data.config,
+        identity: data.identity,
+        visual: data.visual,
+        messaging: data.messaging,
+      });
+      content = `Brand guide PDF generated (${Math.round(pdfBytes.length / 1024)}KB, ${data.identity.colors.length} colors, ${data.identity.typography.length} fonts)`;
+      break;
+    }
   }
 
-  const filename = TARGET_FILES[target];
-  await brandDir.writeMarkdown(filename, content);
+  const filename = TARGET_FILES[target] || `exports/brand-guide.pdf`;
+  if (pdfBytes) {
+    await brandDir.writeAsset(`../exports/brand-guide.pdf`, Buffer.from(pdfBytes));
+  } else {
+    await brandDir.writeMarkdown(filename, content);
+  }
 
   const layers: string[] = ["core_identity"];
   if (data.visual) layers.push("visual_identity");
@@ -827,9 +844,9 @@ async function handler(input: ExportParams) {
 
 const paramsShape = {
   target: z
-    .enum(["chat", "code", "team", "email", "claude-skill"])
+    .enum(["chat", "code", "team", "email", "claude-skill", "pdf"])
     .describe(
-      "Where this export will be used. 'chat': upload to AI conversation (Claude/ChatGPT/Gemini). 'code': paste into CLAUDE.md or .cursorrules. 'team': share with designers/writers. 'email': send via Slack or email. 'claude-skill': persistent Claude skill file with embedded logo + brand rules — the gold standard for automatic brand application in every artifact."
+      "Where this export will be used. 'chat': upload to AI conversation (Claude/ChatGPT/Gemini). 'code': paste into CLAUDE.md or .cursorrules. 'team': share with designers/writers. 'email': send via Slack or email. 'claude-skill': persistent Claude skill file with embedded logo + brand rules. 'pdf': brand guide PDF with color swatches, typography, visual rules, and voice summary — no browser needed."
     ),
   include_logo: z
     .boolean()
