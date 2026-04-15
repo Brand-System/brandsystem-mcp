@@ -3,6 +3,7 @@
 [![Node](https://img.shields.io/node/v/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
 [![brandsystem-mcp MCP server](https://glama.ai/mcp/servers/Brand-System/brandsystem-mcp/badges/score.svg)](https://glama.ai/mcp/servers/Brand-System/brandsystem-mcp)
 [![npm downloads](https://img.shields.io/npm/dw/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
+[![MCP Badge](https://lobehub.com/badge/mcp/brand-system-brandsystem-mcp)](https://lobehub.com/mcp/brand-system-brandsystem-mcp)
 
 # @brandsystem/mcp
 
