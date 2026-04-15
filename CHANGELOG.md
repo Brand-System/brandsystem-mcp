@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2 (2026-04-15)
+
+### Added
+- **MCP prompts.** Four reusable interaction templates: `extract-brand` (full extraction pipeline from URL), `check-brand` (inline brand compliance check), `write-on-brand` (load brand context then generate content), `brand-overview` (full status overview). Prompts guide agents through common workflows.
+- **Smithery config.** Added `smithery.yaml` for one-click installation via Smithery registry.
+
 ## 0.6.1 (2026-04-15)
 
 ### Fixed

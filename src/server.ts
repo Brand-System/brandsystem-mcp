@@ -3,6 +3,7 @@ import { getVersion } from "./lib/version.js";
 import { BrandDir } from "./lib/brand-dir.js";
 import { checkOnramp } from "./lib/response.js";
 import { registerResources } from "./resources/brand-resources.js";
+import { registerPrompts } from "./prompts/brand-prompts.js";
 import { trackToolCall } from "./lib/telemetry.js";
 import { register as registerInit } from "./tools/brand-init.js";
 import { register as registerStatus } from "./tools/brand-status.js";
@@ -104,6 +105,9 @@ export function createServer(): McpServer {
   // ── Resources (read-only, subscribable brand data) ──
   const brandDir = new BrandDir(process.cwd());
   registerResources(server, brandDir);
+
+  // ── Prompts (reusable interaction templates) ──
+  registerPrompts(server);
 
   // ── Onramp check (async, non-blocking) ──
   // Assess brand completeness on startup so responses can include
