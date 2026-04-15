@@ -33,6 +33,7 @@ describe("extractPdfBrandData", () => {
     await writeFile(file, pdf);
 
     const result = await extractPdfBrandData(file);
+
     expect(result.colors.some((color) => color.value === "#00a3e0" && color.role === "primary")).toBe(true);
     expect(result.typography.some((entry) => entry.family === "Inter")).toBe(true);
     expect(result.spacing?.base_unit).toBe("8px");

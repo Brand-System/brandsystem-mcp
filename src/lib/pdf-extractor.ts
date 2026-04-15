@@ -1,10 +1,7 @@
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { generateColorName } from "./color-namer.js";
 import type { ColorEntry, Confidence, SpacingSpec, TypographyEntry } from "../types/index.js";
-
-const require = createRequire(import.meta.url);
 
 export interface PdfRuleExtraction {
   dos: string[];
@@ -193,44 +190,47 @@ function extractLogoHints(text: string): Array<{ hint: string }> {
 export async function extractPdfBrandData(filePath: string, pages = "all"): Promise<PdfBrandExtraction> {
   const resolvedPath = resolve(filePath);
   const dataBuffer = await readFile(resolvedPath);
-  const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (
-    data: Buffer,
-    options?: {
-      max?: number;
-      pagerender?: (pageData: { getTextContent: (opts: { normalizeWhitespace: boolean; disableCombineTextItems: boolean }) => Promise<{ items: Array<{ str: string; transform: number[] }> }> }) => Promise<string>;
-    },
-  ) => Promise<{ numpages: number; text: string }>;
+
+  // Dynamic import — pdfjs-dist is ESM-only in v5+
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+  const loadingTask = pdfjsLib.getDocument({
+    data: new Uint8Array(dataBuffer),
+    useSystemFonts: true,
+  });
+  const doc = await loadingTask.promise;
 
   const range = parsePageRange(pages);
-  let pageNumber = 0;
-  const result = await pdfParse(dataBuffer, {
-    max: range.end ?? 0,
-    pagerender: async (pageData) => {
-      pageNumber += 1;
-      const textContent = await pageData.getTextContent({
-        normalizeWhitespace: false,
-        disableCombineTextItems: false,
-      });
-      if (pageNumber < range.start) return "";
-      const parts: string[] = [];
-      let lastY = 0;
-      for (const item of textContent.items) {
-        if (!lastY || lastY === item.transform[5]) {
-          parts.push(item.str);
-        } else {
-          parts.push(`\n${item.str}`);
-        }
-        lastY = item.transform[5];
-      }
-      return parts.join("");
-    },
-  });
+  const maxPage = range.end ?? doc.numPages;
+  const pageTexts: string[] = [];
 
-  const text = result.text.replace(/\n{3,}/g, "\n\n").trim();
+  for (let i = range.start; i <= Math.min(maxPage, doc.numPages); i++) {
+    const page = await doc.getPage(i);
+    const textContent = await page.getTextContent({
+      includeMarkedContent: false,
+    });
+    const parts: string[] = [];
+    let lastY = 0;
+    for (const item of textContent.items) {
+      if ("str" in item) {
+        const y = (item as { str: string; transform: number[] }).transform[5];
+        if (lastY && y !== lastY) {
+          parts.push(`\n${item.str}`);
+        } else {
+          parts.push(item.str);
+        }
+        lastY = y;
+      }
+    }
+    pageTexts.push(parts.join(""));
+  }
+
+  const text = pageTexts.join("\n\n").replace(/\n{3,}/g, "\n\n").trim();
+
   return {
     filePath: resolvedPath,
     pages,
-    pageCount: result.numpages,
+    pageCount: doc.numPages,
     text,
     colors: extractColors(text),
     typography: extractTypography(text),
