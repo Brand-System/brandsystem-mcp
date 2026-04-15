@@ -3,6 +3,7 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { ERROR_CODES, type Confidence } from "../types/index.js";
 import { readConnectorConfig } from "../connectors/brandcode/persistence.js";
+import { generateRecoveryGuidance } from "../lib/recovery-guidance.js";
 
 async function handler() {
   const brandDir = new BrandDir(process.cwd());
@@ -200,6 +201,14 @@ async function handler() {
     lines.push(`  Run brand_brandcode_connect to sync with a hosted brand on Brandcode Studio`);
   }
 
+  // Recovery guidance — ranked actions by readiness impact
+  const recovery = await generateRecoveryGuidance(brandDir);
+  if (recovery && recovery.actions.length > 0) {
+    lines.push("");
+    lines.push("── Recovery Guidance ─────────────────");
+    lines.push(recovery.formatted);
+  }
+
   const nextSteps: string[] = [];
   if (!s1Done) {
     if (config.website_url) {
@@ -234,7 +243,13 @@ async function handler() {
   return buildResponse({
     what_happened: "Brand system status retrieved",
     next_steps: nextSteps.length > 0 ? nextSteps : ["Brand system is up to date"],
-    data: { status: lines.join("\n") },
+    data: {
+      status: lines.join("\n"),
+      recovery: recovery ? {
+        readiness: recovery.currentReadiness,
+        actions: recovery.actions,
+      } : undefined,
+    },
   });
 }
 

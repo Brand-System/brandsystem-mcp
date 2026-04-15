@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 (2026-04-15)
+
+### Added
+- **Brand diff on sync (M-12).** When `brand_brandcode_sync` pulls or pushes, the response now includes a structured brand diff instead of generic "files changed" messages. Color changes show hex values, CIE76 ΔE perceptual distance, and WCAG contrast impact against text colors. Font changes flag family swaps as breaking. Voice changes detail tone register shifts, never_say list additions/removals, and anchor vocabulary changes. Visual changes track anti-pattern rule additions. Strategy changes report persona and matrix size shifts. Each change is tagged with severity (breaking/significant/minor).
+- **Extraction recovery guidance (M-13).** `brand_status` now includes a ranked list of what to do next, sorted by readiness impact. Each missing capability maps to: the specific tool to run, what downstream capabilities it unlocks, readiness point impact (+Npp), and estimated effort (quick/moderate/deep). Example: "Add a logo SVG via brand_set_logo → Unlocks VIM generation, brand report logo section → Readiness: 23% → 35% (+12pp)." Powered by a capability dependency graph that knows which fields each tool needs.
+
 ## 0.6.2 (2026-04-15)
 
 ### Added

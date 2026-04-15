@@ -16,6 +16,8 @@ import {
   appendSyncEvent,
 } from "../connectors/brandcode/persistence.js";
 import { readAuthCredentials } from "../lib/auth-state.js";
+import { readPackagePayload } from "../connectors/brandcode/persistence.js";
+import { computeBrandDiff } from "../lib/brand-diff.js";
 import type { SyncHistoryEvent } from "../connectors/brandcode/types.js";
 
 const paramsShape = {
@@ -114,6 +116,9 @@ async function handlePull(input: Params) {
     });
   }
 
+  // Capture old package for diff before overwriting
+  const oldPackage = await readPackagePayload(cwd);
+
   await writePackagePayload(cwd, pullResult.package);
 
   // Update connector config with new sync token
@@ -124,6 +129,11 @@ async function handlePull(input: Params) {
   };
   await writeConnectorConfig(cwd, updatedConfig);
 
+  // Compute brand diff (old runtime vs new runtime from package)
+  const oldRuntime = (oldPackage as Record<string, unknown> | null)?.runtime as Record<string, unknown> | null ?? null;
+  const newRuntime = (pullResult.package as Record<string, unknown>).runtime as Record<string, unknown> | null ?? null;
+  const diff = computeBrandDiff(oldRuntime, newRuntime);
+
   // Record sync history
   const changedAreas = pullResult.delta?.changedAreas ?? ["package updated"];
   const syncEvent: SyncHistoryEvent = {
@@ -131,14 +141,18 @@ async function handlePull(input: Params) {
     syncMode: "updated",
     changedAreas,
     advice: {
-      headline: `Brand "${config.slug}" updated`,
-      detail: `Changed areas: ${changedAreas.join(", ")}. Review the updated brand data.`,
+      headline: diff.changes.length > 0 ? diff.headline : `Brand "${config.slug}" updated`,
+      detail: diff.changes.length > 0 ? diff.formatted : `Changed areas: ${changedAreas.join(", ")}. Review the updated brand data.`,
     },
   };
   await appendSyncEvent(cwd, syncEvent);
 
+  const whatHappened = diff.changes.length > 0
+    ? `Brand "${config.slug}" synced — ${diff.headline}`
+    : `Brand "${config.slug}" synced — ${changedAreas.length} area(s) changed`;
+
   return buildResponse({
-    what_happened: `Brand "${config.slug}" synced — ${changedAreas.length} area(s) changed`,
+    what_happened: whatHappened,
     next_steps: [
       "Run brand_status to see the updated brand identity",
       "Run brand_brandcode_status to review sync details",
@@ -151,6 +165,11 @@ async function handlePull(input: Params) {
       changed_areas: changedAreas,
       delta: pullResult.delta,
       readiness_stage: pullResult.brand.readinessStage,
+      brand_diff: diff.changes.length > 0 ? {
+        headline: diff.headline,
+        formatted: diff.formatted,
+        changes: diff.changes,
+      } : undefined,
     },
   });
 }
