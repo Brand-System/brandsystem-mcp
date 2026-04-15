@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1 (2026-04-15)
+
+### Fixed
+- **Replaced `pdf-parse` with `pdfjs-dist`.** The bundled pdfjs v1.10.100 in `pdf-parse` fails with "bad XRef entry" on Node 24. Switched to `pdfjs-dist` v5.6.205 which is actively maintained and works across all supported Node versions.
+
 ## 0.6.0 (2026-04-15)
 
 ### Added
