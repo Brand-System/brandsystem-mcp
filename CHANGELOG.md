@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.0 (2026-04-15)
+
+### Added
+- **Inline brand gate (`brand_check`).** Fast pass/fail check against the compiled brand identity in under 1ms (cached). Pass any combination of text, color, font, or CSS. Text checks flag never-say words, anchor term misuse (with word-boundary matching), and AI-ism patterns. Color checks compute CIE76 ΔE distance in Lab space and return the nearest brand color with perceptual distance. Font checks are case-insensitive against brand typography with system font passthrough. CSS checks match against visual anti-pattern rules (shadows, gradients, blur). Returns specific fix suggestions per flag and the full brand palette on color failures for agent self-correction. 21 unit tests.
+- **Studio authentication (`brand_brandcode_auth`).** Magic link auth flow with four modes: `status` checks auth state, `login` sends magic link email (auto-verifies in dev mode), `set_key` stores a session JWT after clicking the link, `logout` clears credentials. Credentials stored in `.brand/brandcode-auth.json` (auto-gitignored by `brand_init`). Token expiry checked on read with automatic cleanup.
+- **Save to Studio (`brand_brandcode_connect` mode="save").** Upload a local `.brand/` directory to Brandcode Studio. Requires authentication. Creates connector config and sync history on success. Returns slug, hosted URL, and sync token.
+- **Push to Studio (`brand_brandcode_sync` direction="push").** Push local brand changes to a previously connected Studio brand. Validates ownership via auth token. Updates connector config with new sync token.
+- **Auth error codes.** `NOT_AUTHENTICATED`, `AUTH_FAILED`, `AUTH_EXPIRED`, `FORBIDDEN` for clear error handling in auth flows.
+
+### Improved
+- **Brandcode client now supports POST requests and auth tokens.** Added `requestMagicLink()`, `verifyMagicLink()`, and `saveBrandToStudio()` to the HTTP client. Request layer supports `authToken` option for Bearer token auth.
+
 ## 0.4.0 (2026-04-10)
 
 ### Added

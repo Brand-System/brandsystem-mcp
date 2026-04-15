@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
@@ -40,6 +42,9 @@ async function handler(input: Params) {
     created_at: new Date().toISOString(),
   });
 
+  // Ensure brandcode-auth.json is gitignored (contains secrets)
+  await ensureGitignoreEntry(process.cwd(), ".brand/brandcode-auth.json");
+
   const nextSteps: string[] = [];
   if (input.website_url) {
     nextSteps.push(`Run brand_extract_web with url "${input.website_url}" to pull colors, fonts, and logo`);
@@ -61,6 +66,30 @@ async function handler(input: Params) {
       files_created: ["brand.config.yaml", "core-identity.yaml", "assets/logo/"],
     },
   });
+}
+
+/**
+ * Ensure a path is present in the project .gitignore.
+ * Creates .gitignore if it doesn't exist.
+ */
+async function ensureGitignoreEntry(cwd: string, entry: string): Promise<void> {
+  const gitignorePath = join(cwd, ".gitignore");
+  let content = "";
+  try {
+    content = await readFile(gitignorePath, "utf-8");
+  } catch {
+    // No .gitignore yet
+  }
+
+  const lines = content.split("\n");
+  if (lines.some((line) => line.trim() === entry)) {
+    return; // Already present
+  }
+
+  const newContent = content.endsWith("\n") || content === ""
+    ? content + entry + "\n"
+    : content + "\n" + entry + "\n";
+  await writeFile(gitignorePath, newContent, "utf-8");
 }
 
 export function register(server: McpServer) {

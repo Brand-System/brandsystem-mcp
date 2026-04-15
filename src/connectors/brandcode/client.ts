@@ -8,6 +8,9 @@ import type {
   PullResult,
   HostedBrandDetailResponse,
   HostedBrandFeedResponse,
+  MagicLinkResponse,
+  VerifyResponse,
+  SaveBrandResponse,
 } from "./types.js";
 
 const USER_AGENT = "brandsystem-mcp";
@@ -26,9 +29,16 @@ export class BrandcodeClientError extends Error {
 
 interface FetchOptions {
   shareToken?: string;
+  authToken?: string;
 }
 
-async function request<T>(url: string, opts?: FetchOptions): Promise<T> {
+interface RequestInit {
+  method?: string;
+  body?: string;
+  contentType?: string;
+}
+
+async function request<T>(url: string, opts?: FetchOptions, init?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {
     accept: "application/json",
     "user-agent": USER_AGENT,
@@ -36,9 +46,17 @@ async function request<T>(url: string, opts?: FetchOptions): Promise<T> {
   if (opts?.shareToken) {
     headers["x-brand-share-token"] = opts.shareToken;
   }
+  if (opts?.authToken) {
+    headers["authorization"] = `Bearer ${opts.authToken}`;
+  }
+  if (init?.contentType) {
+    headers["content-type"] = init.contentType;
+  }
 
   const res = await fetch(url, {
+    method: init?.method ?? "GET",
     headers,
+    body: init?.body,
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
 
@@ -98,4 +116,62 @@ export async function pullHostedBrand(
     url += `?syncToken=${encodeURIComponent(syncToken)}`;
   }
   return request<PullResult>(url, opts);
+}
+
+// ---------------------------------------------------------------------------
+// Auth endpoints
+// ---------------------------------------------------------------------------
+
+/**
+ * Request a magic link email for the given email address.
+ */
+export async function requestMagicLink(
+  baseUrl: string,
+  email: string,
+): Promise<MagicLinkResponse> {
+  return request<MagicLinkResponse>(
+    `${baseUrl}/api/auth/magic-link`,
+    undefined,
+    {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      contentType: "application/json",
+    },
+  );
+}
+
+/**
+ * Verify a magic link token and receive a session JWT.
+ */
+export async function verifyMagicLink(
+  baseUrl: string,
+  token: string,
+): Promise<VerifyResponse> {
+  return request<VerifyResponse>(
+    `${baseUrl}/api/auth/verify?token=${encodeURIComponent(token)}`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Brand save/push endpoints
+// ---------------------------------------------------------------------------
+
+/**
+ * Save a brand package to Studio (create or update).
+ * Requires auth token.
+ */
+export async function saveBrandToStudio(
+  baseUrl: string,
+  payload: Record<string, unknown>,
+  authToken: string,
+): Promise<SaveBrandResponse> {
+  return request<SaveBrandResponse>(
+    `${baseUrl}/api/brand/save`,
+    { authToken },
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+      contentType: "application/json",
+    },
+  );
 }

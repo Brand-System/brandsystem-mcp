@@ -57,9 +57,9 @@ function expectValidMetadata(json: Record<string, unknown>): void {
 // ---------------------------------------------------------------------------
 
 describe("tool registration", () => {
-  it("registers all 36 tools", async () => {
+  it("registers all 38 tools", async () => {
     const { tools } = await client.listTools();
-    expect(tools.length).toBe(36);
+    expect(tools.length).toBe(38);
   });
 
   it("every tool has a non-empty description", async () => {
@@ -337,6 +337,104 @@ describe("tools that require .brand/ dir", () => {
       target: "chat",
     });
     expectValidMetadata(json);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// brand_check inline gate
+// ---------------------------------------------------------------------------
+
+describe("brand_check inline gate", () => {
+  it("requires at least one input", async () => {
+    const json = await callAndParse("brand_check", {});
+    expectValidMetadata(json);
+    expect(json.error).toBe("no_input");
+  });
+
+  it("handles text check gracefully (pass or not_compiled)", async () => {
+    const json = await callAndParse("brand_check", { text: "hello world" });
+    expectValidMetadata(json);
+    // Either passes (if brand data exists from earlier tests) or returns not_compiled
+    expect(json.error === "not_compiled" || json.pass !== undefined).toBe(true);
+  });
+
+  it("handles color check gracefully", async () => {
+    const json = await callAndParse("brand_check", { color: "#ff0000" });
+    expectValidMetadata(json);
+    expect(json.error === "not_compiled" || json.pass !== undefined).toBe(true);
+  });
+
+  it("handles font check gracefully", async () => {
+    const json = await callAndParse("brand_check", { font: "Helvetica" });
+    expectValidMetadata(json);
+    expect(json.error === "not_compiled" || json.pass !== undefined).toBe(true);
+  });
+
+  it("handles css check gracefully", async () => {
+    const json = await callAndParse("brand_check", { css: "box-shadow: 0 2px 4px black" });
+    expectValidMetadata(json);
+    expect(json.error === "not_compiled" || json.pass !== undefined).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Brandcode Studio connector tools (auth + save/push modes)
+// ---------------------------------------------------------------------------
+
+describe("brandcode auth and connector tools", () => {
+  it("brand_brandcode_auth status returns not authenticated", async () => {
+    const json = await callAndParse("brand_brandcode_auth", {
+      mode: "status",
+    });
+    expectValidMetadata(json);
+    expect(json.authenticated).toBe(false);
+  });
+
+  it("brand_brandcode_auth login requires email", async () => {
+    const json = await callAndParse("brand_brandcode_auth", {
+      mode: "login",
+    });
+    expectValidMetadata(json);
+    expect(json.error).toBe("validation_failed");
+  });
+
+  it("brand_brandcode_auth set_key requires key", async () => {
+    const json = await callAndParse("brand_brandcode_auth", {
+      mode: "set_key",
+    });
+    expectValidMetadata(json);
+    expect(json.error).toBe("validation_failed");
+  });
+
+  it("brand_brandcode_auth logout handles no credentials", async () => {
+    const json = await callAndParse("brand_brandcode_auth", {
+      mode: "logout",
+    });
+    expectValidMetadata(json);
+    expect(json.was_authenticated).toBe(false);
+  });
+
+  it("brand_brandcode_connect save mode requires auth", async () => {
+    const json = await callAndParse("brand_brandcode_connect", {
+      mode: "save",
+    });
+    expectValidMetadata(json);
+    // Should fail with not_initialized or not_authenticated
+    expect(json.error).toBeDefined();
+  });
+
+  it("brand_brandcode_sync push requires connection", async () => {
+    const json = await callAndParse("brand_brandcode_sync", {
+      direction: "push",
+    });
+    expectValidMetadata(json);
+    expect(json.error).toBe("not_found");
+  });
+
+  it("brand_brandcode_sync pull (default) requires connection", async () => {
+    const json = await callAndParse("brand_brandcode_sync", {});
+    expectValidMetadata(json);
+    expect(json.error).toBe("not_found");
   });
 });
 

@@ -1,28 +1,40 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { ERROR_CODES } from "../types/index.js";
 import { resolveBrandcodeHostedUrl } from "../connectors/brandcode/resolve.js";
-import { pullHostedBrand } from "../connectors/brandcode/client.js";
+import {
+  pullHostedBrand,
+  saveBrandToStudio,
+  BrandcodeClientError,
+} from "../connectors/brandcode/client.js";
 import {
   readConnectorConfig,
   writeConnectorConfig,
   writePackagePayload,
   appendSyncEvent,
 } from "../connectors/brandcode/persistence.js";
+import { readAuthCredentials } from "../lib/auth-state.js";
 import type { SyncHistoryEvent } from "../connectors/brandcode/types.js";
 
 const paramsShape = {
+  direction: z
+    .enum(["pull", "push"])
+    .default("pull")
+    .describe(
+      '"pull" (default) fetches the latest from Studio. "push" uploads local .brand/ to Studio (requires auth).',
+    ),
   share_token: z
     .string()
     .optional()
-    .describe("Share token for protected brands (only needed if not stored)"),
+    .describe("Share token for protected brands (only needed for pull)"),
 };
 
 const ParamsSchema = z.object(paramsShape);
 type Params = z.infer<typeof ParamsSchema>;
 
-async function handler(input: Params) {
+async function handlePull(input: Params) {
   const cwd = process.cwd();
 
   // Read existing connector config
@@ -143,10 +155,156 @@ async function handler(input: Params) {
   });
 }
 
+async function handlePush() {
+  const cwd = process.cwd();
+  const brandDir = new BrandDir(cwd);
+
+  // Require existing connection
+  const connConfig = await readConnectorConfig(cwd);
+  if (!connConfig) {
+    return buildResponse({
+      what_happened: "No Brandcode connection found",
+      next_steps: [
+        'Run brand_brandcode_connect mode="save" to save brand to Studio first',
+        "Or brand_brandcode_connect url=\"slug\" to connect to an existing hosted brand",
+      ],
+      data: { error: ERROR_CODES.NOT_FOUND },
+    });
+  }
+
+  // Require .brand/
+  if (!(await brandDir.exists())) {
+    return buildResponse({
+      what_happened: "No .brand/ directory found",
+      next_steps: ["Run brand_start or brand_init first"],
+      data: { error: ERROR_CODES.NOT_INITIALIZED },
+    });
+  }
+
+  // Require auth
+  const creds = await readAuthCredentials(cwd);
+  if (!creds) {
+    return buildResponse({
+      what_happened: "Not authenticated — login required to push",
+      next_steps: [
+        'Run brand_brandcode_auth mode="login" email="you@example.com" to authenticate',
+      ],
+      data: { error: ERROR_CODES.NOT_AUTHENTICATED },
+    });
+  }
+
+  // Build payload from local brand state
+  let config;
+  try {
+    config = await brandDir.readConfig();
+  } catch {
+    return buildResponse({
+      what_happened: "Could not read .brand/brand.config.yaml",
+      next_steps: ["Run brand_audit to check .brand/ directory health"],
+      data: { error: ERROR_CODES.NO_BRAND_DATA },
+    });
+  }
+
+  const payload: Record<string, unknown> = {
+    client_name: config.client_name,
+    slug: connConfig.slug,
+    config,
+  };
+
+  try {
+    payload.core_identity = await brandDir.readCoreIdentity();
+  } catch {
+    // Optional
+  }
+
+  // Push to Studio (uses the save endpoint which handles create-or-update)
+  try {
+    const result = await saveBrandToStudio(
+      creds.studioUrl,
+      payload,
+      creds.token,
+    );
+
+    const now = new Date().toISOString();
+
+    // Update connector config with new sync token
+    const updatedConfig = {
+      ...connConfig,
+      syncToken: result.syncToken,
+      lastSyncedAt: now,
+    };
+    await writeConnectorConfig(cwd, updatedConfig);
+
+    // Record sync history
+    const syncEvent: SyncHistoryEvent = {
+      timestamp: now,
+      syncMode: "updated",
+      changedAreas: ["pushed from local"],
+      advice: {
+        headline: `Brand "${connConfig.slug}" pushed to Studio`,
+        detail: "Local changes uploaded. Studio version updated.",
+      },
+    };
+    await appendSyncEvent(cwd, syncEvent);
+
+    return buildResponse({
+      what_happened: `Brand "${connConfig.slug}" pushed to Studio`,
+      next_steps: [
+        `View at ${creds.studioUrl}/start/brands/${connConfig.slug}`,
+        "Run brand_brandcode_status to verify sync state",
+      ],
+      data: {
+        slug: connConfig.slug,
+        sync_token: result.syncToken,
+        previous_sync_token: connConfig.syncToken,
+        owner_email: result.ownerEmail,
+        brand_url: `${creds.studioUrl}/start/brands/${connConfig.slug}`,
+      },
+    });
+  } catch (err) {
+    if (err instanceof BrandcodeClientError) {
+      if (err.status === 401) {
+        return buildResponse({
+          what_happened: "Authentication expired or invalid",
+          next_steps: [
+            'Run brand_brandcode_auth mode="logout" then mode="login" to re-authenticate',
+          ],
+          data: { error: ERROR_CODES.AUTH_EXPIRED },
+        });
+      }
+      if (err.status === 403) {
+        return buildResponse({
+          what_happened: "This brand is owned by a different account",
+          next_steps: [
+            "You can only push to brands you own",
+            "Check your authenticated email with brand_brandcode_auth mode=\"status\"",
+          ],
+          data: { error: ERROR_CODES.FORBIDDEN },
+        });
+      }
+    }
+    return buildResponse({
+      what_happened: `Push failed: ${(err as Error).message}`,
+      next_steps: [
+        "Check network connectivity and try again",
+        "Run brand_brandcode_auth mode=\"status\" to verify authentication",
+      ],
+      data: { error: ERROR_CODES.FETCH_FAILED },
+    });
+  }
+}
+
+async function handler(input: Params) {
+  if (input.direction === "push") {
+    return handlePush();
+  }
+  return handlePull(input);
+}
+
 export function register(server: McpServer) {
   server.tool(
     "brand_brandcode_sync",
-    'Sync local .brand/ with a previously connected Brandcode Studio brand. Pull-only: fetches the latest package from Studio and updates local files. Delta-aware via syncToken — no-ops when the brand has not changed. Writes to .brand/brandcode-package.json and .brand/brandcode-sync-history.json. Requires a prior brand_brandcode_connect. Use when the user says "sync brand", "update from Studio", "pull latest brand", or "check for brand updates". Returns sync mode (updated/no_change/error), changed areas, and advice. NOT for initial connection — use brand_brandcode_connect first. NOT for checking status without syncing — use brand_brandcode_status.',
+    'Sync local .brand/ with a connected Brandcode Studio brand. Two directions: "pull" (default) fetches the latest from Studio, delta-aware via syncToken. "push" uploads local changes to Studio (requires auth via brand_brandcode_auth). Requires a prior brand_brandcode_connect. Use when the user says "sync brand", "push to Studio", "pull latest brand", or "update Studio". Returns sync mode, changed areas, and sync token. NOT for initial connection — use brand_brandcode_connect. NOT for checking status — use brand_brandcode_status.',
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);

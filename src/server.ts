@@ -32,9 +32,11 @@ import { register as registerAuditContent } from "./tools/brand-audit-content.js
 import { register as registerCheckCompliance } from "./tools/brand-check-compliance.js";
 import { register as registerAuditDrift } from "./tools/brand-audit-drift.js";
 import { register as registerRuntime } from "./tools/brand-runtime.js";
+import { register as registerCheck } from "./tools/brand-check.js";
 import { register as registerExtractVisual } from "./tools/brand-extract-visual.js";
 import { register as registerExtractPdf } from "./tools/brand-extract-pdf.js";
 import { register as registerResolveConflicts } from "./tools/brand-resolve-conflicts.js";
+import { register as registerBrandcodeAuth } from "./tools/brand-brandcode-auth.js";
 import { register as registerBrandcodeConnect } from "./tools/brand-brandcode-connect.js";
 import { register as registerBrandcodeSync } from "./tools/brand-brandcode-sync.js";
 import { register as registerBrandcodeStatus } from "./tools/brand-brandcode-status.js";
@@ -86,10 +88,12 @@ export function createServer(): McpServer {
 
   // ── Runtime ──
   registerRuntime(server);     // Read compiled brand runtime contract
+  registerCheck(server);       // Fast inline brand gate
 
   // ── Brandcode Studio connector ──
-  registerBrandcodeConnect(server);  // Connect to hosted brand
-  registerBrandcodeSync(server);     // Sync with hosted brand
+  registerBrandcodeAuth(server);     // Authenticate with Studio
+  registerBrandcodeConnect(server);  // Connect to hosted brand (pull or save)
+  registerBrandcodeSync(server);     // Sync with hosted brand (pull or push)
   registerBrandcodeStatus(server);   // Inspect connection status
 
   // ── Cross-session utilities ──

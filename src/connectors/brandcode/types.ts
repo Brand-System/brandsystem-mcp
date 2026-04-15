@@ -147,6 +147,64 @@ export interface PullResult {
 }
 
 // ---------------------------------------------------------------------------
+// API Request/Response: POST /api/auth/magic-link
+// ---------------------------------------------------------------------------
+
+export interface MagicLinkRequest {
+  email: string;
+}
+
+export interface MagicLinkResponse {
+  ok: true;
+  mode: "development" | "email";
+  email: string;
+  expiresAt: string;
+  /** Only present in development mode */
+  token?: string;
+  /** Only present in development mode */
+  verifyUrl?: string;
+  /** Only present in email mode */
+  deliveryId?: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// API Request/Response: GET /api/auth/verify
+// ---------------------------------------------------------------------------
+
+export interface VerifyResponse {
+  ok: true;
+  email: string;
+  token: string;
+  expiresAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// API Request/Response: POST /api/brand/save
+// ---------------------------------------------------------------------------
+
+export interface SaveBrandResponse {
+  slug: string;
+  ownerEmail: string;
+  syncToken: string;
+  session: {
+    slug: string;
+    url: string;
+    savedAt: string;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Local Persistence: .brand/brandcode-auth.json (gitignored)
+// ---------------------------------------------------------------------------
+
+export interface AuthCredentials {
+  email: string;
+  token: string;
+  expiresAt: string;
+  studioUrl: string;
+}
+
+// ---------------------------------------------------------------------------
 // Local Persistence: .brand/brandcode-connector.json
 // ---------------------------------------------------------------------------
 

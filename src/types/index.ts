@@ -367,6 +367,12 @@ export const ERROR_CODES = {
   EMPTY_ITEMS: "empty_items",
   ALL_EMPTY: "all_empty",
 
+  // Auth errors
+  NOT_AUTHENTICATED: "not_authenticated",
+  AUTH_FAILED: "auth_failed",
+  AUTH_EXPIRED: "auth_expired",
+  FORBIDDEN: "forbidden",
+
   // Rate limiting
   RATE_LIMITED: "rate_limited",
 } as const;

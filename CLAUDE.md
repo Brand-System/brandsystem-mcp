@@ -21,7 +21,7 @@ Build must pass before committing. The entry point is `src/index.ts` (stdio tran
 src/
   index.ts         # Stdio transport entry point
   server.ts        # Creates McpServer, registers all 34 tools in priority order
-  tools/           # One file per tool (32 files, 34 tools). Each exports a register(server) function.
+  tools/           # One file per tool (34 files, 36 tools). Each exports a register(server) function.
   lib/             # Shared utilities (brand-dir, css-parser, dtcg-compiler, content-scorer, etc.)
   types/           # TypeScript type definitions
   schemas/         # Zod schemas for validation
