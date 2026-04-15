@@ -2,6 +2,7 @@
 [![npm version](https://img.shields.io/npm/v/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
 [![Node](https://img.shields.io/node/v/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
 [![brandsystem-mcp MCP server](https://glama.ai/mcp/servers/Brand-System/brandsystem-mcp/badges/score.svg)](https://glama.ai/mcp/servers/Brand-System/brandsystem-mcp)
+[![npm downloads](https://img.shields.io/npm/dw/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
 
 # @brandsystem/mcp
 
@@ -42,11 +43,45 @@ Tell your AI tool:
 
 That single command extracts colors, fonts, and logo from the website, escalates to rendered or deeper multi-page extraction when the cheap pass is weak, compiles DTCG tokens, generates `design-synthesis.json` + `DESIGN.md`, and generates a portable HTML brand report -- all in under 60 seconds.
 
-### 3. Use it
+### 3. What you get
+
+```
+.brand/
+  brand.config.yaml          ← brand name, source URLs, session state
+  core-identity.yaml         ← colors (with roles), fonts, logo specs
+  tokens.json                ← DTCG design tokens
+  brand-runtime.json         ← single-file brand context for any AI agent
+  interaction-policy.json    ← anti-patterns, voice constraints, never-say words
+  design-synthesis.json      ← spacing, radius, shadows, component signals
+  DESIGN.md                  ← portable design brief (agent-readable)
+  brand-report.html          ← visual report (paste into any AI chat)
+  assets/logo/               ← extracted logo files (SVG/PNG)
+```
+
+Load `brand-runtime.json` into any sub-agent's context. First output is on-brand. No per-prompt boilerplate.
+
+### 4. Use it
 
 > Run brand_write for a social-graphic about "Q3 product launch"
 
-The AI now has your full brand context -- colors, typography, logo, anti-patterns, voice rules -- and generates on-brand content.
+The AI now has your full brand context — colors, typography, logo, anti-patterns, voice rules — and generates on-brand content.
+
+### 5. Go deeper (optional)
+
+| Session | What it adds | Command |
+|---------|-------------|---------|
+| 1. Core Identity | Colors, fonts, logo, tokens | `brand_start` (done above) |
+| 2. Visual Identity | Composition, anti-patterns, illustration style | `brand_deepen_identity` |
+| 3. Messaging | Voice, tone, never-say words, brand story | `brand_compile_messaging` |
+| 4. Content Strategy | Personas, journey stages, themes | `brand_build_personas` |
+
+Each session enriches `brand-runtime.json`. Stop at any point — Session 1 alone is valuable.
+
+### 6. Share with your team
+
+> Run brand_brandcode_connect to save on Brandcode Studio
+
+Your brand persists on [brandcode.studio](https://brandcode.studio). Teammates pull the same brand into their tools. One source of truth.
 
 ---
 
