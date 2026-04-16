@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 (2026-04-16)
+
+### Added
+- **Device code authentication.** `brand_brandcode_auth mode="activate"` displays a short human-readable code (e.g. BRAND-7K4X) for the user to enter at brandcode.studio/activate. No JWT copy-paste, no leaving the agent session to hunt for tokens. The agent polls for completion automatically. This is now the recommended auth flow for MCP users.
+
+### Changed
+- **Auth deferred from happy path.** Extraction, preview, brand_check, and all local tools work without authentication. Studio activation is positioned as an optional upgrade for users who want cloud persistence and team sharing, not a prerequisite. Tool descriptions, prompts, and recovery guidance updated accordingly.
+- **`brand_brandcode_auth` description** now leads with `activate` mode and explicitly states auth is NOT needed for extraction or brand_check.
+
 ## 0.7.2 (2026-04-16)
 
 ### Fixed
