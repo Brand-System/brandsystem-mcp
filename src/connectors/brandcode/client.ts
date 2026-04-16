@@ -11,6 +11,8 @@ import type {
   MagicLinkResponse,
   VerifyResponse,
   SaveBrandResponse,
+  DeviceCodeResponse,
+  DeviceCodePollResponse,
 } from "./types.js";
 
 const USER_AGENT = "brandsystem-mcp";
@@ -173,5 +175,39 @@ export async function saveBrandToStudio(
       body: JSON.stringify(payload),
       contentType: "application/json",
     },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Device code auth endpoints
+// ---------------------------------------------------------------------------
+
+/**
+ * Request a device code for agent-first authentication.
+ */
+export async function requestDeviceCode(
+  baseUrl: string,
+  email: string,
+): Promise<DeviceCodeResponse> {
+  return request<DeviceCodeResponse>(
+    `${baseUrl}/api/auth/device-code`,
+    undefined,
+    {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      contentType: "application/json",
+    },
+  );
+}
+
+/**
+ * Poll for device code completion. Returns the session JWT when approved.
+ */
+export async function pollDeviceCode(
+  baseUrl: string,
+  code: string,
+): Promise<DeviceCodePollResponse> {
+  return request<DeviceCodePollResponse>(
+    `${baseUrl}/api/auth/device-code/poll?code=${encodeURIComponent(code)}`,
   );
 }

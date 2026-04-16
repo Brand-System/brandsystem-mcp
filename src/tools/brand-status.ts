@@ -132,8 +132,7 @@ async function handler() {
     lines.push("");
     lines.push("✓ Brand system complete. All 4 sessions finished.");
     lines.push("  Your brand-runtime.json has identity, visual rules, voice, and strategy.");
-    lines.push("  For governance (claims, evidence, application rules) and content operations,");
-    lines.push("  connect to Brandcode Studio: run brand_brandcode_connect.");
+    lines.push("  Load it into any sub-agent's context for instant on-brand output.");
   }
 
   if (hasVisual) {

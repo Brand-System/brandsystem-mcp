@@ -194,6 +194,28 @@ export interface SaveBrandResponse {
 }
 
 // ---------------------------------------------------------------------------
+// API Request/Response: POST /api/auth/device-code
+// ---------------------------------------------------------------------------
+
+export interface DeviceCodeResponse {
+  ok: true;
+  code: string;
+  activate_url: string;
+  expires_at: string;
+  poll_interval: number;
+}
+
+// ---------------------------------------------------------------------------
+// API Response: GET /api/auth/device-code/poll
+// ---------------------------------------------------------------------------
+
+export type DeviceCodePollResponse =
+  | { status: "pending" }
+  | { status: "expired" }
+  | { status: "not_found" }
+  | { status: "complete"; token: string; email: string; expiresAt: string };
+
+// ---------------------------------------------------------------------------
 // Local Persistence: .brand/brandcode-auth.json (gitignored)
 // ---------------------------------------------------------------------------
 
