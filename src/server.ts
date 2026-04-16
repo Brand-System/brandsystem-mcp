@@ -34,6 +34,7 @@ import { register as registerCheckCompliance } from "./tools/brand-check-complia
 import { register as registerAuditDrift } from "./tools/brand-audit-drift.js";
 import { register as registerRuntime } from "./tools/brand-runtime.js";
 import { register as registerCheck } from "./tools/brand-check.js";
+import { register as registerPreview } from "./tools/brand-preview.js";
 import { register as registerExtractVisual } from "./tools/brand-extract-visual.js";
 import { register as registerExtractPdf } from "./tools/brand-extract-pdf.js";
 import { register as registerResolveConflicts } from "./tools/brand-resolve-conflicts.js";
@@ -90,6 +91,7 @@ export function createServer(): McpServer {
   // ── Runtime ──
   registerRuntime(server);     // Read compiled brand runtime contract
   registerCheck(server);       // Fast inline brand gate
+  registerPreview(server);     // Visual proof page
 
   // ── Brandcode Studio connector ──
   registerBrandcodeAuth(server);     // Authenticate with Studio

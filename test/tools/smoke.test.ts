@@ -57,9 +57,9 @@ function expectValidMetadata(json: Record<string, unknown>): void {
 // ---------------------------------------------------------------------------
 
 describe("tool registration", () => {
-  it("registers all 38 tools", async () => {
+  it("registers all 39 tools", async () => {
     const { tools } = await client.listTools();
-    expect(tools.length).toBe(38);
+    expect(tools.length).toBe(39);
   });
 
   it("every tool has a non-empty description", async () => {
@@ -336,6 +336,17 @@ describe("tools that require .brand/ dir", () => {
     const json = await callAndParse("brand_export", {
       target: "chat",
     });
+    expectValidMetadata(json);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// brand_preview
+// ---------------------------------------------------------------------------
+
+describe("brand_preview", () => {
+  it("handles missing .brand/", async () => {
+    const json = await callAndParse("brand_preview", {});
     expectValidMetadata(json);
   });
 });

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.7.1 (2026-04-16)
+
+### Added
+- **Brand preview (M-15).** `brand_preview` generates a single-page visual proof from brand-runtime.json — color swatches, typography hierarchy, buttons, cards, and a WCAG contrast accessibility matrix. Screenshot-ready, shareable. Writes `.brand/brand-preview.html`.
+
+### Fixed
+- **Color role assignment.** Extraction now uses selector context (header/hero bg → primary, link/button → action, body text → text) and CSS property type (background-color + chromatic + high frequency → primary). Reduces `role: unknown` on sites with plain CSS names.
+- **Blank visual/voice fields.** `brand_deepen_identity` and `brand_compile_messaging` now reject all-empty answers instead of writing blank files. Guides agents to use interactive mode or skip the session.
+- **Feedback schema alias.** `brand_feedback` now accepts `type` as an alias for `category` — common agent misguess.
+
+### Improved
+- **Diff engine key paths (M-17).** Normalizes package structure to find runtime at `package.runtime`, `package.brandInstance.runtime`, or the package itself.
+- **Recovery-driven next_steps (M-18).** `brand_status` uses ranked recovery guidance for next_steps when available, falling back to linear session progression only when recovery can't assess.
+- **Compile cache invalidation (M-19).** `brand_compile` invalidates the `brand_check` cache after writing new runtime/policy files.
+
 ## 0.7.0 (2026-04-15)
 
 ### Added
