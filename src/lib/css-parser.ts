@@ -541,7 +541,46 @@ export function inferColorRole(
   if (p.includes("gradient")) return "gradient";
   if (p.includes("highlight") || p.includes("focus") || p.includes("selection")) return "highlight";
 
-  // Value-based heuristics (when CSS names give no signal)
+  // Selector-based heuristics (structural context from the DOM)
+  const sel = (color as ExtractedColor & { selector_context?: string }).selector_context?.toLowerCase() ?? "";
+
+  if (sel) {
+    // Links and buttons → action
+    if (/\ba\b|\.btn|button|\.cta|submit/i.test(sel) && p.includes("color") && !p.includes("background")) return "action";
+    if (/\ba\b|\.btn|button|\.cta|submit/i.test(sel) && p.includes("background")) return "action";
+
+    // Header/nav backgrounds → primary candidate
+    if (/header|\.hero|\.banner|nav/i.test(sel) && (p.includes("background") || p === "fill")) return "primary";
+
+    // Body/paragraph text color → text
+    if (/body|\.content|main|article|^p\b|\.text/i.test(sel) && p.includes("color") && !p.includes("background")) return "text";
+
+    // Footer, aside → neutral
+    if (/footer|aside|\.sidebar/i.test(sel) && p.includes("background")) return "neutral";
+
+    // Section/page backgrounds → surface
+    if (/section|\.wrapper|\.container|\.page|body/i.test(sel) && p.includes("background")) return "surface";
+
+    // Border-specific selectors
+    if (p.includes("border")) return "border";
+  }
+
+  // CSS property fallback (when selector context also gives no signal)
+  if (p === "background-color" || p === "background") {
+    if (isNearWhite(color.value)) return "surface";
+    // Chromatic background with high frequency → likely primary
+    if (isChromatic(color.value) && color.frequency >= 3) return "primary";
+    return "surface";
+  }
+  if (p === "color") {
+    if (isNearBlack(color.value)) return "text";
+    // Chromatic text color → could be action (link) or accent
+    if (isChromatic(color.value)) return "accent";
+    return "text";
+  }
+  if (p.includes("border")) return "border";
+
+  // Value-based heuristics (last resort)
   if (isNearWhite(color.value)) return "surface";
   if (isNearBlack(color.value)) return "text";
   if (isNeutral(color.value)) return "neutral";

@@ -879,6 +879,24 @@ async function handler(input: Params) {
     });
   }
 
+  // Guard: reject answers where all values are empty/blank (non-interactive agent issue)
+  const parsedAnswers = typeof input.answers === "string" ? (() => { try { return JSON.parse(input.answers as string); } catch { return input.answers; } })() : input.answers;
+  if (typeof parsedAnswers === "object" && parsedAnswers !== null) {
+    const values = Object.values(parsedAnswers as Record<string, unknown>);
+    const allEmpty = values.every((v) => v === "" || v === null || v === undefined || (Array.isArray(v) && v.length === 0));
+    if (values.length > 0 && allEmpty) {
+      return buildResponse({
+        what_happened: "All answers are empty — skipping write to avoid blank messaging data",
+        next_steps: [
+          "This tool requires a human to answer the interview questions",
+          "Run brand_compile_messaging mode=\"interview\" to get the questions, present them to the user, then call mode=\"record\" with real answers",
+          "If running non-interactively, skip Session 3 for now",
+        ],
+        data: { error: ERROR_CODES.ALL_EMPTY },
+      });
+    }
+  }
+
   return handleRecord(brandDir, input.section, input.answers);
 }
 

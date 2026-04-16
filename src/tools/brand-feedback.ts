@@ -550,7 +550,13 @@ export function register(server: McpServer) {
     "Report bugs, friction, feature ideas, data quality issues, praise, or structured agent signals to the brandsystem team. Use when a tool returns an error, extraction misses data, the workflow feels harder than it should, or something works particularly well. For structured agent telemetry, use category='agent_signal' with signal, tool_used, and signal_context fields — brand context is auto-populated from .brand/config. Stored locally in ~/.brandsystem/feedback/ for developer triage. Returns a feedback ID.",
     sendParamsShape,
     async (args) => {
-      const parsed = safeParseParams(SendParamsSchema, args);
+      // Accept "type" as alias for "category" (common agent misguess)
+      const normalized = { ...(args as Record<string, unknown>) };
+      if (normalized.type && !normalized.category) {
+        normalized.category = normalized.type;
+        delete normalized.type;
+      }
+      const parsed = safeParseParams(SendParamsSchema, normalized);
       if (!parsed.success) return parsed.response;
       return sendHandler(parsed.data);
     }
