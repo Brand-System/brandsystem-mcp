@@ -209,8 +209,9 @@ const CAPABILITY_GRAPH: CapabilityDep[] = [
   {
     field: "connector",
     label: "Brandcode Studio connection",
-    tool: "brand_brandcode_connect",
-    description: "Connect to Brandcode Studio for hosting + sync",
+    tool: "brand_brandcode_auth",
+    toolArgs: 'mode="activate" email="you@example.com"',
+    description: "Activate Brandcode Studio (displays a short code, no token copy needed)",
     effort: "moderate",
     points: 5,
     unlocks: [

@@ -57,9 +57,9 @@ function expectValidMetadata(json: Record<string, unknown>): void {
 // ---------------------------------------------------------------------------
 
 describe("tool registration", () => {
-  it("registers all 39 tools", async () => {
+  it("registers all 41 tools", async () => {
     const { tools } = await client.listTools();
-    expect(tools.length).toBe(39);
+    expect(tools.length).toBe(41);
   });
 
   it("every tool has a non-empty description", async () => {

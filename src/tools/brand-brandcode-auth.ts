@@ -183,7 +183,7 @@ async function handleStatus(cwd: string) {
     return buildResponse({
       what_happened: "Not authenticated with Brandcode Studio",
       next_steps: [
-        'Run brand_brandcode_auth mode="activate" email="you@example.com" to connect to Brandcode Studio',
+        'Run brand_brandcode_auth mode="activate" email="you@example.com" to connect — displays a short code, no token copy needed',
       ],
       data: {
         authenticated: false,
@@ -274,7 +274,8 @@ async function handleLogin(cwd: string, studioUrl: string, email?: string) {
       next_steps: [
         "Check your email and click the magic link",
         "After clicking, the browser will show a session token",
-        'Copy the token and run: brand_brandcode_auth mode="set_key" key="<your-token>"',
+        `Copy the token and run: brand_brandcode_auth mode="set_key" key="<your-token>" studio_url="${studioUrl}"`,
+        'Note: mode="activate" is easier — no token copy needed. Use it next time.',
       ],
       data: {
         email,

@@ -201,7 +201,7 @@ async function handleSave() {
     return buildResponse({
       what_happened: "Not authenticated — login required to save brands",
       next_steps: [
-        'Run brand_brandcode_auth mode="login" email="you@example.com" to authenticate first',
+        'Run brand_brandcode_auth mode="activate" email="you@example.com" to connect — displays a short code, no token copy needed',
       ],
       data: { error: ERROR_CODES.NOT_AUTHENTICATED },
     });
