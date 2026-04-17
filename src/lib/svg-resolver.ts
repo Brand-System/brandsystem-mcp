@@ -115,11 +115,73 @@ export function hasEmptyGradientStops(svgContent: string): boolean {
   return hasEmpty;
 }
 
-export function resolveSvg(svgContent: string): {
+/**
+ * Fill empty gradient stops with inferred colors.
+ *
+ * Strategy:
+ * 1. If the gradient has some stops WITH colors, interpolate (first stop color
+ *    for leading empties, last stop color for trailing empties).
+ * 2. If ALL stops are empty, use provided brand colors (primary → secondary).
+ * 3. If no brand colors, use black → transparent (visible but clearly wrong,
+ *    prompts the user to fix it).
+ *
+ * Returns the repaired SVG and the number of stops filled.
+ */
+export function fillEmptyGradientStops(
+  svgContent: string,
+  brandColors?: { primary?: string; secondary?: string },
+): { svg: string; filled: number } {
+  const $ = cheerio.load(svgContent, { xml: true });
+  let filled = 0;
+
+  $("linearGradient, radialGradient, lineargradient, radialgradient").each((_gi, gradient) => {
+    const stops = $(gradient).find("stop");
+    if (stops.length === 0) return;
+
+    // Collect existing stop colors
+    const existing: (string | null)[] = [];
+    stops.each((_si, stop) => {
+      const color = $(stop).attr("stop-color") || null;
+      const style = $(stop).attr("style") || "";
+      const styleColor = style.match(/stop-color:\s*([^;]+)/)?.[1]?.trim() || null;
+      existing.push(color || styleColor);
+    });
+
+    const hasAnyColor = existing.some((c) => c !== null);
+
+    stops.each((si, stop) => {
+      if (existing[si] !== null) return; // already has a color
+
+      let inferredColor: string;
+      if (hasAnyColor) {
+        // Find nearest non-null sibling
+        const before = existing.slice(0, si).reverse().find((c) => c !== null);
+        const after = existing.slice(si + 1).find((c) => c !== null);
+        inferredColor = before || after || "#000000";
+      } else {
+        // All empty — use brand colors
+        const primary = brandColors?.primary || "#000000";
+        const secondary = brandColors?.secondary || "transparent";
+        inferredColor = si === 0 ? primary : secondary;
+      }
+
+      $(stop).attr("stop-color", inferredColor);
+      filled++;
+    });
+  });
+
+  return { svg: $.xml().trim(), filled };
+}
+
+export function resolveSvg(
+  svgContent: string,
+  options?: { brandColors?: { primary?: string; secondary?: string } },
+): {
   inline_svg: string;
   data_uri: string;
   needs_review?: boolean;
   review_reason?: string;
+  gradient_stops_filled?: number;
 } {
   // Sanitize SVG to remove dangerous elements/attributes
   const sanitized = sanitizeSvg(svgContent);
@@ -138,18 +200,25 @@ export function resolveSvg(svgContent: string): {
     }
   }
 
+  // Fill empty gradient stops before encoding
+  const { svg: repaired, filled } = fillEmptyGradientStops(cleaned, options?.brandColors);
+  if (filled > 0) {
+    cleaned = repaired;
+  }
+
   const base64 = Buffer.from(cleaned, "utf-8").toString("base64");
   const data_uri = `data:image/svg+xml;base64,${base64}`;
 
-  // Check for empty gradient stops (renders as black rectangle)
-  const emptyGradients = hasEmptyGradientStops(cleaned);
+  // Check if there are STILL empty gradient stops after repair (shouldn't happen, but safety check)
+  const stillEmpty = hasEmptyGradientStops(cleaned);
 
   return {
     inline_svg: cleaned,
     data_uri,
-    ...(emptyGradients && {
+    ...(filled > 0 && { gradient_stops_filled: filled }),
+    ...(stillEmpty && {
       needs_review: true,
-      review_reason: "SVG has gradient stops without stop-color attributes. The logo may render as a solid black shape. Provide the logo directly via brand_set_logo with the correct SVG, or check the original source file.",
+      review_reason: "SVG still has gradient stops without stop-color after auto-fill. Check the original source file.",
     }),
   };
 }

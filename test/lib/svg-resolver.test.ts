@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeSvg, resolveSvg, resolveImage } from '../../src/lib/svg-resolver.js';
+import { sanitizeSvg, resolveSvg, resolveImage, fillEmptyGradientStops, hasEmptyGradientStops } from '../../src/lib/svg-resolver.js';
 
 describe('sanitizeSvg', () => {
   // --- Passes through ---
@@ -314,5 +314,55 @@ describe('resolveImage', () => {
     expect(data_uri).toMatch(/^data:image\/png;base64,/);
     const decoded = Buffer.from(data_uri.replace('data:image/png;base64,', ''), 'base64').toString('utf-8');
     expect(decoded).toBe('fake-png-data');
+  });
+});
+
+describe('fillEmptyGradientStops', () => {
+  it('fills empty stops with brand colors when all stops are empty', () => {
+    const svg = '<svg><defs><linearGradient id="g1"><stop offset="0%"/><stop offset="100%"/></linearGradient></defs></svg>';
+    const { svg: result, filled } = fillEmptyGradientStops(svg, { primary: '#ff0000', secondary: '#0000ff' });
+    expect(filled).toBe(2);
+    expect(result).toContain('stop-color="#ff0000"');
+    expect(result).toContain('stop-color="#0000ff"');
+  });
+
+  it('fills empty stops by interpolating from siblings', () => {
+    const svg = '<svg><defs><linearGradient id="g1"><stop offset="0%" stop-color="#ff0000"/><stop offset="50%"/><stop offset="100%" stop-color="#0000ff"/></linearGradient></defs></svg>';
+    const { svg: result, filled } = fillEmptyGradientStops(svg);
+    expect(filled).toBe(1);
+    // Middle stop should get color from nearest sibling (first = #ff0000)
+    expect(result).toContain('stop-color="#ff0000"');
+  });
+
+  it('leaves valid stops untouched', () => {
+    const svg = '<svg><defs><linearGradient id="g1"><stop offset="0%" stop-color="#ff0000"/><stop offset="100%" stop-color="#0000ff"/></linearGradient></defs></svg>';
+    const { filled } = fillEmptyGradientStops(svg);
+    expect(filled).toBe(0);
+  });
+
+  it('handles stops with style attribute', () => {
+    const svg = '<svg><defs><linearGradient id="g1"><stop offset="0%" style="stop-color:#ff0000"/><stop offset="100%"/></linearGradient></defs></svg>';
+    const { filled } = fillEmptyGradientStops(svg, { primary: '#00ff00' });
+    expect(filled).toBe(1);
+  });
+
+  it('defaults to black/transparent without brand colors', () => {
+    const svg = '<svg><defs><linearGradient id="g1"><stop offset="0%"/><stop offset="100%"/></linearGradient></defs></svg>';
+    const { svg: result, filled } = fillEmptyGradientStops(svg);
+    expect(filled).toBe(2);
+    expect(result).toContain('stop-color="#000000"');
+    expect(result).toContain('stop-color="transparent"');
+  });
+});
+
+describe('hasEmptyGradientStops', () => {
+  it('detects empty gradient stops', () => {
+    const svg = '<svg><defs><linearGradient><stop offset="0%"/></linearGradient></defs></svg>';
+    expect(hasEmptyGradientStops(svg)).toBe(true);
+  });
+
+  it('returns false when all stops have colors', () => {
+    const svg = '<svg><defs><linearGradient><stop offset="0%" stop-color="#ff0000"/></linearGradient></defs></svg>';
+    expect(hasEmptyGradientStops(svg)).toBe(false);
   });
 });

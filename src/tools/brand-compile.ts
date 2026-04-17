@@ -25,8 +25,54 @@ async function handler(server: McpServer) {
     });
   }
 
-  const config = await brandDir.readConfig();
-  const identity = await brandDir.readCoreIdentity();
+  // Read and validate all source files upfront, collecting all errors
+  const validationErrors: string[] = [];
+
+  let config;
+  try {
+    config = await brandDir.readConfig();
+  } catch (err) {
+    if (err && typeof err === "object" && "issues" in err) {
+      const issues = (err as { issues: Array<{ path: (string | number)[]; message: string }> }).issues;
+      for (const issue of issues) {
+        validationErrors.push(`brand.config.yaml: ${issue.path.join(".")} — ${issue.message}`);
+      }
+    } else {
+      validationErrors.push(`brand.config.yaml: ${(err as Error).message}`);
+    }
+  }
+
+  let identity;
+  try {
+    identity = await brandDir.readCoreIdentity();
+  } catch (err) {
+    if (err && typeof err === "object" && "issues" in err) {
+      const issues = (err as { issues: Array<{ path: (string | number)[]; message: string }> }).issues;
+      for (const issue of issues) {
+        validationErrors.push(`core-identity.yaml: ${issue.path.join(".")} — ${issue.message}`);
+      }
+    } else {
+      validationErrors.push(`core-identity.yaml: ${(err as Error).message}`);
+    }
+  }
+
+  if (validationErrors.length > 0) {
+    return buildResponse({
+      what_happened: `${validationErrors.length} schema validation error(s) found — fix all before recompiling`,
+      next_steps: [
+        "Fix the errors listed below in your .brand/ YAML files, then run brand_compile again",
+        "Or run brand_start to re-extract from scratch with the current schema",
+      ],
+      data: {
+        error: ERROR_CODES.VALIDATION_FAILED,
+        validation_errors: validationErrors,
+      },
+    });
+  }
+
+  // TypeScript narrowing — both are defined if we got past validation
+  config = config!;
+  identity = identity!;
 
   const designArtifacts = await generateAndPersistDesignArtifacts(brandDir, { overwrite: true });
 
@@ -118,13 +164,44 @@ async function handler(server: McpServer) {
   }
   nextSteps.push("DESIGN.md and design-synthesis.json are refreshed — use them as the agent-facing design brief and structured synthesis layer");
 
-  // --- Read optional session data ---
+  // --- Read optional session data (graceful on schema errors) ---
   const hasVisual = await brandDir.hasVisualIdentity();
   const hasMessaging = await brandDir.hasMessaging();
   const hasStrategy = await brandDir.hasStrategy();
-  const visual = hasVisual ? await brandDir.readVisualIdentity() : null;
-  const messaging = hasMessaging ? await brandDir.readMessaging() : null;
-  const strategy = hasStrategy ? await brandDir.readStrategy() : null;
+  const schemaWarnings: string[] = [];
+
+  let visual = null;
+  if (hasVisual) {
+    try { visual = await brandDir.readVisualIdentity(); }
+    catch (err) {
+      const msg = err && typeof err === "object" && "issues" in err
+        ? (err as { issues: Array<{ path: (string | number)[]; message: string }> }).issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")
+        : (err as Error).message;
+      schemaWarnings.push(`visual-identity.yaml skipped (schema error): ${msg}`);
+    }
+  }
+
+  let messaging = null;
+  if (hasMessaging) {
+    try { messaging = await brandDir.readMessaging(); }
+    catch (err) {
+      const msg = err && typeof err === "object" && "issues" in err
+        ? (err as { issues: Array<{ path: (string | number)[]; message: string }> }).issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")
+        : (err as Error).message;
+      schemaWarnings.push(`messaging.yaml skipped (schema error): ${msg}`);
+    }
+  }
+
+  let strategy = null;
+  if (hasStrategy) {
+    try { strategy = await brandDir.readStrategy(); }
+    catch (err) {
+      const msg = err && typeof err === "object" && "issues" in err
+        ? (err as { issues: Array<{ path: (string | number)[]; message: string }> }).issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")
+        : (err as Error).message;
+      schemaWarnings.push(`content-strategy.yaml skipped (schema error): ${msg}`);
+    }
+  }
 
   // --- Session 2: VIM generation if visual-identity.yaml exists ---
   if (visual) {
@@ -221,6 +298,7 @@ async function handler(server: McpServer) {
       runtime_compiled: true,
       design_synthesis_generated: true,
       design_synthesis_source: designArtifacts.source_used,
+      ...(schemaWarnings.length > 0 && { schema_warnings: schemaWarnings }),
       agent_tip: "Load .brand/brand-runtime.json into any sub-agent's context. It replaces 200-400 tokens of per-prompt brand boilerplate with a single file. First output will be on-brand.",
       ...(hasVisual && { vim_generated: true }),
       ...(conversationGuide && { conversation_guide: conversationGuide }),
