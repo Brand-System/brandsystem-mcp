@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.2 (2026-04-16)
+
+### Fixed
+- **Compile batches all schema errors (M-21).** `brand_compile` now catches all Zod validation errors from config, identity, visual, messaging, and strategy files upfront and returns them in one response. Optional session files degrade gracefully with warnings instead of aborting.
+- **SVG gradient fill inference (M-24).** Empty gradient stops (renders as black rectangles) are auto-filled from sibling stop colors or brand primary/secondary. Runs automatically during logo resolution.
+- **Auth hints recommend `activate` mode (M-22/M-23).** All auth error messages, next_steps, and recovery guidance now recommend `mode="activate"` (device code) over `mode="login"` (magic link). `set_key` hints include `studio_url` explicitly.
+
 ## 0.8.1 (2026-04-16)
 
 ### Fixed
