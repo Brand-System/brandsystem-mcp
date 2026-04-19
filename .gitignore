@@ -9,3 +9,5 @@ scripts/audit-results/
 REGISTRIES.md
 specs/brand-extraction-*.md
 .mcpregistry_*
+.vercel
+.env*.local

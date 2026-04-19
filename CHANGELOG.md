@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.9.1 (2026-04-19)
 
 ### Added
 - **Brandcode MCP Phase 0 lock.** Added `specs/brandcode-mcp-phase-0-lock.md` to lock the S009 G-5b decisions: 8-tool hosted surface, `@brandcode/mcp` naming, `mcp.brandcode.studio/{slug}` URL structure, free-v1 pricing posture, and the Phase 1 staging-prototype handoff.
 - **Hosted MCP status surfacing.** `brand_brandcode_status` now returns `brandcode_mcp_available`, `brandcode_mcp_phase`, `brandcode_mcp_url`, and the locked 8-tool surface so agents can distinguish the Phase 0 lock from the Phase 1 hosted launch.
+- **Brandcode MCP Phase 1 staging scaffold (G-5b Milestone A).** New `src/hosted/` surface registers the locked 8-tool list and serves the hosted runtime over Web Standard Streamable HTTP. Bearer-token auth with per-brand scopes, path-based slug routing (`/{slug}`), memoized service-token pull from UCS, silent upstream fallback. `brand_runtime` and `brand_status` fully wired; the other 6 tools registered with descriptive stubs pending Milestone B. Deploy scaffold: `api/[slug].ts` Vercel Function, `vercel.json` rewrite, `bin/brandcode-mcp.mjs` local dev entry. Does not affect the published `@brandsystem/mcp` stdio server — additive scaffolding only.
+
+### Fixed
+- **Hosted MCP service-token header (G-5g).** The hosted surface now sends `Authorization: Bearer <service-token>` when calling UCS, matching the G-5d validator. Previously sent a custom `x-brandcode-mcp-service-token` header that UCS ignored, causing every hosted pull to fail auth and return `not_compiled` at the runtime slicer.
+- **Hosted runtime slicer normalizes brandInstance shape (G-5h).** `extractRuntime` now recognizes the flat brandInstance shape UCS actually serves (`tokens`, `fonts`, `assets`, `verbalIdentity` as siblings) and normalizes it into the runtime-like object `sliceRuntime` expects. Minimal/visual/voice slices now return real colors, typography, and logo references instead of null.
 
 ### Changed
 - README and `llms.txt` now clarify the "Two MCPs, one brand" story: `@brandsystem/mcp` is the local Build MCP; Brandcode MCP is the upcoming hosted Use MCP.
