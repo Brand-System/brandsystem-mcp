@@ -18,6 +18,7 @@ import {
 import { readAuthCredentials } from "../lib/auth-state.js";
 import { readPackagePayload } from "../connectors/brandcode/persistence.js";
 import { computeBrandDiff } from "../lib/brand-diff.js";
+import { invalidateLiveCache } from "../connectors/brandcode/live-source.js";
 import type { SyncHistoryEvent } from "../connectors/brandcode/types.js";
 
 const paramsShape = {
@@ -81,6 +82,7 @@ async function handlePull(input: Params) {
 
   // No-op: brand is already up to date
   if (pullResult.upToDate) {
+    invalidateLiveCache(config.slug);
     const syncEvent: SyncHistoryEvent = {
       timestamp: now,
       syncMode: "no_change",
@@ -128,6 +130,7 @@ async function handlePull(input: Params) {
     lastSyncedAt: now,
   };
   await writeConnectorConfig(cwd, updatedConfig);
+  invalidateLiveCache(config.slug);
 
   // Compute brand diff — normalize package structure to find runtime
   const extractRuntime = (pkg: Record<string, unknown> | null): Record<string, unknown> | null => {
@@ -264,6 +267,7 @@ async function handlePush() {
       lastSyncedAt: now,
     };
     await writeConnectorConfig(cwd, updatedConfig);
+    invalidateLiveCache(connConfig.slug);
 
     // Record sync history
     const syncEvent: SyncHistoryEvent = {

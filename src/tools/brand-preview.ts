@@ -4,9 +4,17 @@ import { buildResponse } from "../lib/response.js";
 import { ERROR_CODES } from "../types/index.js";
 import { generatePreviewHtml } from "../lib/preview-generator.js";
 import type { BrandRuntime } from "../lib/runtime-compiler.js";
+import {
+  ensureLiveFreshness,
+  buildLiveIndicator,
+} from "../connectors/brandcode/live-source.js";
 
 async function handler() {
-  const brandDir = new BrandDir(process.cwd());
+  const cwd = process.cwd();
+  const brandDir = new BrandDir(cwd);
+
+  const live = await ensureLiveFreshness(cwd);
+  const liveIndicator = buildLiveIndicator(live);
 
   if (!(await brandDir.exists())) {
     return buildResponse({
@@ -41,8 +49,16 @@ async function handler() {
   const hasVoice = !!runtime.voice;
   const hasVisual = !!runtime.visual;
 
+  const freshnessTag = liveIndicator
+    ? live.source === "local-fallback"
+      ? " (Live — local fallback)"
+      : live.source === "live"
+        ? " (Live)"
+        : " (Live — cached)"
+    : "";
+
   return buildResponse({
-    what_happened: `Brand preview generated for "${runtime.client_name}"`,
+    what_happened: `Brand preview generated for "${runtime.client_name}"${freshnessTag}`,
     next_steps: [
       "Open .brand/brand-preview.html in a browser to see the visual proof",
       "Screenshot and share to validate the brand extraction",
@@ -61,6 +77,7 @@ async function handler() {
       },
       color_count: colorCount,
       font_count: fontCount,
+      ...(liveIndicator ? { live: liveIndicator } : {}),
     },
   });
 }

@@ -3,6 +3,10 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildResponse, safeParseParams } from "../lib/response.js";
 import { ERROR_CODES } from "../types/index.js";
 import { runBrandCheck, getBrandPalette } from "../lib/brand-check-engine.js";
+import {
+  ensureLiveFreshness,
+  buildLiveIndicator,
+} from "../connectors/brandcode/live-source.js";
 
 const paramsShape = {
   text: z
@@ -51,6 +55,9 @@ async function handler(input: Params) {
     });
   }
 
+  const live = await ensureLiveFreshness(cwd);
+  const liveIndicator = buildLiveIndicator(live);
+
   const result = await runBrandCheck(cwd, {
     text: input.text,
     color: input.color,
@@ -76,7 +83,12 @@ async function handler(input: Params) {
     return buildResponse({
       what_happened: `Brand check passed (${checked.join(", ")})`,
       next_steps: [],
-      data: { pass: true, checked, flags: [] },
+      data: {
+        pass: true,
+        checked,
+        flags: [],
+        ...(liveIndicator ? { live: liveIndicator } : {}),
+      },
     });
   }
 
@@ -103,6 +115,9 @@ async function handler(input: Params) {
   };
   if (palette) {
     data.brand_palette = palette;
+  }
+  if (liveIndicator) {
+    data.live = liveIndicator;
   }
 
   return buildResponse({

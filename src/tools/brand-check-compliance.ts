@@ -7,6 +7,10 @@ import { loadBrandContext, isHtmlContent } from "../lib/content-scorer.js";
 import { isPathWithinBase } from "../lib/path-security.js";
 import * as cheerio from "cheerio";
 import { ERROR_CODES } from "../types/index.js";
+import {
+  ensureLiveFreshness,
+  buildLiveIndicator,
+} from "../connectors/brandcode/live-source.js";
 
 // ---------------------------------------------------------------------------
 // Inline utilities (fast-path versions — no full scoring overhead)
@@ -124,7 +128,11 @@ interface ComplianceCheck {
 }
 
 async function handler(input: CheckComplianceParams) {
-  const brandDir = new BrandDir(process.cwd());
+  const cwd = process.cwd();
+  const brandDir = new BrandDir(cwd);
+
+  const live = await ensureLiveFreshness(cwd);
+  const liveIndicator = buildLiveIndicator(live);
 
   if (!(await brandDir.exists())) {
     return buildResponse({
@@ -243,6 +251,7 @@ async function handler(input: CheckComplianceParams) {
       checks: checks.slice(0, 20),
       strict_mode: input.strict,
       layers_checked: layersChecked,
+      ...(liveIndicator ? { live: liveIndicator } : {}),
     } as unknown as Record<string, unknown>,
   });
 }

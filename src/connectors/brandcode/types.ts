@@ -239,6 +239,12 @@ export interface ConnectorConfig {
   syncToken: string;
   lastSyncedAt: string;
   shareTokenRequired: boolean;
+  /** When true, read-only tools refresh from hosted runtime on call (subject to TTL). */
+  liveMode?: boolean;
+  /** ISO timestamp of when Live Mode was turned on. */
+  liveModeActivatedAt?: string;
+  /** Cache TTL for live reads. Defaults to 60s when absent. */
+  liveCacheTTLSeconds?: number;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.9.0 (2026-04-18)
+
+### Added
+- **Live Mode (G-5a).** New tool `brand_brandcode_live` toggles Live Mode on a connected Brandcode Studio brand. When on, read-only tools (`brand_runtime`, `brand_check`, `brand_audit_content`, `brand_check_compliance`, `brand_preview`, `brand_status`) refresh from the hosted runtime on each call within a short cache TTL (default 60s). Governance edits in Brand Console propagate on the next tool call without a manual sync. Backed by a per-process in-memory cache that invalidates on explicit `brand_brandcode_sync`. Requires prior `brand_brandcode_connect` and `brand_brandcode_auth`.
+- **`brand_runtime` live routing.** When Live Mode is on, the runtime is extracted from the hosted package and tagged `runtime_origin: "live"`. Supports hosted package shapes `pkg.runtime`, `pkg.brandInstance.runtime`, and "package is a runtime".
+- **Silent network-failure fallback.** Every live-aware tool falls back to the on-disk mirror when the Studio pull fails. The failure surfaces as a `live.fallback_reason` field in the response — never as a user-visible error.
+- **Git-connected repo tools (C-1/C-7).** `brand_connect_repo` and `brand_repo_status` wire a GitHub repo's `.brand/` directory as the source of truth for a hosted brand; Studio polls every five minutes.
+
+### Changed
+- **`ConnectorConfig` extended** with optional `liveMode`, `liveModeActivatedAt`, `liveCacheTTLSeconds`. Existing connector configs without these fields default to Live Mode off — zero behavior change for unconnected users.
+- **`brand_brandcode_sync` invalidates the live cache** on pull and push so the next live read observes the freshest state.
+- **`brand_status` surfaces Live Mode state** under the Brandcode Studio section, including cache warmth and fallback indicators.
+
+### Notes
+- Live Mode is opt-in, per-session. The 3000+ existing MCP users who never connect to Studio see zero behavior change.
+- Write tools (extract/build/mutate) stay local-first; Live Mode is read-only by design. To push local changes to hosted, use `brand_brandcode_sync direction="push"`.
+- In-memory cache is process-local; not shared across processes and not persisted to disk.
+
 ## 0.8.2 (2026-04-16)
 
 ### Fixed

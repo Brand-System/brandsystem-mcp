@@ -3,10 +3,20 @@ import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
 import { ERROR_CODES, type Confidence } from "../types/index.js";
 import { readConnectorConfig } from "../connectors/brandcode/persistence.js";
+import {
+  ensureLiveFreshness,
+  buildLiveIndicator,
+} from "../connectors/brandcode/live-source.js";
 import { generateRecoveryGuidance } from "../lib/recovery-guidance.js";
 
 async function handler() {
-  const brandDir = new BrandDir(process.cwd());
+  const cwd = process.cwd();
+  const brandDir = new BrandDir(cwd);
+
+  // Refresh local mirror first if Live Mode is on — status should reflect
+  // hosted state when the user has opted in.
+  const live = await ensureLiveFreshness(cwd);
+  const liveIndicator = buildLiveIndicator(live);
 
   if (!(await brandDir.exists())) {
     return buildResponse({
@@ -53,6 +63,7 @@ async function handler() {
             "brand_brandcode_connect — Connect to a hosted brand on Brandcode Studio",
             "brand_brandcode_sync — Sync local .brand/ with hosted brand",
             "brand_brandcode_status — Check Brandcode Studio connection status",
+            "brand_brandcode_live — Toggle Live Mode (read-only tools refresh from hosted runtime)",
           ],
         },
       },
@@ -189,12 +200,26 @@ async function handler() {
   lines.push(`DESIGN.md:                ${hasDesignMarkdown ? "✓ Generated" : "○ Not generated"}`);
 
   // Check Brandcode Studio connection
-  const connectorConfig = await readConnectorConfig(process.cwd());
+  const connectorConfig = await readConnectorConfig(cwd);
   lines.push("");
   lines.push("── Brandcode Studio ─────────────────");
   if (connectorConfig) {
     lines.push(`Connected:  ✓ ${connectorConfig.slug}`);
     lines.push(`Remote:     ${connectorConfig.brandUrl}`);
+    if (connectorConfig.liveMode) {
+      const ttl = connectorConfig.liveCacheTTLSeconds ?? 60;
+      const sourceLabel =
+        live.source === "local-fallback"
+          ? `ON — fallback to local (${live.fallbackReason ?? "network"})`
+          : live.source === "live"
+            ? "ON — live refresh"
+            : live.source === "live-no-change"
+              ? "ON — live, no change"
+              : "ON — cache";
+      lines.push(`Live Mode:  ✓ ${sourceLabel} (cache ${ttl}s)`);
+    } else {
+      lines.push(`Live Mode:  ○ off — run brand_brandcode_live mode="on" to enable`);
+    }
   } else {
     lines.push(`Connected:  ○ Not connected`);
     lines.push(`  Run brand_brandcode_connect to sync with a hosted brand on Brandcode Studio`);
@@ -238,8 +263,12 @@ async function handler() {
     nextSteps.push(`Run brand_extract_figma with figma_file_key "${config.figma_file_key}" for higher-accuracy data`);
   }
 
+  const statusHeadline = liveIndicator
+    ? `Brand system status retrieved (live mode ${live.source})`
+    : "Brand system status retrieved";
+
   return buildResponse({
-    what_happened: "Brand system status retrieved",
+    what_happened: statusHeadline,
     next_steps: nextSteps.length > 0 ? nextSteps : ["Brand system is up to date"],
     data: {
       status: lines.join("\n"),
@@ -247,6 +276,7 @@ async function handler() {
         readiness: recovery.currentReadiness,
         actions: recovery.actions,
       } : undefined,
+      ...(liveIndicator ? { live: liveIndicator } : {}),
     },
   });
 }

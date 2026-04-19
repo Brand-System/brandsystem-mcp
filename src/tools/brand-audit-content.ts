@@ -10,6 +10,10 @@ import {
 } from "../lib/content-scorer.js";
 import { isPathWithinBase } from "../lib/path-security.js";
 import { ERROR_CODES } from "../types/index.js";
+import {
+  ensureLiveFreshness,
+  buildLiveIndicator,
+} from "../connectors/brandcode/live-source.js";
 
 // ---------------------------------------------------------------------------
 // Content resolution
@@ -37,7 +41,11 @@ async function resolveContent(input: string): Promise<{ content: string; isHtml:
 // ---------------------------------------------------------------------------
 
 async function handler(input: AuditContentParams) {
-  const brandDir = new BrandDir(process.cwd());
+  const cwd = process.cwd();
+  const brandDir = new BrandDir(cwd);
+
+  const live = await ensureLiveFreshness(cwd);
+  const liveIndicator = buildLiveIndicator(live);
 
   if (!(await brandDir.exists())) {
     return buildResponse({
@@ -95,7 +103,9 @@ async function handler(input: AuditContentParams) {
   }
 
   return buildResponse({
-    what_happened: summary,
+    what_happened: liveIndicator
+      ? `${summary} (live mode ${live.source})`
+      : summary,
     next_steps: nextSteps,
     data: {
       overall_score: result.overall,
@@ -107,6 +117,7 @@ async function handler(input: AuditContentParams) {
       conversation_guide: {
         instruction: "Present the overall score prominently, then walk through each dimension. For low-scoring dimensions, show specific examples from the content and suggest rewrites.",
       },
+      ...(liveIndicator ? { live: liveIndicator } : {}),
     } as unknown as Record<string, unknown>,
   });
 }
