@@ -115,6 +115,136 @@ describe("brand_runtime (hosted)", () => {
     const json = await call(client, "brand_runtime", { slice: "full" });
     expect(json.error).toBe("fetch_failed");
   });
+
+  describe("brandInstance flat-shape normalization (G-5h)", () => {
+    const FLAT_PACKAGE: BrandPackagePayload = {
+      slug: "brandcode",
+      runtimeVersion: "2026-04-16",
+      brandInstance: {
+        manifest: { name: "Brandcode", slug: "brandcode", version: "0.0" },
+        tokens: {
+          brandName: "Brandcode",
+          colors: {
+            primary: "#2563eb",
+            dark: "#18181b",
+            white: "#ffffff",
+            lightGrey: "#f4f4f5",
+          },
+          typography: {
+            fontFamily: "Inter, system-ui, sans-serif",
+            displayWeight: 600,
+            bodyWeight: 400,
+          },
+          action: { primary: "#2563eb" },
+        },
+        fonts: {
+          strategy: "system_only",
+          fontFamily: "Inter, system-ui, sans-serif",
+          roles: {
+            body: {
+              fontFamily: "Inter, system-ui, sans-serif",
+              fallbackStack: ["system-ui", "sans-serif"],
+            },
+            display: {
+              fontFamily: "Merriweather, Georgia, serif",
+              fallbackStack: ["Georgia", "serif"],
+            },
+          },
+        },
+        assets: [],
+        verbalIdentity: "Direct, clear, generous.",
+        perspective: "Tool-as-partner.",
+        narratives: [],
+      },
+    };
+
+    it("normalizes colors from tokens.colors into identity.colors", async () => {
+      const { client } = await connectClient(buildContext(FLAT_PACKAGE));
+      const json = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = json.runtime as Record<string, unknown>;
+      const identity = runtime.identity as Record<string, unknown>;
+      expect(identity.colors).toEqual({
+        primary: "#2563eb",
+        dark: "#18181b",
+        white: "#ffffff",
+        lightGrey: "#f4f4f5",
+      });
+    });
+
+    it("normalizes fonts.roles with display first (minimal slice picks heading)", async () => {
+      const { client } = await connectClient(buildContext(FLAT_PACKAGE));
+      const full = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = full.runtime as Record<string, unknown>;
+      const identity = runtime.identity as Record<string, unknown>;
+      const typography = identity.typography as Record<string, string>;
+      // display must be the first entry so minimal slice grabs it
+      expect(Object.keys(typography)[0]).toBe("display");
+      expect(typography.display).toContain("Merriweather");
+      expect(typography.body).toContain("Inter");
+    });
+
+    it("minimal slice returns primary color + display font (not null)", async () => {
+      const { client } = await connectClient(buildContext(FLAT_PACKAGE));
+      const json = await call(client, "brand_runtime", { slice: "minimal" });
+      const runtime = json.runtime as Record<string, unknown>;
+      const identity = runtime.identity as Record<string, unknown>;
+      expect((identity.colors as Record<string, string>).primary).toBe(
+        "#2563eb",
+      );
+      const typo = identity.typography as Record<string, string>;
+      expect(Object.keys(typo)).toHaveLength(1);
+      expect(typo.display).toContain("Merriweather");
+      expect(identity.logo).toBeNull();
+    });
+
+    it("client_name prefers manifest.name, falls back to slug", async () => {
+      const { client } = await connectClient(buildContext(FLAT_PACKAGE));
+      const json = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = json.runtime as Record<string, unknown>;
+      expect(runtime.client_name).toBe("Brandcode");
+    });
+
+    it("version picks runtimeVersion from package top level", async () => {
+      const { client } = await connectClient(buildContext(FLAT_PACKAGE));
+      const json = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = json.runtime as Record<string, unknown>;
+      expect(runtime.version).toBe("2026-04-16");
+    });
+
+    it("logo is detected from assets with kind=logo and svg format", async () => {
+      const pkgWithLogo = {
+        ...FLAT_PACKAGE,
+        brandInstance: {
+          ...(FLAT_PACKAGE.brandInstance as Record<string, unknown>),
+          assets: [
+            { kind: "logo", format: "svg", url: "https://cdn/logo.svg" },
+            { kind: "headshot", format: "png" },
+          ],
+        },
+      };
+      const { client } = await connectClient(buildContext(pkgWithLogo));
+      const json = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = json.runtime as Record<string, unknown>;
+      const identity = runtime.identity as Record<string, unknown>;
+      expect(identity.logo).toEqual({ type: "logo", has_svg: true });
+    });
+
+    it("falls back to tokens.typography when fonts.roles is absent", async () => {
+      const pkgNoRoles = {
+        ...FLAT_PACKAGE,
+        brandInstance: {
+          ...(FLAT_PACKAGE.brandInstance as Record<string, unknown>),
+          fonts: { strategy: "system_only" },
+        },
+      };
+      const { client } = await connectClient(buildContext(pkgNoRoles));
+      const json = await call(client, "brand_runtime", { slice: "full" });
+      const runtime = json.runtime as Record<string, unknown>;
+      const identity = runtime.identity as Record<string, unknown>;
+      const typo = identity.typography as Record<string, string>;
+      expect(typo.default).toContain("Inter");
+    });
+  });
 });
 
 describe("brand_status (hosted)", () => {

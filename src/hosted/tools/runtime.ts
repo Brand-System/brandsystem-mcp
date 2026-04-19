@@ -25,6 +25,18 @@ const paramsShape = {
 const ParamsSchema = z.object(paramsShape);
 type Params = z.infer<typeof ParamsSchema>;
 
+/**
+ * Recognized hosted-package shapes (order matters — first match wins):
+ *
+ *   1. `pkg.runtime`                     — pre-compiled runtime at top level
+ *   2. `pkg.brandInstance.runtime`       — legacy nested runtime
+ *   3. `pkg.brandInstance.{tokens,fonts,assets,...}` — current flat shape;
+ *                                          normalize into a runtime-like object
+ *   4. `pkg.identity`                    — package IS a runtime
+ *
+ * G-5h: the flat brandInstance shape is the one UCS actually serves today.
+ * Keeping the older shapes lets clients upgrade without UCS changes.
+ */
 function extractRuntime(
   pkg: BrandPackagePayload | null,
 ): Record<string, unknown> | null {
@@ -34,11 +46,140 @@ function extractRuntime(
     return record.runtime as Record<string, unknown>;
   }
   const instance = record.brandInstance as Record<string, unknown> | undefined;
-  if (instance?.runtime && typeof instance.runtime === "object") {
-    return instance.runtime as Record<string, unknown>;
+  if (instance) {
+    if (instance.runtime && typeof instance.runtime === "object") {
+      return instance.runtime as Record<string, unknown>;
+    }
+    if (
+      isRecord(instance.tokens) ||
+      isRecord(instance.fonts) ||
+      Array.isArray(instance.assets)
+    ) {
+      return normalizeBrandInstance(record, instance);
+    }
   }
   if (record.identity && typeof record.identity === "object") {
     return record;
+  }
+  return null;
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === "object" && !Array.isArray(v);
+}
+
+function pickString(...candidates: unknown[]): string {
+  for (const c of candidates) {
+    if (typeof c === "string" && c.length > 0) return c;
+  }
+  return "";
+}
+
+/**
+ * Build a runtime-shaped object from the flat brandInstance UCS serves today.
+ *
+ * Sources consulted:
+ *   - identity.colors     ← brandInstance.tokens.colors (role → hex)
+ *   - identity.typography ← brandInstance.fonts.roles (preferred) or
+ *                           brandInstance.tokens.typography.fontFamily
+ *   - identity.logo       ← first logo-tagged entry in brandInstance.assets
+ *   - version             ← pkg.runtimeVersion or manifest.brandcodeVersion
+ *   - client_name         ← manifest.name, tokens.brandName, or slug
+ *
+ * visual/voice/strategy stay null until richer mappings land alongside the
+ * real brand_check / brand_search implementations in Milestone B.
+ */
+function normalizeBrandInstance(
+  pkg: Record<string, unknown>,
+  instance: Record<string, unknown>,
+): Record<string, unknown> {
+  const tokens = instance.tokens as Record<string, unknown> | undefined;
+  const fonts = instance.fonts as Record<string, unknown> | undefined;
+  const assets = instance.assets as unknown[] | undefined;
+  const manifest = instance.manifest as Record<string, unknown> | undefined;
+
+  const colors =
+    (tokens?.colors as Record<string, string> | undefined) ?? {};
+  const typography = pickTypography(fonts, tokens);
+  const logo = pickLogo(assets);
+
+  return {
+    version: pickString(
+      pkg.runtimeVersion,
+      manifest?.brandcodeVersion,
+      manifest?.version,
+      "hosted",
+    ),
+    client_name: pickString(
+      manifest?.name,
+      tokens?.brandName,
+      pkg.slug,
+      "hosted brand",
+    ),
+    compiled_at: new Date().toISOString(),
+    sessions_completed: 0,
+    identity: {
+      colors,
+      typography,
+      logo,
+    },
+    visual: null,
+    voice: null,
+    strategy: null,
+  };
+}
+
+function pickTypography(
+  fonts: Record<string, unknown> | undefined,
+  tokens: Record<string, unknown> | undefined,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  const roles = fonts?.roles as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (roles) {
+    // Canonical order — display first so minimal slice picks it as "heading".
+    const order = ["display", "heading", "body", "mono"];
+    for (const role of order) {
+      const fam = roles[role]?.fontFamily;
+      if (typeof fam === "string" && fam.length > 0) out[role] = fam;
+    }
+    for (const [role, spec] of Object.entries(roles)) {
+      if (order.includes(role)) continue;
+      const fam = (spec as Record<string, unknown> | undefined)?.fontFamily;
+      if (typeof fam === "string" && fam.length > 0) out[role] = fam;
+    }
+    if (Object.keys(out).length > 0) return out;
+  }
+  const tokenTypo = tokens?.typography as Record<string, unknown> | undefined;
+  const family = tokenTypo?.fontFamily;
+  if (typeof family === "string" && family.length > 0) {
+    out.default = family;
+  }
+  return out;
+}
+
+function pickLogo(
+  assets: unknown[] | undefined,
+): { type: string; has_svg: boolean } | null {
+  if (!assets || assets.length === 0) return null;
+  for (const asset of assets) {
+    if (!asset || typeof asset !== "object") continue;
+    const a = asset as Record<string, unknown>;
+    const kind =
+      (typeof a.kind === "string" && a.kind) ||
+      (typeof a.type === "string" && a.type) ||
+      (typeof a.role === "string" && a.role) ||
+      "";
+    if (!/logo/i.test(kind)) continue;
+    const format =
+      (typeof a.format === "string" && a.format) ||
+      (typeof a.contentType === "string" && a.contentType) ||
+      "";
+    return {
+      type: kind,
+      has_svg: /svg/i.test(format),
+    };
   }
   return null;
 }
