@@ -2,7 +2,7 @@
   "name": "@brandsystem/mcp",
   "version": "0.9.1",
   "mcpName": "io.github.Brand-System/brandsystem-mcp",
-  "description": "MCP server for brand identity extraction, management, and AI enforcement. Extract logos, colors, fonts, voice from any website. Enforce brand guidelines in Claude, ChatGPT, Cursor, and any MCP-compatible tool.",
+  "description": "Author a portable .brand runtime — the governance layer that travels with your brand. Extract identity from websites, Figma, and PDFs; compile tokens, anti-patterns, and voice rules into a single .brand/ directory; deploy to Claude Design, Claude Code, Cursor, ChatGPT, and any MCP-compatible tool. One artifact, every surface on brand.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -46,17 +46,19 @@
   ],
   "keywords": [
     "mcp",
-    "brand",
+    "model-context-protocol",
+    "brand-runtime",
+    "brand-governance",
+    "claude-design",
     "brand-identity",
-    "design-system",
     "brand-guidelines",
+    "brand-compliance",
     "design-tokens",
+    "design-system",
     "visual-identity",
     "brand-voice",
     "ai-tools",
-    "model-context-protocol",
-    "brand-compliance",
-    "brand-governance"
+    "brand"
   ],
   "license": "MIT",
   "repository": {

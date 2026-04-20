@@ -5,17 +5,21 @@
 [![npm downloads](https://img.shields.io/npm/dw/@brandsystem/mcp)](https://www.npmjs.com/package/@brandsystem/mcp)
 [![MCP Badge](https://lobehub.com/badge/mcp/brand-system-brandsystem-mcp)](https://lobehub.com/mcp/brand-system-brandsystem-mcp)
 
-# @brandsystem/mcp
+# @brandsystem/mcp — Build
 
-**Make your brand machine-readable.** Extract identity from any website, structure it as tokens and policies, and make it available to every AI tool you use.
+**The authoring tool for the portable `.brand` runtime.** Extract identity from websites, Figma, and PDFs. Compile governance, tokens, and voice rules into a single `.brand/` directory. Deploy that runtime to Claude Design, Claude Code, Cursor, ChatGPT — every surface that can read a governed brand. One artifact, every surface on brand.
 
 ## What It Solves
 
-AI tools produce generic output because they have no brand context. Brand guidelines live in PDFs, Figma files, and people's heads, none of which AI tools can read at the moment of creation.
+AI tools default to category-average output because they have no brand context. Brand guidelines live in PDFs, Figma files, and people's heads — none of which AI tools can read at the moment of creation. The dominant failure mode isn't "broken output"; it's "correct but generic" — output that passes mechanical checks but reads like a competent generalist could have made it.
 
-This MCP server extracts brand identity from live sources (websites, rendered pages, Figma files), compiles it into structured design tokens, runtime contracts, and interaction policies, and makes it available to any AI tool through the [Model Context Protocol](https://modelcontextprotocol.io). The result is a `.brand/` directory with your colors, fonts, logos, voice rules, visual anti-patterns, and DTCG tokens. Portable, version-controlled, and ready for any AI tool to consume.
+This MCP server is the authoring half of the **"Two MCPs, One Brand"** model. It extracts brand identity from live sources, compiles it into a `.brand/` directory with structured governance (anti-patterns, proof-point status, voice rules, application rules) plus DTCG tokens, brand-runtime.json, and interaction-policy.json. That directory is the **portable brand runtime** — the artifact that travels with your brand from surface to surface.
 
-With `brand-runtime.json` loaded, agent prompts collapse from 200-400 tokens of inline brand context to just the delta. First output is on-brand. No review bottleneck.
+- **Claude Design** reads the `.brand/` directory natively when pointed at a governed repo
+- **Claude Code**, **Cursor**, **ChatGPT**, **Windsurf**, and any other MCP client load `brand-runtime.json` at generation time
+- **@brandcode/mcp** (the hosted Use MCP) serves the same runtime over HTTP for teams that want live reads at `mcp.brandcode.studio/{slug}`
+
+With brand-runtime.json loaded, agent prompts collapse from 200-400 tokens of inline brand context to just the delta. First output is on-brand. No review bottleneck.
 
 ---
 
@@ -106,11 +110,19 @@ Each session builds on the previous. Stop anywhere -- you get value immediately.
 
 ### Two MCPs, One Brand
 
-`@brandsystem/mcp` is the **Build** MCP: extract from websites, Figma, and PDFs; compile tokens, runtime, and policy; keep a local `.brand/` directory portable and versionable.
+The `.brand` runtime is the product. Two MCPs serve it:
 
-Brandcode MCP is the hosted **Use** MCP: connect an MCP client to a live Brandcode Studio brand at `https://mcp.brandcode.studio/{slug}` so agents can fetch current runtime, search approved knowledge, check drafts, retrieve assets, and leave feedback without copying guidelines between tools.
+**`@brandsystem/mcp` — Build (this package).** Author and compile the `.brand` runtime locally. Extract from websites, Figma, and PDFs. Compile governance (anti-patterns, proof-point status, voice rules, application rules) plus DTCG tokens, brand-runtime.json, and interaction-policy.json into a single `.brand/` directory. Portable, versionable, ready to commit to any repo.
 
-Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md). Phase 1 is the staging prototype. Until that prototype ships, keep using `@brandsystem/mcp` for local build/sync and Live Mode for connected reads.
+**`@brandcode/mcp` — Use (hosted).** Connect any MCP client to a live governed brand at `https://mcp.brandcode.studio/{slug}`. Agents fetch the current runtime, search approved knowledge, check drafts, retrieve assets, and leave feedback — no per-tool guideline copy, no stale snapshots. Tagline: *"Your brand, live in every AI tool."*
+
+Same `.brand` runtime artifact. Two consumption paths. Build authors it; Use serves it.
+
+Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). Phase 1 staging prototype closed its sprint gate on 2026-04-19. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
+
+### Claude Design integration
+
+The `.brand/` directory is engineered as a first-class input for [Claude Design](https://www.anthropic.com/news/claude-design). Point Claude Design at a repo that contains `.brand/` — governance YAML, narrative library, proof-point files, taste notes, DTCG tokens — and it grounds on the governed brand instead of improvising from uploaded assets. This is the Deploy path: author once with `@brandsystem/mcp`, then every Anthropic surface (Claude Design, Claude Code, Chat via compile packs) consumes the same runtime.
 
 ---
 
@@ -485,40 +497,33 @@ Use this when the homepage is not enough to understand the brand system, or when
 
 ## The Bigger Picture
 
-`@brandsystem/mcp` now works in two complementary modes: as a standalone local MCP for portable brand creation, and as a connector into hosted Brandcode Studio brands when you want sync, packaging, and shared distribution.
-
-### Relationship to Brandcode Studio
-
-[Brandcode Studio](https://brandcode.studio) is the hosted system for managing, packaging, and distributing brand systems. `@brandsystem/mcp` is the portable runtime layer: it can create a `.brand/` directory from scratch, or it can connect to a hosted Studio brand and pull that brand into local tools.
+Four verbs stack — Build, Use, Evolve, Deploy. `@brandsystem/mcp` owns Build. The `.brand` runtime is what moves between them.
 
 ```
-                    ┌──────────────────────┐
-                    │  Brand OS Creation    │
-                    │ ★ @brandsystem/mcp    │
-                    └──────────┬───────────┘
-                               │ creates or pulls
-                               ▼
-┌──────────────────────────────────────────────────┐
-│                Brandcode Studio                   │
-│                                                   │
-│  Hosted brand packages ──→ Sync + distribution     │
-│         ▲                      │                  │
-│         │               Governance layer          │
-│         │          (claims, narratives, rules)    │
-│         │                      │                  │
-│         │               Production engines        │
-│         │          (web, PDF, viz, copywriting)   │
-│         │                      │                  │
-│         └──── Measurement ◄────┘                  │
-│               (performance → insights → loop)     │
-└──────────────────────────────────────────────────┘
+ Build                    Use                        Deploy
+ ─────                    ───                        ──────
+ @brandsystem/mcp   ────►  @brandcode/mcp     ────►   Every surface
+ (this package)            (mcp.brandcode.studio)      Claude Design
+                                                       Claude Code
+ authors the ─────────►  .brand/ runtime  ─────────►  Cursor
+ portable runtime           (portable artifact)        ChatGPT
+                                                       NotebookLM
+                           ▲                           Gemini
+                           │                           ...any MCP client
+                           │
+                    Evolve ─── Brandcode Studio
+                    (governance promotion,
+                     taste compilation,
+                     memory wall)
 ```
 
-**`@brandsystem/mcp` creates or pulls the Brand OS** — colors, typography, voice, composition rules, messaging, and portable outputs that work immediately in any AI tool.
+**Build** — this package. Extract identity. Compile governance. Produce a `.brand/` directory.
 
-**Brandcode Studio adds the hosted operational layer.** Once you want shared distribution, sync, governance-backed packages, and richer production workflows, the same brand can be managed centrally and pulled into local MCP sessions on demand.
+**Use** — `@brandcode/mcp` hosted at `mcp.brandcode.studio/{slug}`. Any MCP client fetches the live governed brand.
 
-**You don't need the hosted layer to get value.** The standalone local flow remains fully usable with no account required. The Studio connector is optional when you are ready for shared hosted brands.
+**Evolve** — [Brandcode Studio](https://brandcode.studio). Taste notes graduate from memory to formal governance. Anti-patterns accumulate. The runtime sharpens with every production cycle.
+
+**Deploy** — the governed `.brand` repo travels with you. Point Claude Design at it. Compile packs for Claude Code, Chat, Gemini, NotebookLM. Every surface consumes the same runtime.
 
 ### Progressive Depth
 
@@ -530,22 +535,23 @@ Each stage builds on the previous. Stop anywhere — you get value immediately.
 | **2. MCP depth** | Figma extraction, clarification, full audit | Session 1 with `brand_extract_figma` + `brand_clarify` |
 | **3. Visual identity** | Composition rules, patterns, anti-patterns, VIM | Session 2: `brand_deepen_identity` → `brand_compile` |
 | **4. Core messaging** | Voice profile, perspective, brand story | Session 3: `brand_extract_messaging` → `brand_compile_messaging` |
-| **5. Studio sync** | Hosted package pull, sync history, shared distribution | `brand_brandcode_connect` → `brand_brandcode_status` → `brand_brandcode_sync` |
-| **6. Brandcode governance** | Claims, narratives, application rules, scoring, measurement | Operationalize the Brand OS within Brandcode Studio |
-| **7. Full loop** | Market Intelligence → production → measurement → insights back into Brand OS | Brandcode end-to-end |
+| **5. Studio sync** | Hosted package pull, sync history, shared distribution | `brand_brandcode_connect` → `brand_brandcode_sync` → `brand_brandcode_live` for Live Mode reads |
+| **6. Live Use MCP** | Agents anywhere hit `mcp.brandcode.studio/{slug}` for current runtime, knowledge search, draft checks, asset fetch | `@brandcode/mcp` connects once; reads stay fresh across agent sessions |
+| **7. Deploy to Claude Design** | Claude Design grounds on the `.brand/` directory natively — governance, narratives, proof points, taste notes all load without translation | Point Claude Design at a repo containing `.brand/`; output is on-brand from the first generation |
 
 Stages 1–4 are the standalone local MCP flow. Open source, fully portable, no account required.
 
-Stages 5–7 are the hosted Brandcode ecosystem — where the Brand OS becomes shared, synced, and operational. Available through [Brandcode Studio](https://brandcode.studio) and [Column Five Media](https://columnfivemedia.com).
+Stages 5–7 are the Deploy path — where the `.brand` runtime becomes shared, served live, and consumed by every generation surface. Available through [Brandcode Studio](https://brandcode.studio) and [Column Five Media](https://columnfivemedia.com).
 
 ### What's Portable
 
 | Artifact | Portable? | Owned By |
 |----------|-----------|----------|
-| `@brandsystem/mcp` (tools) | Fully — open source, any brand | MIT license |
-| `.brand/` directory (outputs) | Fully — works in any tool | Client |
-| Brandcode framework (schema + workflows) | Yes — universal | Open |
-| Client claims, narratives, rules | Per-instance | Client |
+| `@brandsystem/mcp` (authoring tool) | Fully — open source, any brand | MIT license |
+| `.brand/` directory (the runtime) | Fully — the portable artifact that travels with your brand | Client |
+| Brandcode framework (schema + stances + U-mech) | Fully — universal layer imported by every brand instance | Open |
+| Client claims, narratives, rules (I-content) | Per-instance — unique to each brand | Client |
+| `@brandcode/mcp` (hosted Use MCP) | Serves the runtime — any MCP client connects | Brandcode |
 
 ---
 
