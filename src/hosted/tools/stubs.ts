@@ -29,34 +29,6 @@ function stubResponse(tool: string, slug: string, note: string) {
   });
 }
 
-export function registerSearchStub(
-  server: McpServer,
-  context: HostedBrandContext,
-) {
-  const shape = {
-    query: z.string().describe("Natural-language query over brand knowledge."),
-    limit: z.number().int().min(1).max(50).default(10).describe("Max results."),
-  };
-  const schema = z.object(shape);
-  server.tool(
-    "brand_search",
-    "Query narratives, proof points, application rules, and governed brand knowledge with provenance. Read-only. Returns hits with source, confidence, and canonical text. Phase 1 staging: stub.",
-    shape,
-    async (args) => {
-      const scopeError = enforceToolScope("brand_search", context);
-      if (scopeError) return scopeError;
-
-      const parsed = safeParseParams(schema, args);
-      if (!parsed.success) return parsed.response;
-      return stubResponse(
-        "brand_search",
-        context.slug,
-        "Brand search lands with the full Phase 1 release after the sprint gate",
-      );
-    },
-  );
-}
-
 export function registerCheckStub(
   server: McpServer,
   context: HostedBrandContext,

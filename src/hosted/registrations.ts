@@ -11,9 +11,9 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { HostedBrandContext } from "./types.js";
 import { registerRuntime } from "./tools/runtime.js";
+import { registerSearch } from "./tools/search.js";
 import { registerStatus } from "./tools/status.js";
 import {
-  registerSearchStub,
   registerCheckStub,
   registerListAssetsStub,
   registerGetAssetStub,
@@ -38,7 +38,7 @@ export function registerHostedTools(
 ) {
   // Order matches Phase 0 lock table.
   registerRuntime(server, context);
-  registerSearchStub(server, context);
+  registerSearch(server, context);
   registerCheckStub(server, context);
   registerStatus(server, context);
   registerListAssetsStub(server, context);

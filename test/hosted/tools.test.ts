@@ -90,6 +90,15 @@ describe("hosted tool scope enforcement", () => {
     expect(json.granted_scopes).toEqual(["check"]);
   });
 
+  it("brand_search returns a structured 403-equivalent without read scope", async () => {
+    const auth = buildAuth({ scopes: ["check"] });
+    const { client } = await connectClient(buildContext(null, { auth }));
+    const json = await call(client, "brand_search", { query: "proof" });
+    expect(json.error).toBe("insufficient_scope");
+    expect(json.status).toBe(403);
+    expect(json.required_scope).toBe("read");
+  });
+
   it("brand_check requires explicit check scope; read alone 403s", async () => {
     const readOnly = await connectClient(buildContext(null));
     const denied = await call(readOnly.client, "brand_check", { text: "hi" });
@@ -118,6 +127,154 @@ describe("hosted tool scope enforcement", () => {
       summary: "test",
     });
     expect(json.error).toBe("not_implemented_in_staging");
+  });
+});
+
+describe("brand_search (hosted)", () => {
+  const SEARCH_PACKAGE: BrandPackagePayload = {
+    slug: "acme",
+    brandInstance: {
+      narratives: [
+        {
+          id: "nl-001",
+          name: "Flagship narrative",
+          type: "Key Message",
+          status: "Active",
+          canonical_text: "Acme helps teams ship governed AI work.",
+          usage_notes: "Lead with governed AI when trust is the topic.",
+          source_label: "Narrative Library",
+        },
+      ],
+      proofPoints: [
+        {
+          id: "claim-001",
+          title: "91% of teams need governed AI proof",
+          status: "Active",
+          confidence: 0.95,
+          salience: "Lead With",
+          source: "Proof register",
+        },
+        {
+          id: "claim-002",
+          title: "Experimental signal",
+          status: "Watch",
+          confidence: 0.68,
+          evidence: "Watch before using as a headline.",
+          source: "https://private-provider.example/raw",
+        },
+      ],
+      applicationRules: {
+        rules: [
+          {
+            id: "ar-001",
+            name: "Launch page",
+            framework: "Problem Guide Proof",
+            required_elements: ["governed AI proof", "clear next step"],
+            status: "Active",
+          },
+        ],
+      },
+      brandPhrases: [
+        {
+          id: "bp-001",
+          phrase: "Governed AI, ready to ship",
+          status: "Active",
+          usage_notes: "Use for product-led CTAs.",
+        },
+      ],
+      readiness: {
+        stage: "usable",
+        primaryConcern: "Needs more governed proof",
+      },
+      capabilities: {
+        enabled: ["runtime", "content"],
+      },
+    },
+  };
+
+  it("returns ranked hits from narratives, proof points, application rules, and brand phrases", async () => {
+    const { client } = await connectClient(buildContext(SEARCH_PACKAGE));
+    const json = await call(client, "brand_search", {
+      query: "governed AI proof",
+      limit: 10,
+    });
+
+    expect(json.total_hits).toBeGreaterThanOrEqual(4);
+    const hits = json.hits as Array<Record<string, unknown>>;
+    expect(hits.map((hit) => hit.source_type)).toEqual(
+      expect.arrayContaining([
+        "proof_point",
+        "application_rule",
+        "narrative",
+        "brand_phrase",
+      ]),
+    );
+    expect(hits[0]).toMatchObject({
+      id: "claim-001",
+      title: "91% of teams need governed AI proof",
+      source_type: "proof_point",
+      status: "Active",
+      confidence: 0.95,
+    });
+    expect(hits[0].provenance).toEqual({
+      source: "Proof register",
+    });
+  });
+
+  it("keeps ranking deterministic for repeated queries", async () => {
+    const { client } = await connectClient(buildContext(SEARCH_PACKAGE));
+    const first = await call(client, "brand_search", {
+      query: "governed AI proof",
+      limit: 10,
+    });
+    const second = await call(client, "brand_search", {
+      query: "governed AI proof",
+      limit: 10,
+    });
+    expect(first.hits).toEqual(second.hits);
+  });
+
+  it("redacts URL-like provenance and stays custody-safe", async () => {
+    const { client } = await connectClient(buildContext(SEARCH_PACKAGE));
+    const json = await call(client, "brand_search", {
+      query: "experimental signal",
+    });
+    const hits = json.hits as Array<Record<string, unknown>>;
+    expect(hits[0].id).toBe("claim-002");
+    expect(JSON.stringify(hits[0])).not.toContain("private-provider.example");
+    expect(json.custody_safe).toBe(true);
+    expect(json.selected_kit_artifact_support).toBe("not_implemented_in_v1");
+  });
+
+  it("returns a truthful empty result for empty or no-match queries", async () => {
+    const { client } = await connectClient(buildContext(SEARCH_PACKAGE));
+    const empty = await call(client, "brand_search", { query: "   " });
+    expect(empty.hits).toEqual([]);
+    expect(empty.total_hits).toBe(0);
+    const emptyMetadata = empty._metadata as Record<string, unknown>;
+    expect(emptyMetadata.what_happened).toContain(
+      "No hosted brand search query",
+    );
+    expect(emptyMetadata.next_steps).toContain(
+      "Try a more specific query about narratives, proof points, application rules, or brand phrases",
+    );
+
+    const noMatch = await call(client, "brand_search", {
+      query: "nonexistent zebra",
+    });
+    expect(noMatch.hits).toEqual([]);
+    expect(noMatch.total_hits).toBe(0);
+    const noMatchMetadata = noMatch._metadata as Record<string, unknown>;
+    expect(noMatchMetadata.what_happened).toContain(
+      "No hosted brand knowledge matched",
+    );
+  });
+
+  it("tolerates missing hosted knowledge arrays gracefully", async () => {
+    const { client } = await connectClient(buildContext({ brandInstance: {} }));
+    const json = await call(client, "brand_search", { query: "anything" });
+    expect(json.hits).toEqual([]);
+    expect(json.searched_documents).toBe(0);
   });
 });
 
@@ -324,7 +481,6 @@ describe("brand_status (hosted)", () => {
 
 describe("stubs return structured not_implemented_in_staging errors", () => {
   const STUB_TOOLS = [
-    ["brand_search", { query: "logo" }],
     ["list_brand_assets", {}],
     ["get_brand_asset", { asset_id: "x" }],
     ["brand_history", {}],
