@@ -547,7 +547,7 @@ async function triageHandler(input: TriageParams) {
 export function register(server: McpServer) {
   server.tool(
     "brand_feedback",
-    "Report bugs, friction, feature ideas, data quality issues, praise, or structured agent signals to the brandsystem team. Use when a tool returns an error, extraction misses data, the workflow feels harder than it should, or something works particularly well. For structured agent telemetry, use category='agent_signal' with signal, tool_used, and signal_context fields — brand context is auto-populated from .brand/config. Stored locally in ~/.brandsystem/feedback/ for developer triage. Returns a feedback ID.",
+    "Send a feedback signal to the brandsystem team about a tool or workflow. Use when a tool errors, extraction misses obvious data, the workflow felt harder than it should, an agent's path got blocked, or something worked particularly well and should be preserved. Set category to one of: 'bug' (broken), 'friction' (works but painful), 'feature_request' (capability missing), 'data_quality' (results wrong/incomplete), 'praise' (worth keeping), 'agent_signal' (structured telemetry — also pass signal + tool_used + signal_context; brand context auto-fills from .brand/config). Provide a one-line summary plus optional detail/severity/context. Writes to ~/.brandsystem/feedback/ AND attempts a fire-and-forget POST to brandcode.studio (drains backlog if previously offline). Returns the feedback ID and remote-send status. NOT for reading existing feedback — use brand_feedback_review. NOT for changing item status — use brand_feedback_triage.",
     sendParamsShape,
     async (args) => {
       // Accept "type" as alias for "category" (common agent misguess)

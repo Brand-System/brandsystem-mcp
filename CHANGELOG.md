@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.9.2 (2026-04-21)
+## 0.9.3 (2026-05-06)
+
+### Changed
+- **Tool descriptions sharpened across 6 tools** to improve agent disambiguation. `brand_resolve_conflicts` (was the lowest-scoring tool on Glama at 3.6/5): now describes both modes, when to call, what each returns, and how it relates to brand_audit. `brand_check` and `brand_check_compliance` now have crisp, mutually exclusive descriptions: `brand_check` is the inline linter you call WHILE writing (one or more fields, fast pass/fail per input); `brand_check_compliance` is the publish-time gate (single PASS/FAIL on a finished piece, optional strict mode). `brand_build_journey`, `brand_export`, and `brand_feedback` rewritten with explicit trigger phrases, mode/target enumerations, and NOT-for clarifications.
+- **`brand_compile_messaging` interview returns ONE section at a time** instead of all three. The conversation_guide always said "work through ONE section at a time" but the response shipped perspective + voice + brand_story upfront — ~10K chars per call, of which the agent could only act on the first. Now returns the first missing section with a `remaining_sections` list and a section-targeted intro. Response size dropped from ~9.9K to ~3.2K. Calling `mode='interview'` again after each `mode='record'` returns the next section. No schema break — agents that read the existing `interview` array still work because the agenda is still under `interview`, just narrowed.
+- **`brand_build_journey` interview drops the duplicate `defaults_full` field** and trims the conversation_guide. The response previously emitted both a stripped `default_stages` table and a full `defaults_full` array containing the same 4 stages with extra fields the server already auto-applies on `mode='record'` with no answers. Customizable field shape stays in the conversation_guide. Response size dropped from ~5.9K to under 5K.
+
+
 
 ### Added
 - **`brand_enrich_skill` tool (S010 N-2 PR3).** Takes a Claude Design-style auto-generated `SKILL.md`, diffs it against `.brand/governance/` YAML (narrative-library, valid-proof-points, anti-patterns, application-rules, taste-codes), and returns an enriched `SKILL.md` with missing governance content injected, cited by ID, and grouped into canonical sections. Additive only — never rewrites existing content; appends to existing guardrail-like sections ("Hard rules", "Guardrails") instead of duplicating. Response shape includes `diff_summary` with per-category add counts plus warnings.

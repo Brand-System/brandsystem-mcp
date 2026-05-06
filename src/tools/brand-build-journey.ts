@@ -112,43 +112,31 @@ async function handleInterview(brandDir: BrandDir) {
     tone_shift: s.tone_shift,
   }));
 
+  // Drop `defaults_full` — it duplicates `default_stages` plus the 4 extra
+  // fields (story_types, narrative_elements, claims_policy) that the server
+  // already applies automatically when record mode is called without answers.
+  // The agent only needs the stage table for presentation; full field shape
+  // is documented in the conversation_guide for customization.
   return buildResponse({
     what_happened: existingStages.length > 0
       ? `Found ${existingStages.length} existing journey stage(s) for "${clientName}". Presenting defaults for review.`
       : `No journey stages defined yet for "${clientName}". Presenting the 4 default buyer journey stages.`,
     next_steps: [
-      "Present the default stages table and ask the user to customize or accept them",
-      "After the user responds, call brand_build_journey with mode='record' and the final stages as answers",
+      "Present the default stages table and ask whether to accept or customize",
+      "Then call brand_build_journey mode='record' (omit answers to accept defaults, or pass customized stages as JSON)",
     ],
     data: {
       client_name: clientName,
       existing_stages: existingStages.length > 0 ? existingStages : null,
       default_stages: stageTable,
-      defaults_full: defaults,
       conversation_guide: {
         instruction: [
-          `Present the 4 default buyer journey stages as a table for "${clientName}":`,
+          `Present the 4 default buyer journey stages for "${clientName}" as a table (Stage / Buyer Mindset / Content Goal / Tone Shift — fields are in default_stages).`,
+          "Ask: 'Want to customize any, or do these work as-is?'",
+          "Accept-as-is: call brand_build_journey mode='record' with no answers (server writes defaults).",
+          "Customize: gather edits, then call mode='record' with answers as JSON — array of stages or single stage object with id to update one.",
           "",
-          "| Stage | Buyer Mindset | Content Goal | Tone Shift |",
-          "|-------|--------------|--------------|------------|",
-          ...defaults.map(
-            (s) =>
-              `| **${s.name}** | ${s.buyer_mindset} | ${s.content_goal} | ${s.tone_shift} |`
-          ),
-          "",
-          "Say: 'These are the standard buyer journey stages. They work for most B2B brands. Want to customize any of them, or do these work as-is?'",
-          "",
-          "If the user says they're fine, call brand_build_journey with mode='record' and no answers (writes defaults).",
-          "If they want to customize, walk through each stage they want to change. Gather their edits, then call brand_build_journey with mode='record' and the customized stages as the answers parameter.",
-          "",
-          "Each stage has these fields that can be customized:",
-          "  - name: display name",
-          "  - buyer_mindset: the question in the buyer's head",
-          "  - content_goal: what content should accomplish",
-          "  - story_types: which story archetypes fit (Brand Narrative, Product/Service Story, Customer/Social Proof)",
-          "  - narrative_elements: which narrative elements to emphasize (Problem, Hero, Guide, Journey, Victory, Proof Point)",
-          "  - claims_policy: how claims are deployed (preferred_salience, max_per_piece, min_confidence)",
-          "  - tone_shift: how tone adjusts at this stage",
+          "Customizable per stage: name, buyer_mindset, content_goal, story_types (Brand Narrative / Product-Service Story / Customer-Social Proof), narrative_elements (Problem / Hero / Guide / Journey / Victory / Proof Point), claims_policy (preferred_salience, max_per_piece, min_confidence), tone_shift.",
         ].join("\n"),
       },
     },
@@ -334,7 +322,7 @@ async function handler(input: Params) {
 export function register(server: McpServer) {
   server.tool(
     "brand_build_journey",
-    "Define buyer journey stages for content strategy — the path from awareness to purchase. Ships with 4 proven defaults (First Touch, Context & Meaning, Validation & Proof, Decision Support) that can be customized per brand. Mode 'interview' presents defaults for review. Mode 'record' writes stages (omit answers to accept defaults). Mode 'view' shows current stages. Part of Session 4 (content strategy). Returns stage definitions with buyer mindset, content goals, and tone shifts.",
+    "Define the buyer journey stages a content strategy targets — the path from first touch to decision. Ships with 4 defaults that work for most B2B brands (First Touch, Context & Meaning, Validation & Proof, Decision Support), each with buyer mindset, content goal, story types, narrative elements, claims policy, and tone shift. Mode 'interview' presents the defaults as a table and prompts for customization. Mode 'record' writes the final stages to .brand/strategy.yaml — pass `answers` as a JSON array of stage objects (or a single stage to update one), or omit to accept the defaults verbatim. Mode 'view' returns the current stages. Use during Session 4 (content strategy) after personas/themes are sketched. Returns stage definitions and writes strategy.yaml in record mode. After this, run brand_build_personas.",
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);

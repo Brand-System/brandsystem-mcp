@@ -11,3 +11,4 @@ specs/brand-extraction-*.md
 .mcpregistry_*
 .vercel
 .env*.local
+.gstack/

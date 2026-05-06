@@ -363,17 +363,18 @@ async function handleInterview(brandDir: BrandDir) {
     });
   }
 
-  // Build interview agenda for missing sections
-  const agenda: Array<Record<string, unknown>> = [];
+  // Return ONLY the first missing section. The conversation_guide says
+  // "ONE section at a time" — returning all three at once burned ~10K chars
+  // for no benefit, since the agent calls back into this tool after each
+  // record to get the next section. Full context for skipped sections is
+  // available in `remaining_sections`.
+  const currentSection = missing[0];
+  const remainingSections = missing.slice(1);
 
-  if (missing.includes("perspective")) {
-    agenda.push({
-      section: "perspective",
-      questions: PERSPECTIVE_QUESTIONS,
-    });
-  }
-
-  if (missing.includes("voice")) {
+  let agendaItem: Record<string, unknown>;
+  if (currentSection === "perspective") {
+    agendaItem = { section: "perspective", questions: PERSPECTIVE_QUESTIONS };
+  } else if (currentSection === "voice") {
     const voiceParts = VOICE_INTERVIEW_PARTS.map((part) => ({
       ...part,
       ...(part.part === "2" && auditVocabulary
@@ -384,73 +385,55 @@ async function handleInterview(brandDir: BrandDir) {
           }
         : {}),
     }));
-    agenda.push({
+    agendaItem = {
       section: "voice",
       parts: voiceParts,
       ai_ism_defaults: DEFAULT_AI_ISM_PATTERNS,
       ai_ism_note:
-        "These are the default AI-ism patterns that will be flagged in generated content. Ask if they want to add, remove, or adjust any.",
-    });
-  }
-
-  if (missing.includes("brand_story")) {
-    agenda.push({
-      section: "brand_story",
-      questions: BRAND_STORY_QUESTIONS,
-    });
+        "Default AI-ism patterns flagged in generated content. Ask if user wants to add, remove, or adjust.",
+    };
+  } else {
+    agendaItem = { section: "brand_story", questions: BRAND_STORY_QUESTIONS };
   }
 
   const populatedSections = SECTIONS.filter((s) => !missing.includes(s));
 
+  // Compact, section-targeted intro. Was 1600 chars across all 3 sections;
+  // now ~400 chars for whatever section is current.
+  const sectionIntro: Record<Section, string> = {
+    perspective:
+      `PERSPECTIVE: "Let's define what your brand actually believes. Not your mission statement — your *worldview*."`,
+    voice:
+      `VOICE: "Now that we know what you believe, let's define how it sounds." Voice has 3 parts (Tone, Vocabulary, Sentence Rules). Work through each part sequentially.${auditVocabulary ? " A messaging audit exists — before asking for new vocabulary, present the audit's top terms and ask: keep, replace, or ban." : ""}`,
+    brand_story:
+      `BRAND STORY: "Last part — your origin story. Not a mission statement, but an actual story with tension and stakes. If details are unknown, give what you know and flag the rest for founder/leadership to fill in."`,
+  };
+
   return buildResponse({
     what_happened: hasMessaging
-      ? `Messaging exists but ${missing.length} section(s) still need data: ${missing.join(", ")}`
-      : `No messaging.yaml yet. All 3 sections need data.`,
+      ? `Messaging exists but ${missing.length} section(s) still need data: ${missing.join(", ")}. Returning questions for: ${currentSection}.`
+      : `No messaging.yaml yet. ${missing.length} sections to fill. Returning questions for: ${currentSection}.`,
     next_steps: [
-      "Present the interview questions below — start with the first missing section",
-      "After gathering answers for a section, call brand_compile_messaging with mode='record', section=<name>, answers=<JSON>",
-      "Repeat for each section until all are populated",
+      `Ask the questions for "${currentSection}" conversationally — one at a time, with follow-ups, not as a dump.`,
+      `When the section has enough answers, call brand_compile_messaging mode='record' section='${currentSection}' answers=<JSON>.`,
+      remainingSections.length > 0
+        ? `After recording, call brand_compile_messaging mode='interview' again to get the next section (${remainingSections.join(", ")}).`
+        : `This is the last missing section. After recording, run brand_compile to refresh runtime artifacts.`,
     ],
     data: {
       client_name: clientName,
+      current_section: currentSection,
+      remaining_sections: remainingSections,
       missing_sections: missing,
       populated_sections: populatedSections,
-      interview: agenda,
+      interview: agendaItem,
       conversation_guide: {
         instruction: [
-          `You are building the messaging architecture for "${clientName}". This is Session 3 — perspective, voice, and brand story.`,
+          `You are building the messaging architecture for "${clientName}" (Session 3). Working on: ${currentSection}.`,
           "",
-          "HOW TO RUN THIS INTERVIEW:",
-          "1. Work through ONE section at a time in order: perspective → voice → brand story.",
-          "2. Ask the questions conversationally — do NOT dump all questions at once.",
-          "3. Listen for the answer, ask the follow-up if provided, then move to the next question.",
-          "4. When you have enough answers for a section, call brand_compile_messaging with mode='record' to save.",
-          "5. Then move to the next missing section.",
+          sectionIntro[currentSection],
           "",
-          "SECTION INTROS (use these to transition):",
-          "",
-          "PERSPECTIVE:",
-          `"Let's define what your brand actually believes. Not your mission statement — your *worldview*."`,
-          "",
-          "VOICE:",
-          `"Now that we know what you believe, let's define how it sounds."`,
-          "Voice has 3 parts: Tone (3 descriptors + register), Vocabulary (anchor terms + never-say), and Sentence Rules.",
-          "Work through each part sequentially.",
-          ...(auditVocabulary
-            ? [
-                "",
-                "VOCABULARY TRIAGE (voice part 2):",
-                "A messaging audit exists. Before asking for new vocabulary, present the audit's top terms and ask: keep, replace, or ban.",
-              ]
-            : []),
-          "",
-          "BRAND STORY:",
-          `"Last part — your origin story. Not a mission statement, but an actual story with tension and stakes. If you don't know all the details, that's completely fine — give me what you know and we'll flag the rest for the founder or leadership team to fill in."`,
-          "",
-          "AFTER ALL SECTIONS ARE RECORDED:",
-          `"Your messaging architecture is set. Want to test it? Give me a content type and a topic and I'll generate something using your full brand system."`,
-          "Suggest running brand_write to test the full system.",
-          "",
+          "Ask questions conversationally, one at a time. Use follow-ups when provided. When the section has enough answers, call brand_compile_messaging mode='record'.",
           "TONE: Collaborative strategist — curious, direct, non-judgmental.",
           "GOAL: Get specific, deployable language — not corporate mush.",
         ].join("\n"),

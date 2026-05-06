@@ -860,7 +860,7 @@ type ExportParams = z.infer<typeof ParamsSchema>;
 export function register(server: McpServer) {
   server.tool(
     "brand_export",
-    "Generate portable brand files for any environment — Chat, Code, team sharing, or email. Target 'chat': self-contained markdown to upload to any AI conversation (Claude, ChatGPT, Gemini). Target 'code': MCP config + CLAUDE.md/.cursorrules snippet. Target 'team': clean brand guidelines for designers and writers. Target 'email': concise 500-word summary for Slack or email. Writes to .brand/exports/ and returns the full content. Use when the user wants to share their brand system or set up a new tool.",
+    "Bundle the compiled brand system into a portable artifact for a specific destination. Use when asked 'share my brand', 'export for ChatGPT/Cursor/team', 'generate brand guidelines', 'make a one-pager', or 'create a brand PDF'. Target 'chat': self-contained markdown for upload to any AI conversation (Claude, ChatGPT, Gemini). Target 'code': MCP server config + CLAUDE.md/.cursorrules snippet. Target 'team': human-readable brand guidelines for designers/writers/marketers. Target 'email': ~500-word summary for Slack or email. Target 'claude-skill': SKILL.md with embedded logo + rules for persistent Claude artifacts. Target 'pdf': branded PDF with swatches, type, anti-patterns, and voice. Set include_logo=false to drop the embedded SVG/data URI when size matters. Writes to .brand/exports/<file> and returns the full content (markdown targets) or a generation summary (pdf). Requires brand_compile to have run first. NOT for previewing one section — use brand_preview.",
     paramsShape,
     async (args) => {
       const parsed = safeParseParams(ParamsSchema, args);
