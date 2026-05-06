@@ -60,7 +60,7 @@ export function toolHasScope(
   if (!required) return false;
   if (required === "read") return scopes.includes("read");
   if (required === "check") {
-    return scopes.includes("check") || scopes.includes("read");
+    return scopes.includes("check");
   }
   // feedback: must have feedback explicitly; read alone is insufficient
   return scopes.includes("feedback");

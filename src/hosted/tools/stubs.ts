@@ -11,6 +11,7 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildResponse, safeParseParams } from "../../lib/response.js";
+import { enforceToolScope } from "../scope.js";
 import type { HostedBrandContext } from "../types.js";
 
 type StubReason = "not_implemented_in_staging";
@@ -42,6 +43,9 @@ export function registerSearchStub(
     "Query narratives, proof points, application rules, and governed brand knowledge with provenance. Read-only. Returns hits with source, confidence, and canonical text. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("brand_search", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(
@@ -69,6 +73,9 @@ export function registerCheckStub(
     "Validate draft text, color, font, and CSS against live governance. Pass/fail plus specific fixes. Mirrors @brandsystem/mcp's brand_check. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("brand_check", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(
@@ -96,6 +103,9 @@ export function registerListAssetsStub(
     "Paginated catalog of brand assets for the connected hosted brand. Filter by category and lifecycle. Read-only. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("list_brand_assets", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(
@@ -120,6 +130,9 @@ export function registerGetAssetStub(
     "Fetch a specific asset URL plus metadata (format, dimensions, lifecycle). Read-only. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("get_brand_asset", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(
@@ -151,6 +164,9 @@ export function registerFeedbackStub(
     "Append an observation or proposal to the governance review queue for the connected hosted brand. Append-only. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("brand_feedback", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(
@@ -176,6 +192,9 @@ export function registerHistoryStub(
     "Return recent MCP runs scoped by this API key and brand permissions. Read-only. Phase 1 staging: stub.",
     shape,
     async (args) => {
+      const scopeError = enforceToolScope("brand_history", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(schema, args);
       if (!parsed.success) return parsed.response;
       return stubResponse(

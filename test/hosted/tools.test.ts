@@ -26,9 +26,10 @@ function buildContext(
   pkg: BrandPackagePayload | null,
   overrides: Partial<HostedBrandContext> = {},
 ): HostedBrandContext {
+  const auth = overrides.auth ?? buildAuth();
   return {
     slug: "acme",
-    auth: buildAuth(),
+    auth,
     loadBrandPackage: async () => pkg,
     ucsBaseUrl: "https://www.brandcode.studio",
     ucsServiceToken: "test-token",
@@ -61,6 +62,62 @@ describe("hosted server registers all 8 tools in locked order", () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name);
     expect(names).toEqual([...HOSTED_TOOL_ORDER]);
+  });
+});
+
+describe("hosted tool scope enforcement", () => {
+  const PACKAGE: BrandPackagePayload = {
+    runtime: {
+      version: "1.0.0",
+      client_name: "Acme Hosted",
+      identity: { colors: { primary: "#000000" } },
+    },
+  };
+
+  it("brand_runtime passes with read scope", async () => {
+    const { client } = await connectClient(buildContext(PACKAGE));
+    const json = await call(client, "brand_runtime", { slice: "minimal" });
+    expect(json.runtime_origin).toBe("hosted");
+  });
+
+  it("brand_runtime returns a structured 403-equivalent without read scope", async () => {
+    const auth = buildAuth({ scopes: ["check"] });
+    const { client } = await connectClient(buildContext(PACKAGE, { auth }));
+    const json = await call(client, "brand_runtime", { slice: "minimal" });
+    expect(json.error).toBe("insufficient_scope");
+    expect(json.status).toBe(403);
+    expect(json.required_scope).toBe("read");
+    expect(json.granted_scopes).toEqual(["check"]);
+  });
+
+  it("brand_check requires explicit check scope; read alone 403s", async () => {
+    const readOnly = await connectClient(buildContext(null));
+    const denied = await call(readOnly.client, "brand_check", { text: "hi" });
+    expect(denied.error).toBe("insufficient_scope");
+    expect(denied.status).toBe(403);
+    expect(denied.required_scope).toBe("check");
+
+    const auth = buildAuth({ scopes: ["check"] });
+    const allowed = await connectClient(buildContext(null, { auth }));
+    const json = await call(allowed.client, "brand_check", { text: "hi" });
+    expect(json.error).toBe("not_implemented_in_staging");
+  });
+
+  it("brand_feedback requires explicit feedback scope", async () => {
+    const readOnly = await connectClient(buildContext(null));
+    const denied = await call(readOnly.client, "brand_feedback", {
+      summary: "test",
+    });
+    expect(denied.error).toBe("insufficient_scope");
+    expect(denied.status).toBe(403);
+    expect(denied.required_scope).toBe("feedback");
+
+    const auth = buildAuth({ scopes: ["feedback"] });
+    const allowed = await connectClient(buildContext(null, { auth }));
+    const json = await call(allowed.client, "brand_feedback", {
+      summary: "test",
+    });
+    expect(json.error).toBe("not_implemented_in_staging");
   });
 });
 
@@ -268,10 +325,8 @@ describe("brand_status (hosted)", () => {
 describe("stubs return structured not_implemented_in_staging errors", () => {
   const STUB_TOOLS = [
     ["brand_search", { query: "logo" }],
-    ["brand_check", { text: "hi" }],
     ["list_brand_assets", {}],
     ["get_brand_asset", { asset_id: "x" }],
-    ["brand_feedback", { summary: "test" }],
     ["brand_history", {}],
   ] as const;
 

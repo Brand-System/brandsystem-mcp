@@ -6,7 +6,7 @@
  *   - `bin/brandcode-mcp.mjs` for local dev
  *   - CI smoke harness
  *
- * Vercel deployments use `api/mcp/[[...path]].ts` instead — it calls the
+ * Vercel deployments use `api/[slug].ts` instead — it calls the
  * same router directly, no Node server adapter required.
  */
 import http from "node:http";

@@ -47,8 +47,8 @@ describe("toolHasScope", () => {
     expect(toolHasScope("brand_status", ["read"])).toBe(true);
     expect(toolHasScope("list_brand_assets", ["read"])).toBe(true);
   });
-  it("check tool accepts read-only keys (progressive trust)", () => {
-    expect(toolHasScope("brand_check", ["read"])).toBe(true);
+  it("check tool requires explicit check scope", () => {
+    expect(toolHasScope("brand_check", ["read"])).toBe(false);
     expect(toolHasScope("brand_check", ["check"])).toBe(true);
   });
   it("feedback requires explicit feedback scope", () => {

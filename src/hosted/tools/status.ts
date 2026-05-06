@@ -7,6 +7,7 @@
  */
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildResponse } from "../../lib/response.js";
+import { enforceToolScope } from "../scope.js";
 import type { HostedBrandContext } from "../types.js";
 
 function summarizePackage(pkg: unknown): Record<string, unknown> {
@@ -37,6 +38,9 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
     "brand_status",
     "Return hosted MCP connection metadata: slug, environment, granted scopes, runtime availability, and brand package summary. Use when an agent wants to know what it can do with the current key/brand.",
     async () => {
+      const scopeError = enforceToolScope("brand_status", context);
+      if (scopeError) return scopeError;
+
       const pkg = await context.loadBrandPackage().catch(() => null);
       const summary = summarizePackage(pkg);
       const hasRuntime =

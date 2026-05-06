@@ -11,6 +11,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildResponse, safeParseParams } from "../../lib/response.js";
 import { ERROR_CODES } from "../../types/index.js";
 import type { BrandPackagePayload } from "../../connectors/brandcode/types.js";
+import { enforceToolScope } from "../scope.js";
 import type { HostedBrandContext } from "../types.js";
 
 const paramsShape = {
@@ -238,6 +239,9 @@ export function registerRuntime(
     "Fetch the live governed brand runtime for the connected hosted brand. Returns a compiled runtime contract (identity, visual rules, voice constraints, content strategy) suitable for injection into any sub-agent. Supports slicing: full/visual/voice/minimal. Read-only. Always reflects current Brand Console state — no local cache.",
     paramsShape,
     async (args) => {
+      const scopeError = enforceToolScope("brand_runtime", context);
+      if (scopeError) return scopeError;
+
       const parsed = safeParseParams(ParamsSchema, args);
       if (!parsed.success) return parsed.response;
 
