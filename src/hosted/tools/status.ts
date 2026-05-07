@@ -22,7 +22,7 @@ const TOOL_IMPLEMENTATION_MATRIX = [
   { tool: "list_brand_assets", implementation: "real", write_behavior: "read-only" },
   { tool: "get_brand_asset", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_feedback", implementation: "stub", write_behavior: "append-only" },
-  { tool: "brand_history", implementation: "stub", write_behavior: "read-only" },
+  { tool: "brand_history", implementation: "real", write_behavior: "read-only" },
 ] as const;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -315,7 +315,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
           assets.available
             ? "list_brand_assets and get_brand_asset return package-safe asset metadata"
             : "Publish package-safe runtime assets before expecting asset tool results",
-          "Remaining stubs: brand_feedback, brand_history",
+          "Remaining stubs: brand_feedback",
         ],
         data: {
           status: lines.join("\n"),

@@ -60,31 +60,3 @@ export function registerFeedbackStub(
     },
   );
 }
-
-export function registerHistoryStub(
-  server: McpServer,
-  context: HostedBrandContext,
-) {
-  const shape = {
-    limit: z.number().int().min(1).max(100).default(25).describe("Page size."),
-    cursor: z.string().optional().describe("Pagination cursor."),
-  };
-  const schema = z.object(shape);
-  server.tool(
-    "brand_history",
-    "Return recent MCP runs scoped by this API key and brand permissions. Read-only. Phase 1 staging: stub.",
-    shape,
-    async (args) => {
-      const scopeError = enforceToolScope("brand_history", context);
-      if (scopeError) return scopeError;
-
-      const parsed = safeParseParams(schema, args);
-      if (!parsed.success) return parsed.response;
-      return stubResponse(
-        "brand_history",
-        context.slug,
-        "Run history lands after UCS exposes a GET endpoint over AgentRunRecord",
-      );
-    },
-  );
-}

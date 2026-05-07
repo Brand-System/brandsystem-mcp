@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { createHostedServer } from "../../src/hosted/server.js";
@@ -56,6 +56,10 @@ async function call(
   return JSON.parse(content[0].text) as Record<string, unknown>;
 }
 
+beforeEach(() => {
+  vi.unstubAllGlobals();
+});
+
 describe("hosted server registers all 8 tools in locked order", () => {
   it("listTools returns the Phase 0 locked surface", async () => {
     const { client } = await connectClient(buildContext(null));
@@ -111,6 +115,15 @@ describe("hosted tool scope enforcement", () => {
     expect(get.error).toBe("insufficient_scope");
     expect(get.status).toBe(403);
     expect(get.required_scope).toBe("read");
+  });
+
+  it("brand_history returns a structured 403-equivalent without read scope", async () => {
+    const auth = buildAuth({ scopes: ["check"] });
+    const { client } = await connectClient(buildContext(null, { auth }));
+    const json = await call(client, "brand_history", {});
+    expect(json.error).toBe("insufficient_scope");
+    expect(json.status).toBe(403);
+    expect(json.required_scope).toBe("read");
   });
 
   it("brand_check requires explicit check scope; read alone 403s", async () => {
@@ -629,6 +642,215 @@ describe("hosted asset tools", () => {
   });
 });
 
+describe("brand_history (hosted)", () => {
+  function stubHistoryResponse(body: unknown, init: ResponseInit = {}) {
+    const fetchMock = vi.fn(async () =>
+      new Response(JSON.stringify(body), {
+        status: init.status ?? 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  const HISTORY_BODY = {
+    ok: true,
+    telemetry: {
+      totalRuns: 2,
+      completedRuns: 1,
+      failedRuns: 1,
+      successRate: 50,
+      latestFailure: {
+        taskLabel: "Brand Check",
+        summary: "Failed with https://private-provider.example/raw",
+        failureKind: "runtime_error",
+      },
+    },
+    history: [
+      {
+        run: {
+          id: "run-001",
+          provider: "mcp",
+          status: "completed",
+          startedAt: "2026-05-06T10:00:00.000Z",
+          completedAt: "2026-05-06T10:00:01.000Z",
+          taskPreset: "brand_search",
+          resultSummary:
+            "Found governed guidance at https://private-provider.example/raw",
+          context: {
+            brandSlug: "acme",
+            surface: "mcp-hosted",
+            surfaceId: "mcp-hosted",
+            freshnessState: "live",
+          },
+          runtimeVersion: "2026-05-06",
+          runtimeSyncToken: null,
+          receiptIds: ["receipt-001"],
+          telemetry: { durationMs: 1000, failureKind: null },
+        },
+        replay: {
+          kind: "grounded_retrieval",
+          queryText: "governed guidance",
+        },
+        trustEnvelope: {
+          id: "trust-001",
+          recordedAt: "2026-05-06T10:00:01.000Z",
+          confidence: {
+            level: "grounded",
+            summary: "Grounded in one source.",
+          },
+          grounding: { usedSourceCount: 1, usedSources: [] },
+          coverageWarnings: [],
+          blindSpots: [],
+        },
+        approvalRequest: {
+          id: "approval-001",
+          actionLabel: "Use answer",
+        },
+        receipts: [
+          {
+            id: "receipt-001",
+            runId: "run-001",
+            kind: "review_guidance_note",
+            actionKind: "read_only_answer",
+            summary: "Recorded note",
+            receiptHash: "abc123",
+          },
+        ],
+        portableReceiptChain: [
+          {
+            receiptId: "portable-verification-run-001",
+            receiptType: "verification",
+            createdAt: "2026-05-06T10:00:01.000Z",
+            parentReceiptId: null,
+            verification: {
+              overallResult: "pass",
+              checks: [
+                {
+                  description: "Large check blob that should not be returned",
+                  evidence: "https://private-provider.example/evidence",
+                },
+              ],
+            },
+          },
+          {
+            receiptId: "portable-support-receipt-001",
+            receiptType: "support",
+            createdAt: "2026-05-06T10:00:02.000Z",
+            parentReceiptId: "portable-verification-run-001",
+            support: {
+              diagnosisSteps: ["large support blob that should not be returned"],
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  it("fetches UCS AgentRun history and returns compact receipt-aware entries", async () => {
+    const fetchMock = stubHistoryResponse(HISTORY_BODY);
+    const { client } = await connectClient(buildContext(null));
+    const json = await call(client, "brand_history", {
+      limit: 10,
+      cursor: "ignored-cursor",
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    const requestedUrl = new URL(String(url));
+    expect(requestedUrl.pathname).toBe("/api/brand/hosted/acme/agent/history");
+    expect(requestedUrl.searchParams.get("provider")).toBe("mcp");
+    expect(requestedUrl.searchParams.get("surface")).toBe("mcp-hosted");
+    expect(requestedUrl.searchParams.get("limit")).toBe("10");
+    expect(requestedUrl.searchParams.has("cursor")).toBe(false);
+    expect((init as RequestInit).headers).toMatchObject({
+      authorization: "Bearer test-token",
+    });
+
+    expect(json.history_origin).toBe("ucs");
+    expect(json.next_cursor).toBeNull();
+    expect(json.cursor_support).toBe("not_reported_by_ucs");
+    expect(json.cursor_requested).toBe("ignored-cursor");
+    expect(json.telemetry).toMatchObject({
+      write_active: false,
+      status: "deferred",
+    });
+
+    const history = json.history as Array<Record<string, unknown>>;
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({
+      id: "run-001",
+      started_at: "2026-05-06T10:00:00.000Z",
+      finished_at: "2026-05-06T10:00:01.000Z",
+      provider: "mcp",
+      surface: "mcp-hosted",
+      task_preset: "brand_search",
+      outcome: "completed",
+      receipt_count: 1,
+      portable_receipt_chain: {
+        count: 2,
+        receipt_ids: [
+          "portable-verification-run-001",
+          "portable-support-receipt-001",
+        ],
+        receipt_types: ["verification", "support"],
+        overall_results: ["pass"],
+      },
+    });
+    expect(JSON.stringify(history[0])).not.toContain("diagnosisSteps");
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("passes UCS telemetry summary through safely", async () => {
+    stubHistoryResponse(HISTORY_BODY);
+    const { client } = await connectClient(buildContext(null));
+    const json = await call(client, "brand_history", {});
+    expect(json.telemetry_summary).toMatchObject({
+      totalRuns: 2,
+      completedRuns: 1,
+      failedRuns: 1,
+      successRate: 50,
+      latestFailure: {
+        taskLabel: "Brand Check",
+        summary: "Failed with [redacted-url]",
+        failureKind: "runtime_error",
+      },
+    });
+  });
+
+  it("does not crash when UCS omits a usable history array", async () => {
+    stubHistoryResponse({ ok: true, telemetry: null, history: { bad: true } });
+    const { client } = await connectClient(buildContext(null));
+    const json = await call(client, "brand_history", {});
+    expect(json.history).toEqual([]);
+    expect(json.malformed_history).toBe(true);
+    expect(json.next_cursor).toBeNull();
+  });
+
+  it("returns structured errors for UCS not found and service-token failures", async () => {
+    stubHistoryResponse({ error: "Hosted brand not found." }, { status: 404 });
+    const notFoundClient = await connectClient(buildContext(null));
+    const notFound = await call(notFoundClient.client, "brand_history", {});
+    expect(notFound).toMatchObject({
+      error: "hosted_brand_not_found",
+      status: 404,
+      upstream_status: 404,
+      history_origin: "ucs",
+    });
+
+    stubHistoryResponse({ error: "Service-token auth required." }, { status: 401 });
+    const authClient = await connectClient(buildContext(null));
+    const authError = await call(authClient.client, "brand_history", {});
+    expect(authError).toMatchObject({
+      error: "ucs_auth",
+      status: 502,
+      upstream_status: 401,
+      history_origin: "ucs",
+    });
+  });
+});
+
 describe("brand_runtime (hosted)", () => {
   const PACKAGE: BrandPackagePayload = {
     runtime: {
@@ -842,7 +1064,6 @@ describe("brand_status (hosted)", () => {
     expect(json.runtime_available).toBe(true);
     expect(json.remaining_stubs).toEqual([
       "brand_feedback",
-      "brand_history",
     ]);
 
     const implementedTools = json.implemented_tools as Array<
@@ -856,7 +1077,7 @@ describe("brand_status (hosted)", () => {
       ["list_brand_assets", "real"],
       ["get_brand_asset", "real"],
       ["brand_feedback", "stub"],
-      ["brand_history", "stub"],
+      ["brand_history", "real"],
     ]);
 
     const scopeMatrix = json.scope_matrix as Array<Record<string, unknown>>;
@@ -937,12 +1158,13 @@ describe("brand_status (hosted)", () => {
 
 describe("stubs return structured not_implemented_in_staging errors", () => {
   const STUB_TOOLS = [
-    ["brand_history", {}],
+    ["brand_feedback", { summary: "test" }],
   ] as const;
 
   for (const [tool, args] of STUB_TOOLS) {
     it(`${tool} returns not_implemented_in_staging`, async () => {
-      const { client } = await connectClient(buildContext(null));
+      const auth = buildAuth({ scopes: ["feedback"] });
+      const { client } = await connectClient(buildContext(null, { auth }));
       const json = await call(client, tool, args as Record<string, unknown>);
       expect(json.error).toBe("not_implemented_in_staging");
       expect(json.tool).toBe(tool);
