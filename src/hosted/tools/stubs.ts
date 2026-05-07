@@ -59,63 +59,6 @@ export function registerCheckStub(
   );
 }
 
-export function registerListAssetsStub(
-  server: McpServer,
-  context: HostedBrandContext,
-) {
-  const shape = {
-    category: z.string().optional().describe("Filter by asset category."),
-    lifecycle: z.string().optional().describe("Filter by lifecycle status."),
-    cursor: z.string().optional().describe("Pagination cursor."),
-    limit: z.number().int().min(1).max(100).default(25).describe("Page size."),
-  };
-  const schema = z.object(shape);
-  server.tool(
-    "list_brand_assets",
-    "Paginated catalog of brand assets for the connected hosted brand. Filter by category and lifecycle. Read-only. Phase 1 staging: stub.",
-    shape,
-    async (args) => {
-      const scopeError = enforceToolScope("list_brand_assets", context);
-      if (scopeError) return scopeError;
-
-      const parsed = safeParseParams(schema, args);
-      if (!parsed.success) return parsed.response;
-      return stubResponse(
-        "list_brand_assets",
-        context.slug,
-        "Asset catalog pagination lands alongside get_brand_asset",
-      );
-    },
-  );
-}
-
-export function registerGetAssetStub(
-  server: McpServer,
-  context: HostedBrandContext,
-) {
-  const shape = {
-    asset_id: z.string().describe("Asset identifier from list_brand_assets."),
-  };
-  const schema = z.object(shape);
-  server.tool(
-    "get_brand_asset",
-    "Fetch a specific asset URL plus metadata (format, dimensions, lifecycle). Read-only. Phase 1 staging: stub.",
-    shape,
-    async (args) => {
-      const scopeError = enforceToolScope("get_brand_asset", context);
-      if (scopeError) return scopeError;
-
-      const parsed = safeParseParams(schema, args);
-      if (!parsed.success) return parsed.response;
-      return stubResponse(
-        "get_brand_asset",
-        context.slug,
-        "Single-asset fetch lands alongside list_brand_assets",
-      );
-    },
-  );
-}
-
 export function registerFeedbackStub(
   server: McpServer,
   context: HostedBrandContext,

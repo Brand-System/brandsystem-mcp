@@ -99,6 +99,20 @@ describe("hosted tool scope enforcement", () => {
     expect(json.required_scope).toBe("read");
   });
 
+  it("asset tools return structured 403-equivalent responses without read scope", async () => {
+    const auth = buildAuth({ scopes: ["check"] });
+    const { client } = await connectClient(buildContext(null, { auth }));
+    const list = await call(client, "list_brand_assets", {});
+    expect(list.error).toBe("insufficient_scope");
+    expect(list.status).toBe(403);
+    expect(list.required_scope).toBe("read");
+
+    const get = await call(client, "get_brand_asset", { asset_id: "logo" });
+    expect(get.error).toBe("insufficient_scope");
+    expect(get.status).toBe(403);
+    expect(get.required_scope).toBe("read");
+  });
+
   it("brand_check requires explicit check scope; read alone 403s", async () => {
     const readOnly = await connectClient(buildContext(null));
     const denied = await call(readOnly.client, "brand_check", { text: "hi" });
@@ -275,6 +289,163 @@ describe("brand_search (hosted)", () => {
     const json = await call(client, "brand_search", { query: "anything" });
     expect(json.hits).toEqual([]);
     expect(json.searched_documents).toBe(0);
+  });
+});
+
+describe("hosted asset tools", () => {
+  const ASSET_PACKAGE: BrandPackagePayload = {
+    slug: "acme",
+    brandInstance: {
+      assets: [
+        {
+          id: "logo-primary",
+          title: "Primary logo",
+          category: "logo",
+          lifecycle: "official",
+          format: "svg",
+          width: 512,
+          height: 128,
+          packagePath: "acme/runtime/assets/logo-primary.svg",
+          url: "https://private-provider.example/raw-logo.svg",
+          tags: ["identity", "runtime"],
+          official: true,
+        },
+        {
+          id: "hero-runtime",
+          title: "Runtime hero",
+          category: "illustration",
+          lifecycle: "runtime",
+          format: "png",
+          deliveryRef: {
+            packagePath: "acme/runtime/assets/hero-runtime.png",
+            posture: "package_safe",
+          },
+          inRuntimePackage: true,
+        },
+        {
+          id: "campaign-private",
+          title: "Campaign concept",
+          category: "campaign",
+          lifecycle: "exploratory",
+          providerUrl: "https://private-provider.example/campaign.png",
+          custody: "private_provider",
+        },
+      ],
+    },
+    brandData: {
+      assets: [
+        {
+          id: "approved-badge",
+          name: "Approved badge",
+          kind: "badge",
+          lifecycle: "production-approved",
+          productionApproved: true,
+          package_path: "acme/runtime/assets/approved-badge.svg",
+        },
+      ],
+    },
+  };
+
+  it("list_brand_assets returns package-safe asset summaries with posture", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const json = await call(client, "list_brand_assets", { limit: 10 });
+    expect(json.total_assets).toBe(4);
+    expect(json.next_cursor).toBeNull();
+    expect(json.custody_safe).toBe(true);
+    expect(json.selected_kit_artifact_support).toBe("not_implemented_in_v1");
+
+    const assets = json.assets as Array<Record<string, unknown>>;
+    expect(assets.map((asset) => asset.id)).toEqual([
+      "logo-primary",
+      "hero-runtime",
+      "campaign-private",
+      "approved-badge",
+    ]);
+    expect(assets[0]).toMatchObject({
+      id: "logo-primary",
+      category: "logo",
+      lifecycle: "official",
+      governance_posture: "official",
+      delivery_ref: {
+        posture: "package_safe",
+        package_path: "acme/runtime/assets/logo-primary.svg",
+      },
+    });
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("list_brand_assets filters and paginates deterministically", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const first = await call(client, "list_brand_assets", { limit: 2 });
+    expect((first.assets as unknown[])).toHaveLength(2);
+    expect(first.next_cursor).toBe("2");
+
+    const second = await call(client, "list_brand_assets", {
+      limit: 2,
+      cursor: String(first.next_cursor),
+    });
+    expect(
+      (second.assets as Array<Record<string, unknown>>).map((asset) => asset.id),
+    ).toEqual(["campaign-private", "approved-badge"]);
+
+    const filtered = await call(client, "list_brand_assets", {
+      lifecycle: "production",
+    });
+    expect(
+      (filtered.assets as Array<Record<string, unknown>>).map((asset) => asset.id),
+    ).toEqual(["approved-badge"]);
+  });
+
+  it("get_brand_asset returns full safe metadata for a package asset", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const json = await call(client, "get_brand_asset", {
+      asset_id: "hero-runtime",
+    });
+    const asset = json.asset as Record<string, unknown>;
+    expect(asset).toMatchObject({
+      id: "hero-runtime",
+      governance_posture: "runtime",
+      delivery_ref: {
+        posture: "package_safe",
+        package_path: "acme/runtime/assets/hero-runtime.png",
+      },
+      package_posture: {
+        in_runtime_package: true,
+        selected_kit_artifact_support: "not_implemented_in_v1",
+      },
+    });
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("get_brand_asset blocks private provider URLs instead of returning them", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const json = await call(client, "get_brand_asset", {
+      asset_id: "campaign-private",
+    });
+    const asset = json.asset as Record<string, unknown>;
+    expect(asset.delivery_ref).toEqual({
+      posture: "blocked_private_provider_url",
+      reason: "No package-safe delivery reference is available for this asset",
+    });
+    expect(asset.custody).toMatchObject({
+      safe_for_mcp: false,
+      blocked_private_provider_url: true,
+    });
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("get_brand_asset returns asset_not_found for unknown ids", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const json = await call(client, "get_brand_asset", { asset_id: "missing" });
+    expect(json.error).toBe("asset_not_found");
+    expect(json.asset_id).toBe("missing");
+  });
+
+  it("asset tools tolerate missing arrays", async () => {
+    const { client } = await connectClient(buildContext({ brandInstance: {} }));
+    const json = await call(client, "list_brand_assets", {});
+    expect(json.assets).toEqual([]);
+    expect(json.total_assets).toBe(0);
   });
 });
 
@@ -481,8 +652,6 @@ describe("brand_status (hosted)", () => {
 
 describe("stubs return structured not_implemented_in_staging errors", () => {
   const STUB_TOOLS = [
-    ["list_brand_assets", {}],
-    ["get_brand_asset", { asset_id: "x" }],
     ["brand_history", {}],
   ] as const;
 

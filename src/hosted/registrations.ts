@@ -13,10 +13,9 @@ import type { HostedBrandContext } from "./types.js";
 import { registerRuntime } from "./tools/runtime.js";
 import { registerSearch } from "./tools/search.js";
 import { registerStatus } from "./tools/status.js";
+import { registerGetAsset, registerListAssets } from "./tools/assets.js";
 import {
   registerCheckStub,
-  registerListAssetsStub,
-  registerGetAssetStub,
   registerFeedbackStub,
   registerHistoryStub,
 } from "./tools/stubs.js";
@@ -41,8 +40,8 @@ export function registerHostedTools(
   registerSearch(server, context);
   registerCheckStub(server, context);
   registerStatus(server, context);
-  registerListAssetsStub(server, context);
-  registerGetAssetStub(server, context);
+  registerListAssets(server, context);
+  registerGetAsset(server, context);
   registerFeedbackStub(server, context);
   registerHistoryStub(server, context);
 }
