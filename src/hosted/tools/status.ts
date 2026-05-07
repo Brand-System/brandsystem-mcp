@@ -17,7 +17,7 @@ import type { BrandcodeMcpScope, HostedBrandContext } from "../types.js";
 const TOOL_IMPLEMENTATION_MATRIX = [
   { tool: "brand_runtime", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_search", implementation: "real", write_behavior: "read-only" },
-  { tool: "brand_check", implementation: "stub", write_behavior: "read-only" },
+  { tool: "brand_check", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_status", implementation: "real", write_behavior: "read-only" },
   { tool: "list_brand_assets", implementation: "real", write_behavior: "read-only" },
   { tool: "get_brand_asset", implementation: "real", write_behavior: "read-only" },
@@ -315,7 +315,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
           assets.available
             ? "list_brand_assets and get_brand_asset return package-safe asset metadata"
             : "Publish package-safe runtime assets before expecting asset tool results",
-          "Remaining stubs: brand_check, brand_feedback, brand_history",
+          "Remaining stubs: brand_feedback, brand_history",
         ],
         data: {
           status: lines.join("\n"),

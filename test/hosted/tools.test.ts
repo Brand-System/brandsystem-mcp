@@ -123,7 +123,8 @@ describe("hosted tool scope enforcement", () => {
     const auth = buildAuth({ scopes: ["check"] });
     const allowed = await connectClient(buildContext(null, { auth }));
     const json = await call(allowed.client, "brand_check", { text: "hi" });
-    expect(json.error).toBe("not_implemented_in_staging");
+    expect(json.verdict).toBe("review");
+    expect(json.runtime_origin).toBe("hosted");
   });
 
   it("brand_feedback requires explicit feedback scope", async () => {
@@ -141,6 +142,185 @@ describe("hosted tool scope enforcement", () => {
       summary: "test",
     });
     expect(json.error).toBe("not_implemented_in_staging");
+  });
+});
+
+describe("brand_check (hosted)", () => {
+  const checkAuth = buildAuth({ scopes: ["check"] });
+  const CHECK_PACKAGE: BrandPackagePayload = {
+    slug: "acme",
+    runtime: {
+      identity: {
+        colors: { primary: "#2563eb" },
+        typography: { body: "Inter, system-ui, sans-serif" },
+      },
+    },
+    brandInstance: {
+      tokens: {
+        colors: {
+          primary: "#2563eb",
+          dark: "#18181b",
+        },
+        typography: {
+          fontFamily: "Inter, system-ui, sans-serif",
+        },
+      },
+      fonts: {
+        roles: {
+          body: { fontFamily: "Inter, system-ui, sans-serif" },
+          display: { fontFamily: "Merriweather, Georgia, serif" },
+        },
+      },
+      brandPhrases: [
+        {
+          id: "bp-001",
+          phrase: "Governed AI, ready to ship",
+          status: "Active",
+        },
+      ],
+      proofPoints: [
+        {
+          id: "claim-001",
+          title: "91% of teams need governed AI proof",
+          status: "Active",
+        },
+        {
+          id: "claim-002",
+          title: "Experimental signal",
+          status: "Watch",
+        },
+      ],
+      applicationRules: {
+        rules: [
+          {
+            id: "ar-001",
+            name: "Unsupported claims",
+            rule: "Never claim instant ROI",
+            status: "Active",
+          },
+        ],
+      },
+      capabilities: {
+        blocked: ["autonomous trading"],
+      },
+      voice: {
+        neverSay: ["synergy"],
+        antiPatterns: ["Never use drop shadows"],
+      },
+    },
+  };
+
+  it("evaluates text against Active/Watch proof points and blocked capabilities", async () => {
+    const { client } = await connectClient(
+      buildContext(CHECK_PACKAGE, { auth: checkAuth }),
+    );
+    const json = await call(client, "brand_check", {
+      text: "Governed AI, ready to ship. 91% of teams need governed AI proof. Experimental signal. Add autonomous trading and claim instant ROI.",
+    });
+    expect(json.verdict).toBe("fail");
+    expect(json.runtime_origin).toBe("hosted");
+
+    const findings = json.findings as Array<Record<string, unknown>>;
+    expect(findings.map((finding) => finding.code)).toEqual(
+      expect.arrayContaining([
+        "active_proof_point_used",
+        "watch_proof_point_used",
+        "blocked_capability_used",
+        "brand_phrase_used",
+        "forbidden_language_used",
+      ]),
+    );
+    expect(findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ source: "brandInstance.applicationRules" }),
+      ]),
+    );
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("passes known brand colors and reviews unknown colors", async () => {
+    const { client } = await connectClient(
+      buildContext(CHECK_PACKAGE, { auth: checkAuth }),
+    );
+    const known = await call(client, "brand_check", { color: "#2563EB" });
+    expect(known.verdict).toBe("pass");
+    expect((known.checks as Record<string, Record<string, unknown>>).color.status).toBe(
+      "pass",
+    );
+
+    const unknown = await call(client, "brand_check", { color: "#abcdef" });
+    expect(unknown.verdict).toBe("review");
+    expect(
+      (unknown.findings as Array<Record<string, unknown>>).map(
+        (finding) => finding.code,
+      ),
+    ).toContain("color_not_in_hosted_palette");
+  });
+
+  it("passes known brand fonts and reviews unknown fonts", async () => {
+    const { client } = await connectClient(
+      buildContext(CHECK_PACKAGE, { auth: checkAuth }),
+    );
+    const known = await call(client, "brand_check", {
+      font: "Merriweather, Georgia, serif",
+    });
+    expect(known.verdict).toBe("pass");
+    expect((known.checks as Record<string, Record<string, unknown>>).font.status).toBe(
+      "pass",
+    );
+
+    const unknown = await call(client, "brand_check", {
+      font: "Comic Sans MS",
+    });
+    expect(unknown.verdict).toBe("review");
+    expect(
+      (unknown.findings as Array<Record<string, unknown>>).map(
+        (finding) => finding.code,
+      ),
+    ).toContain("font_not_in_hosted_typography");
+  });
+
+  it("detects known color and font usage in CSS", async () => {
+    const { client } = await connectClient(
+      buildContext(CHECK_PACKAGE, { auth: checkAuth }),
+    );
+    const json = await call(client, "brand_check", {
+      css: ".hero { color: #2563eb; font-family: Inter, system-ui, sans-serif; }",
+    });
+    expect(json.verdict).toBe("pass");
+    const css = (json.checks as Record<string, Record<string, unknown>>).css;
+    expect(css.status).toBe("pass");
+    expect(css.matched).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ kind: "color" }),
+        expect.objectContaining({ kind: "font" }),
+      ]),
+    );
+  });
+
+  it("does not crash when the hosted package is missing or malformed", async () => {
+    const malformed = {
+      brandInstance: {
+        tokens: null,
+        fonts: null,
+        proofPoints: "bad shape",
+      },
+    } as unknown as BrandPackagePayload;
+    const { client } = await connectClient(
+      buildContext(malformed, { auth: checkAuth }),
+    );
+    const json = await call(client, "brand_check", {
+      text: "Hello",
+      color: "#2563eb",
+      font: "Inter",
+    });
+    expect(json.verdict).toBe("review");
+    expect(json.runtime_origin).toBe("hosted");
+    expect(json.checks).toMatchObject({
+      text: { status: "review" },
+      color: { status: "review" },
+      font: { status: "review" },
+    });
   });
 });
 
@@ -661,7 +841,6 @@ describe("brand_status (hosted)", () => {
     expect(json.scopes).toEqual(["read"]);
     expect(json.runtime_available).toBe(true);
     expect(json.remaining_stubs).toEqual([
-      "brand_check",
       "brand_feedback",
       "brand_history",
     ]);
@@ -672,7 +851,7 @@ describe("brand_status (hosted)", () => {
     expect(implementedTools.map((tool) => [tool.tool, tool.implementation])).toEqual([
       ["brand_runtime", "real"],
       ["brand_search", "real"],
-      ["brand_check", "stub"],
+      ["brand_check", "real"],
       ["brand_status", "real"],
       ["list_brand_assets", "real"],
       ["get_brand_asset", "real"],

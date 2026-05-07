@@ -1,12 +1,10 @@
 /**
- * Stub registrations for the 6 hosted tools whose full implementations land
+ * Stub registrations for hosted tools whose full implementations land
  * after the sprint gate. Each stub:
  *   - uses the final description from the Phase 0 lock
  *   - returns a structured "not_implemented_in_staging" response
  *   - keeps the tool list at 8 so clients can probe the full surface now
  *
- * Removing a stub and replacing it with a real implementation should not
- * require touching registrations.ts — just the per-tool module.
  */
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -27,36 +25,6 @@ function stubResponse(tool: string, slug: string, note: string) {
       phase: "phase_1_staging_prototype",
     },
   });
-}
-
-export function registerCheckStub(
-  server: McpServer,
-  context: HostedBrandContext,
-) {
-  const shape = {
-    text: z.string().optional().describe("Copy to check for voice violations."),
-    color: z.string().optional().describe("Hex color to check against palette."),
-    font: z.string().optional().describe("Font family to check against typography."),
-    css: z.string().optional().describe("CSS snippet to check for anti-patterns."),
-  };
-  const schema = z.object(shape);
-  server.tool(
-    "brand_check",
-    "Validate draft text, color, font, and CSS against live governance. Pass/fail plus specific fixes. Mirrors @brandsystem/mcp's brand_check. Phase 1 staging: stub.",
-    shape,
-    async (args) => {
-      const scopeError = enforceToolScope("brand_check", context);
-      if (scopeError) return scopeError;
-
-      const parsed = safeParseParams(schema, args);
-      if (!parsed.success) return parsed.response;
-      return stubResponse(
-        "brand_check",
-        context.slug,
-        "brand_check wires to hosted runtime rules in the next Phase 1 increment",
-      );
-    },
-  );
 }
 
 export function registerFeedbackStub(
