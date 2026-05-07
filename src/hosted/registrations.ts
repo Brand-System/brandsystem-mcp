@@ -15,8 +15,8 @@ import { registerSearch } from "./tools/search.js";
 import { registerCheck } from "./tools/check.js";
 import { registerStatus } from "./tools/status.js";
 import { registerGetAsset, registerListAssets } from "./tools/assets.js";
+import { registerFeedback } from "./tools/feedback.js";
 import { registerHistory } from "./tools/history.js";
-import { registerFeedbackStub } from "./tools/stubs.js";
 
 export const HOSTED_TOOL_ORDER = [
   "brand_runtime",
@@ -40,6 +40,6 @@ export function registerHostedTools(
   registerStatus(server, context);
   registerListAssets(server, context);
   registerGetAsset(server, context);
-  registerFeedbackStub(server, context);
+  registerFeedback(server, context);
   registerHistory(server, context);
 }

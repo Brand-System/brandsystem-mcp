@@ -150,11 +150,166 @@ describe("hosted tool scope enforcement", () => {
     expect(denied.required_scope).toBe("feedback");
 
     const auth = buildAuth({ scopes: ["feedback"] });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ ok: true, entry: {} }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      ),
+    );
     const allowed = await connectClient(buildContext(null, { auth }));
     const json = await call(allowed.client, "brand_feedback", {
       summary: "test",
     });
-    expect(json.error).toBe("not_implemented_in_staging");
+    expect(json.append_status).toBe("recorded");
+    expect(json.canonical_mutation).toBe(false);
+  });
+});
+
+describe("brand_feedback (hosted)", () => {
+  const feedbackAuth = buildAuth({ scopes: ["feedback"] });
+
+  function stubFeedbackResponse(body: unknown, init: ResponseInit = {}) {
+    const fetchMock = vi.fn(async () =>
+      new Response(JSON.stringify(body), {
+        status: init.status ?? 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  it("posts a valid AgentRunHistoryEntry body for observations", async () => {
+    const fetchMock = stubFeedbackResponse({ ok: true, entry: {} });
+    const { client } = await connectClient(
+      buildContext(null, { auth: feedbackAuth }),
+    );
+    const json = await call(client, "brand_feedback", {
+      kind: "observation",
+      summary: "Search result needs clearer provenance",
+      detail: "Observed while checking a hosted package.",
+      source_tool: "brand_search",
+      related_run_id: "run-123",
+      evidence_refs: ["package://runtime/search", "https://private-provider.example/raw"],
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toBe(
+      "https://www.brandcode.studio/api/brand/hosted/acme/agent/history",
+    );
+    expect((init as RequestInit).method).toBe("POST");
+    expect((init as RequestInit).headers).toMatchObject({
+      authorization: "Bearer test-token",
+      "content-type": "application/json",
+    });
+
+    const body = JSON.parse(String((init as RequestInit).body)) as Record<
+      string,
+      Record<string, unknown>
+    >;
+    const entry = body.entry;
+    const run = entry.run as Record<string, unknown>;
+    expect(run.id).toMatch(/^mcp-feedback-observation-/);
+    expect(run.provider).toBeUndefined();
+    expect(run.status).toBe("completed");
+    expect(run.surface).toBe("runtime");
+    expect(run.taskPreset).toBe("mcp_feedback_observation");
+    expect(run.resultSummary).toBe("Search result needs clearer provenance");
+    expect(run.receiptIds).toHaveLength(1);
+
+    const context = run.context as Record<string, unknown>;
+    expect(context).toMatchObject({
+      brandSlug: "acme",
+      surface: "runtime",
+      surfaceId: "mcp-hosted",
+      freshnessState: "live",
+    });
+
+    const receipts = entry.receipts as Array<Record<string, unknown>>;
+    expect(receipts).toHaveLength(1);
+    expect(receipts[0]).toMatchObject({
+      runId: run.id,
+      kind: "review_guidance_note",
+      destinationHome: "runtime",
+      actionKind: "review",
+      runtimeVersion: "hosted",
+    });
+    expect(receipts[0].receiptHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(entry.proposal).toBeNull();
+    expect(JSON.stringify(body)).not.toContain("private-provider.example");
+
+    expect(json).toMatchObject({
+      kind: "observation",
+      append_status: "recorded",
+      history_origin: "ucs",
+      canonical_mutation: false,
+      review_posture:
+        "Recorded as an observation in UCS history; not approved governance and not applied to canon",
+    });
+  });
+
+  it("records proposals with review posture but no canonical mutation claim", async () => {
+    const fetchMock = stubFeedbackResponse({ ok: true, entry: {} });
+    const { client } = await connectClient(
+      buildContext(null, { auth: feedbackAuth }),
+    );
+    const json = await call(client, "brand_feedback", {
+      kind: "proposal",
+      summary: "Consider promoting the new proof point",
+    });
+
+    const [, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(String((init as RequestInit).body)) as Record<
+      string,
+      Record<string, unknown>
+    >;
+    const run = body.entry.run as Record<string, unknown>;
+    const receipts = body.entry.receipts as Array<Record<string, unknown>>;
+    expect(run.taskPreset).toBe("mcp_feedback_proposal");
+    expect(run.approvalState).toBe("proposed");
+    expect(receipts[0].actionKind).toBe("write_proposal");
+    expect(body.entry.proposal).toBeNull();
+
+    expect(json).toMatchObject({
+      kind: "proposal",
+      append_status: "recorded",
+      canonical_mutation: false,
+      review_posture:
+        "Recorded as a review proposal in UCS history; not approved governance and not applied to canon",
+    });
+  });
+
+  it("maps UCS upstream errors to structured feedback errors", async () => {
+    const cases = [
+      [400, "ucs_history_contract_error", 400],
+      [401, "ucs_auth", 502],
+      [403, "ucs_auth", 502],
+      [404, "hosted_brand_not_found", 404],
+      [500, "ucs_error", 502],
+    ] as const;
+
+    for (const [upstreamStatus, code, status] of cases) {
+      stubFeedbackResponse({ error: `upstream ${upstreamStatus}` }, {
+        status: upstreamStatus,
+      });
+      const { client } = await connectClient(
+        buildContext(null, { auth: feedbackAuth }),
+      );
+      const json = await call(client, "brand_feedback", {
+        summary: `case ${upstreamStatus}`,
+      });
+      expect(json).toMatchObject({
+        error: code,
+        status,
+        upstream_status: upstreamStatus,
+        history_origin: "ucs",
+        canonical_mutation: false,
+      });
+    }
   });
 });
 
@@ -1062,9 +1217,7 @@ describe("brand_status (hosted)", () => {
     expect(json.environment).toBe("staging");
     expect(json.scopes).toEqual(["read"]);
     expect(json.runtime_available).toBe(true);
-    expect(json.remaining_stubs).toEqual([
-      "brand_feedback",
-    ]);
+    expect(json.remaining_stubs).toEqual([]);
 
     const implementedTools = json.implemented_tools as Array<
       Record<string, unknown>
@@ -1076,7 +1229,7 @@ describe("brand_status (hosted)", () => {
       ["brand_status", "real"],
       ["list_brand_assets", "real"],
       ["get_brand_asset", "real"],
-      ["brand_feedback", "stub"],
+      ["brand_feedback", "real"],
       ["brand_history", "real"],
     ]);
 
@@ -1134,6 +1287,7 @@ describe("brand_status (hosted)", () => {
       asset_count: 3,
     });
     expect(json.status).toContain("Real tools:");
+    expect(json.status).toContain("Stubs:        ");
     expect(json.status).toContain("Telemetry:    deferred");
   });
 
@@ -1154,21 +1308,4 @@ describe("brand_status (hosted)", () => {
     expect(availability.search.available).toBe(false);
     expect(availability.assets.available).toBe(false);
   });
-});
-
-describe("stubs return structured not_implemented_in_staging errors", () => {
-  const STUB_TOOLS = [
-    ["brand_feedback", { summary: "test" }],
-  ] as const;
-
-  for (const [tool, args] of STUB_TOOLS) {
-    it(`${tool} returns not_implemented_in_staging`, async () => {
-      const auth = buildAuth({ scopes: ["feedback"] });
-      const { client } = await connectClient(buildContext(null, { auth }));
-      const json = await call(client, tool, args as Record<string, unknown>);
-      expect(json.error).toBe("not_implemented_in_staging");
-      expect(json.tool).toBe(tool);
-      expect(json.phase).toBe("phase_1_staging_prototype");
-    });
-  }
 });

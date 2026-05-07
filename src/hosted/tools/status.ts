@@ -14,16 +14,22 @@ import {
 import { enforceToolScope } from "../scope.js";
 import type { BrandcodeMcpScope, HostedBrandContext } from "../types.js";
 
-const TOOL_IMPLEMENTATION_MATRIX = [
+interface ToolImplementationEntry {
+  tool: string;
+  implementation: "real" | "stub";
+  write_behavior: "read-only" | "append-only";
+}
+
+const TOOL_IMPLEMENTATION_MATRIX: ToolImplementationEntry[] = [
   { tool: "brand_runtime", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_search", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_check", implementation: "real", write_behavior: "read-only" },
   { tool: "brand_status", implementation: "real", write_behavior: "read-only" },
   { tool: "list_brand_assets", implementation: "real", write_behavior: "read-only" },
   { tool: "get_brand_asset", implementation: "real", write_behavior: "read-only" },
-  { tool: "brand_feedback", implementation: "stub", write_behavior: "append-only" },
+  { tool: "brand_feedback", implementation: "real", write_behavior: "append-only" },
   { tool: "brand_history", implementation: "real", write_behavior: "read-only" },
-] as const;
+];
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === "object" && !Array.isArray(v);
@@ -315,7 +321,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
           assets.available
             ? "list_brand_assets and get_brand_asset return package-safe asset metadata"
             : "Publish package-safe runtime assets before expecting asset tool results",
-          "Remaining stubs: brand_feedback",
+          "Remaining stubs: none",
         ],
         data: {
           status: lines.join("\n"),
@@ -336,7 +342,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
             active: false,
             status: "deferred",
             detail:
-              "Hosted AgentRun telemetry is not active; UCS history POST remains a Milestone D deferral",
+              "General hosted AgentRun telemetry is not active; brand_feedback uses UCS history POST only for explicit append-only feedback",
           },
           rate_limits: {
             status: "not_reported_by_staging",
