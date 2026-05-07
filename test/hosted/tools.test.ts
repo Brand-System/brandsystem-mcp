@@ -633,10 +633,26 @@ describe("brand_runtime (hosted)", () => {
 });
 
 describe("brand_status (hosted)", () => {
-  it("reports slug, environment, scopes, and runtime availability", async () => {
+  it("reports hosted capability, scope, package, artifact, telemetry, and rate-limit posture", async () => {
     const pkg: BrandPackagePayload = {
       runtime: { version: "1.0.0", client_name: "Acme" },
-      brandData: { narratives: [{}, {}], assets: [{}] },
+      runtimePackage: {
+        packagePath: "acme/runtime/packages/acme-brand-runtime-abc123.zip",
+        receiptPath:
+          "acme/runtime/packages/acme-brand-runtime-abc123.receipt.json",
+        latestPath: "acme/runtime/packages/latest.json",
+        versionHash: "abc123",
+      },
+      brandInstance: {
+        narratives: [{ id: "n-1" }],
+        proofPoints: [{ id: "p-1" }],
+        applicationRules: { rules: [{ id: "r-1" }] },
+        brandPhrases: [{ id: "bp-1" }],
+        readiness: { stage: "usable" },
+        capabilities: { enabled: ["runtime", "content"] },
+        assets: [{ id: "logo" }, { id: "hero" }],
+      },
+      brandData: { assets: [{ id: "badge" }] },
     };
     const { client } = await connectClient(buildContext(pkg));
     const json = await call(client, "brand_status", {});
@@ -644,9 +660,99 @@ describe("brand_status (hosted)", () => {
     expect(json.environment).toBe("staging");
     expect(json.scopes).toEqual(["read"]);
     expect(json.runtime_available).toBe(true);
+    expect(json.remaining_stubs).toEqual([
+      "brand_check",
+      "brand_feedback",
+      "brand_history",
+    ]);
+
+    const implementedTools = json.implemented_tools as Array<
+      Record<string, unknown>
+    >;
+    expect(implementedTools.map((tool) => [tool.tool, tool.implementation])).toEqual([
+      ["brand_runtime", "real"],
+      ["brand_search", "real"],
+      ["brand_check", "stub"],
+      ["brand_status", "real"],
+      ["list_brand_assets", "real"],
+      ["get_brand_asset", "real"],
+      ["brand_feedback", "stub"],
+      ["brand_history", "stub"],
+    ]);
+
+    const scopeMatrix = json.scope_matrix as Array<Record<string, unknown>>;
+    expect(
+      scopeMatrix.find((tool) => tool.tool === "brand_runtime"),
+    ).toMatchObject({ required_scope: "read", granted: true });
+    expect(
+      scopeMatrix.find((tool) => tool.tool === "brand_check"),
+    ).toMatchObject({ required_scope: "check", granted: false });
+    expect(
+      scopeMatrix.find((tool) => tool.tool === "brand_feedback"),
+    ).toMatchObject({ required_scope: "feedback", granted: false });
+
+    const availability = json.capability_availability as Record<
+      string,
+      Record<string, unknown>
+    >;
+    expect(availability.runtime).toMatchObject({
+      available: true,
+      source: "runtime",
+    });
+    expect(availability.search).toMatchObject({
+      available: true,
+      document_count: 6,
+    });
+    expect(availability.assets).toMatchObject({
+      available: true,
+      total_count: 3,
+    });
+
+    expect(json.full_brand_runtime_artifact).toMatchObject({
+      status: "reported_by_package",
+      present: true,
+      package_path: "acme/runtime/packages/acme-brand-runtime-abc123.zip",
+      receipt_path:
+        "acme/runtime/packages/acme-brand-runtime-abc123.receipt.json",
+      latest_path: "acme/runtime/packages/latest.json",
+      version_hash: "abc123",
+    });
+    expect(json.telemetry).toMatchObject({
+      active: false,
+      status: "deferred",
+    });
+    expect(json.rate_limits).toEqual({
+      status: "not_reported_by_staging",
+    });
+
     const summary = json.brand_summary as Record<string, unknown>;
-    expect(summary.narrative_count).toBe(2);
-    expect(summary.asset_count).toBe(1);
+    expect(summary).toMatchObject({
+      readiness_stage: "usable",
+      capabilities_enabled: 2,
+      runtime_available: true,
+      search_document_count: 6,
+      asset_count: 3,
+    });
+    expect(json.status).toContain("Real tools:");
+    expect(json.status).toContain("Telemetry:    deferred");
+  });
+
+  it("does not claim artifact or rate-limit data when staging package omits it", async () => {
+    const { client } = await connectClient(buildContext({ brandInstance: {} }));
+    const json = await call(client, "brand_status", {});
+    expect(json.full_brand_runtime_artifact).toMatchObject({
+      status: "not_reported_by_package",
+      present: false,
+    });
+    expect(json.rate_limits).toEqual({
+      status: "not_reported_by_staging",
+    });
+    const availability = json.capability_availability as Record<
+      string,
+      Record<string, unknown>
+    >;
+    expect(availability.search.available).toBe(false);
+    expect(availability.assets.available).toBe(false);
   });
 });
 
