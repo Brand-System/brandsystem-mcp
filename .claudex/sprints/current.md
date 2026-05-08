@@ -11,7 +11,7 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 
 ## Current Truth
 
-- Local `main` includes the M001-L01 hosted smoke harness commit and has not been pushed.
+- Local `main` includes M001 coordination through M001-L02 and has not been pushed.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.

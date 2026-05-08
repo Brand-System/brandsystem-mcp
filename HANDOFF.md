@@ -8,7 +8,7 @@ The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and shaped the next Ready lane:
+Seeded repo-native sprint coordination and carried M001 through the first two lanes:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
