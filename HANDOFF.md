@@ -8,12 +8,14 @@ The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination:
+Seeded repo-native sprint coordination and shaped the next Ready lane:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
 - `.claudex/packets/M001-L01-hosted-proof-harness.md`
 - `.claudex/prompts/M001-L01-hosted-proof-harness.md`
+- `.claudex/packets/M001-L02-roadmap-alignment-delta.md`
+- `.claudex/prompts/M001-L02-roadmap-alignment-delta.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Latest Build Work
@@ -28,7 +30,9 @@ The harness uses env-provided endpoint and bearer keys. It verifies MCP initiali
 
 ## Next Ready Lane
 
-No lane is Ready for automation immediately after M001-L01. The planned next lane is M001-L02, but it still needs a linked packet before automation should pick it up.
+M001-L02 is Ready: Roadmap Alignment Delta.
+
+The goal is to refresh the Brandcode Use MCP roadmap/product-spine docs so they match the now-real 8-tool hosted implementation, the M001-L01 smoke harness, and UCS portable runtime semantics. Do not start staging DNS/proof or feedback append lanes until L02 is committed.
 
 ## Known Blockers
 

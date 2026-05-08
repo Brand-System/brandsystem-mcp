@@ -30,7 +30,7 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 | Lane | Status | Packet | Goal |
 | --- | --- | --- | --- |
 | M001-L01 | Done | `.claudex/packets/M001-L01-hosted-proof-harness.md` | Add a repeatable hosted MCP smoke harness and refresh docs so the next hosted proof cannot drift into chat-only claims. |
-| M001-L02 | Queued | TBD | Refresh `specs/brandcode-mcp-use-roadmap-alignment.md` against the now-real 8-tool implementation and latest UCS portable runtime semantics. |
+| M001-L02 | Ready | `.claudex/packets/M001-L02-roadmap-alignment-delta.md` | Refresh `specs/brandcode-mcp-use-roadmap-alignment.md` against the now-real 8-tool implementation and latest UCS portable runtime semantics. |
 | M001-L03 | Queued | TBD | Resolve staging-domain/deployment-protection proof once DNS or Vercel access is available. |
 | M001-L04 | Queued | TBD | Prove `brand_feedback` append against UCS history once a real service token exists. |
 | M001-L05 | Queued | TBD | Cut v0.1 release/readiness posture only after CI, staged route, real MCP client, scope, and feedback proof are all complete. |
@@ -43,4 +43,4 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 
 ## Ready Lane Rule
 
-M001-L01 is complete. No lane is Ready for automation until the next packet is shaped; the planned next lane is **M001-L02**.
+Automation should pick up exactly one Ready lane: **M001-L02**. Do not start hosted proof or feedback append lanes until the roadmap alignment delta is committed.

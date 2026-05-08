@@ -41,3 +41,19 @@ What it proves when endpoint and keys are provided:
 - read-only insufficient-scope behavior for `brand_check` and `brand_feedback`
 
 This lane proved the harness help/env-missing path locally without secrets. It did not claim staging-domain proof, Vercel route proof, external MCP client proof, or feedback append proof because live endpoint/key/service-token dependencies were not provided in the local run.
+
+## 2026-05-08 - M001-L02 Shaped
+
+M001-L02 is now the single Ready lane.
+
+Purpose:
+
+- Refresh the Brandcode Use MCP roadmap/product-spine docs after the hosted 8-tool implementation run and M001-L01 proof harness.
+- Remove stale stub language from `specs/brandcode-mcp-use-roadmap-alignment.md`.
+- Re-lock the product semantics around Full Brand Runtime, selected Brand Kits, campaign/exploratory kits, Production-Approved Assets, hosted review/patch input, and `DESIGN.md` non-authority.
+
+Still blocked after L02:
+
+- Exact staging-domain proof waits on DNS/alias/cert.
+- Direct external MCP client proof waits on Vercel access/deployment-protection posture.
+- `brand_feedback` append proof waits on a real UCS service token.
