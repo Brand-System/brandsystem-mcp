@@ -11,8 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 
 ## Current Truth
 
-- `main` is synced with `origin/main` at `61218ac`.
-- Latest GitHub CI for `61218ac` is green.
+- Local `main` includes the M001-L01 hosted smoke harness commit and has not been pushed.
+- Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
 - The audit issue was repaired by `61218ac`.
@@ -22,12 +22,14 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 - `brand_feedback` append proof is blocked until a real UCS service token is provisioned.
 - Direct external MCP client proof is blocked while Vercel deployment protection prevents normal unauthenticated HTTP access to the preview.
 - Untracked local files `.claude/` and `prompt` are not sprint artifacts and should remain untouched unless Jason explicitly asks.
+- M001-L01 added repo-native hosted proof via `npm run smoke:hosted-mcp`.
+- The smoke harness help and env-missing paths run locally without secrets; live hosted proof still requires `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`, and optional read/asset/feedback inputs.
 
 ## Lanes
 
 | Lane | Status | Packet | Goal |
 | --- | --- | --- | --- |
-| M001-L01 | Ready | `.claudex/packets/M001-L01-hosted-proof-harness.md` | Add a repeatable hosted MCP smoke harness and refresh docs so the next hosted proof cannot drift into chat-only claims. |
+| M001-L01 | Done | `.claudex/packets/M001-L01-hosted-proof-harness.md` | Add a repeatable hosted MCP smoke harness and refresh docs so the next hosted proof cannot drift into chat-only claims. |
 | M001-L02 | Queued | TBD | Refresh `specs/brandcode-mcp-use-roadmap-alignment.md` against the now-real 8-tool implementation and latest UCS portable runtime semantics. |
 | M001-L03 | Queued | TBD | Resolve staging-domain/deployment-protection proof once DNS or Vercel access is available. |
 | M001-L04 | Queued | TBD | Prove `brand_feedback` append against UCS history once a real service token exists. |
@@ -41,4 +43,4 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L01**. Do not start queued lanes until L01 is committed and the sprint docs are updated.
+M001-L01 is complete. No lane is Ready for automation until the next packet is shaped; the planned next lane is **M001-L02**.

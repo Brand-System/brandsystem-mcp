@@ -13,6 +13,7 @@
     "prebuild": "npm run verify:release-metadata",
     "build": "tsc",
     "dev": "tsc --watch",
+    "smoke:hosted-mcp": "node scripts/hosted-mcp-smoke.mjs",
     "prestart": "npm run verify:release-metadata",
     "start": "node dist/index.js",
     "pretest": "npm run verify:release-metadata",

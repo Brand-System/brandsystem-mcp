@@ -106,7 +106,7 @@ Minimum sprint-gate path:
 4. Fetch live Brandcode Studio governance for at least `brand_status` and `brand_runtime`.
 5. Emit `AgentRunRecord` with `provider: "mcp"` and `surface: "mcp-hosted"`.
 6. Deploy to `https://mcp.staging.brandcode.studio/{slug}`.
-7. Prove one live-governance tool call from a real MCP client.
+7. Prove one live-governance tool call from a real MCP client, then keep repeatable proof in-repo through `npm run smoke:hosted-mcp`.
 
 Phase 1 can ship the sprint gate when at least one tool answers from live governance in staging. The full v0.1 is complete when all 8 tools, auth failures, scopes, rate limits, and observability are covered.
 

@@ -122,6 +122,17 @@ Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](spe
 
 The Use MCP roadmap alignment lives in [specs/brandcode-mcp-use-roadmap-alignment.md](specs/brandcode-mcp-use-roadmap-alignment.md).
 
+Hosted proof is command-backed through:
+
+```bash
+BRANDCODE_MCP_SMOKE_URL="https://mcp.staging.brandcode.studio/{slug}" \
+BRANDCODE_MCP_SMOKE_FULL_KEY="bck_test_..." \
+BRANDCODE_MCP_SMOKE_READ_KEY="bck_test_..." \
+npm run smoke:hosted-mcp
+```
+
+The smoke harness verifies MCP `initialize`, `tools/list`, the locked 8-tool order, core hosted tool calls, and read-only insufficient-scope behavior for `brand_check` and `brand_feedback`. It never hardcodes keys; missing optional proof inputs are reported as `blocked` or `skipped` with the exact env or hosted dependency.
+
 ### Claude Design integration
 
 The `.brand/` directory is engineered as a first-class input for [Claude Design](https://www.anthropic.com/news/claude-design). Point Claude Design at a repo that contains `.brand/` — governance YAML, narrative library, proof-point files, taste notes, DTCG tokens — and it grounds on the governed brand instead of improvising from uploaded assets. This is the Deploy path: author once with `@brandsystem/mcp`, then every Anthropic surface (Claude Design, Claude Code, Chat via compile packs) consumes the same runtime.

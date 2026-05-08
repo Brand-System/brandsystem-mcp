@@ -1,6 +1,6 @@
 # M001-L01 - Hosted Proof Harness And Truth Spine
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And v0.1 Proof
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Build lane
@@ -81,3 +81,28 @@ The full key should have `read,check,feedback`. The read key should have `read` 
 - Whether `brand_feedback` append was proved or still blocked.
 - Whether proof was local command only, Vercel route proof, or real external MCP client proof.
 - Exact commands run.
+
+## Closeout - 2026-05-08
+
+Implemented:
+
+- Added `scripts/hosted-mcp-smoke.mjs` and `npm run smoke:hosted-mcp`.
+- The harness uses `@modelcontextprotocol/sdk` Streamable HTTP client transport against `BRANDCODE_MCP_SMOKE_URL`.
+- Required live inputs are `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`; optional inputs are `BRANDCODE_MCP_SMOKE_READ_KEY`, `BRANDCODE_MCP_SMOKE_ASSET_ID`, and `BRANDCODE_MCP_SMOKE_SKIP_FEEDBACK`.
+- It verifies MCP `initialize`, `tools/list`, the locked 8-tool order, `brand_status`, `brand_runtime`, `brand_search`, `list_brand_assets`, optional `get_brand_asset`, `brand_check`, `brand_history`, `brand_feedback`, and insufficient-scope behavior for `brand_check` and `brand_feedback`.
+- It does not hardcode secrets. Missing required live proof env reports `blocked`; optional asset/read-key/feedback conditions report `skipped` or `blocked` with the exact dependency.
+
+Proof posture:
+
+- Endpoint tested: none; no live `BRANDCODE_MCP_SMOKE_URL` was provided in this local lane run.
+- Key posture tested: none for live endpoint; local help/env-missing command paths were proved without secrets.
+- `brand_feedback` append proof: still blocked for live hosted proof until a reachable endpoint and UCS service-token posture are available; the harness can skip append with `BRANDCODE_MCP_SMOKE_SKIP_FEEDBACK=1`.
+- Proof type completed: local command/harness behavior only. No Vercel route proof, staging-domain proof, or external MCP client proof was claimed.
+
+Commands run:
+
+- `npm run smoke:hosted-mcp -- --help`
+- `env -u BRANDCODE_MCP_SMOKE_URL -u BRANDCODE_MCP_SMOKE_FULL_KEY -u BRANDCODE_MCP_SMOKE_READ_KEY -u BRANDCODE_MCP_SMOKE_ASSET_ID -u BRANDCODE_MCP_SMOKE_SKIP_FEEDBACK npm run smoke:hosted-mcp -- --json`
+- `npm test -- test/scripts/hosted-mcp-smoke.test.ts`
+- `npm run lint`
+- `npm run build`

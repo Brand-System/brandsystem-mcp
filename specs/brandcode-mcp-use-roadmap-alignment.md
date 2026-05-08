@@ -54,12 +54,13 @@ Goal: one live-governance tool answers from `mcp.staging.brandcode.studio/{slug}
 Required work:
 
 - Deploy the current hosted scaffold to staging with `UCS_SERVICE_TOKEN`, `BRANDCODE_MCP_ENV=staging`, and test keys.
-- Prove `initialize`, `listTools`, and `brand_runtime` against a real MCP client and a real Studio brand.
+- Prove `initialize`, `tools/list`, the locked 8-tool order, `brand_runtime`, `brand_search`, `brand_check`, `brand_history`, `brand_feedback`, and read-only insufficient-scope behavior through `npm run smoke:hosted-mcp` against a real MCP client and real Studio brand.
 - Capture route proof separately from human-visible UI proof. MCP client success is enough for this gate; Runtime Admin UI proof is not a substitute.
 - Fix repo truth gaps before claiming the gate closed:
   - README phase-gate wording must say the gate is current until staging proof exists.
   - Hosted per-tool scope enforcement must be wired, not just described.
   - Telemetry must either emit a valid UCS `AgentRunHistoryEntry` or stay explicitly deferred.
+  - Missing optional proof inputs must remain `blocked` or `skipped` in harness output, not converted into chat-only claims.
 
 ### Milestone B: Runtime-Backed Read Tools
 
