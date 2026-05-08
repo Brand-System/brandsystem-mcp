@@ -1,6 +1,6 @@
 # M001-L02 - Roadmap Alignment Delta
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And v0.1 Proof
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Build lane
@@ -56,3 +56,35 @@ Out of scope:
 - Which docs changed.
 - Any remaining product-spine questions that need Jason.
 - Whether M001-L03 is unblocked or still waiting on DNS/Vercel access.
+
+## Closeout - 2026-05-08
+
+Docs changed:
+
+- `specs/brandcode-mcp-use-roadmap-alignment.md`
+- `specs/brandcode-mcp-phase-0-lock.md`
+- `README.md`
+- `.claudex/sprints/current.md`
+- `.claudex/messages/M001-messages.md`
+- `HANDOFF.md`
+
+What changed:
+
+- Removed stale `not_implemented_in_staging` stub language from the Use MCP roadmap.
+- Reframed current state around the now-real locked 8-tool hosted implementation.
+- Added explicit product object semantics for Official Brand, Full Brand Runtime, Production-Approved Asset, selected Brand Kit, campaign/exploratory kit, hosted patch/review request, and `DESIGN.md`.
+- Preserved the eight-tool Phase 0 lock and hosted Use-only posture.
+- Kept Full Brand Runtime as the default v0.1 object.
+- Kept selected/campaign kits out of default v0.1 until UCS has durable hosted selected-kit publish/share truth.
+- Kept `brand_feedback` as append-only review input, not canonical governance mutation.
+
+Remaining questions/blockers:
+
+- No product-spine question needs Jason from this docs pass.
+- M001-L03 is still blocked on staging DNS/alias/cert and Vercel deployment-protection/client access posture.
+- M001-L04 is still blocked on a real UCS service token for feedback append proof.
+
+Verification:
+
+- `git diff --check`
+- Docs-only lane; no TypeScript/package imports changed, so `npm run lint` was not required by this packet.

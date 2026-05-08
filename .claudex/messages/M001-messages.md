@@ -57,3 +57,31 @@ Still blocked after L02:
 - Exact staging-domain proof waits on DNS/alias/cert.
 - Direct external MCP client proof waits on Vercel access/deployment-protection posture.
 - `brand_feedback` append proof waits on a real UCS service token.
+
+## 2026-05-08 - M001-L02 Closed
+
+M001-L02 refreshed the Use MCP roadmap/product spine as a docs-only lane.
+
+Updated docs:
+
+- `specs/brandcode-mcp-use-roadmap-alignment.md`
+- `specs/brandcode-mcp-phase-0-lock.md`
+- `README.md`
+- M001 sprint closeout docs
+
+Current product truth:
+
+- `@brandsystem/mcp` remains Build.
+- `@brandcode/mcp` remains hosted Use.
+- v0.1 remains locked at exactly 8 tools.
+- The roadmap no longer calls implemented hosted tools `not_implemented_in_staging` stubs.
+- Full Brand Runtime is the default hosted object.
+- selected Brand Kits and campaign/exploratory kits stay out of default v0.1 until UCS has durable hosted selected-kit publish/share truth.
+- `DESIGN.md` is an adapter/readable brief, not runtime authority.
+- `brand_feedback` is append-only review/hosted patch-request input, not canonical mutation.
+
+Next lane posture:
+
+- No lane is Ready for automation.
+- M001-L03 remains blocked by DNS/alias/cert and Vercel access/deployment-protection posture.
+- M001-L04 remains blocked by real UCS service-token provisioning.

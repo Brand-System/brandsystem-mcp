@@ -30,8 +30,8 @@ The hosted MCP registers exactly these 8 tools in v1:
 | `brand_check` | Validate draft text, color, font, and CSS against live governance. Mirrors the `@brandsystem/mcp` signature. | Read-only |
 | `brand_status` | Return connection metadata, freshness, rate-limit state, and available scopes. | Read-only |
 | `list_brand_assets` | Paginated asset catalog with category and lifecycle filters. | Read-only |
-| `get_brand_asset` | Fetch a specific asset URL and metadata. | Read-only |
-| `brand_feedback` | Append an observation or proposal to the governance review queue. | Append-only |
+| `get_brand_asset` | Fetch specific package-safe asset delivery references and metadata. | Read-only |
+| `brand_feedback` | Append an observation or proposal to the governance review queue without mutating canon. | Append-only |
 | `brand_history` | Return recent MCP runs scoped by API key and brand permissions. | Read-only |
 
 Rejected for v1:

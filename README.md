@@ -114,11 +114,11 @@ The `.brand` runtime is the product. Two MCPs serve it:
 
 **`@brandsystem/mcp` — Build (this package).** Author and compile the `.brand` runtime locally. Extract from websites, Figma, and PDFs. Compile governance (anti-patterns, proof-point status, voice rules, application rules) plus DTCG tokens, brand-runtime.json, and interaction-policy.json into a single `.brand/` directory. Portable, versionable, ready to commit to any repo.
 
-**`@brandcode/mcp` — Use (hosted).** Connect any MCP client to a live governed brand at `https://mcp.brandcode.studio/{slug}`. Agents fetch the current runtime, search approved knowledge, check drafts, retrieve assets, and leave feedback — no per-tool guideline copy, no stale snapshots. Tagline: *"Your brand, live in every AI tool."*
+**`@brandcode/mcp` — Use (hosted).** Connect any MCP client to the live Full Brand Runtime at `https://mcp.brandcode.studio/{slug}`. Agents fetch the current runtime, search approved knowledge, check drafts, retrieve package-safe assets, and leave append-only review feedback — no per-tool guideline copy, no stale snapshots, no canonical mutation from the MCP. Tagline: *"Your brand, live in every AI tool."*
 
 Same `.brand` runtime artifact. Two consumption paths. Build authors it; Use serves it.
 
-Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). Phase 1 staging scaffold is in this repo; the current sprint gate is still real MCP-client proof that one live-governance tool answers from `https://mcp.staging.brandcode.studio/{slug}`. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
+Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). The hosted implementation now registers all 8 locked tools, while the current sprint gate is still real MCP-client proof from `https://mcp.staging.brandcode.studio/{slug}` with DNS/Vercel access and service-token blockers called out. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
 
 The Use MCP roadmap alignment lives in [specs/brandcode-mcp-use-roadmap-alignment.md](specs/brandcode-mcp-use-roadmap-alignment.md).
 
@@ -532,7 +532,7 @@ Four verbs stack — Build, Use, Evolve, Deploy. `@brandsystem/mcp` owns Build. 
 
 **Build** — this package. Extract identity. Compile governance. Produce a `.brand/` directory.
 
-**Use** — `@brandcode/mcp` hosted at `mcp.brandcode.studio/{slug}`. Any MCP client fetches the live governed brand.
+**Use** — `@brandcode/mcp` hosted at `mcp.brandcode.studio/{slug}`. Any MCP client fetches the live Full Brand Runtime by default.
 
 **Evolve** — [Brandcode Studio](https://brandcode.studio). Taste notes graduate from memory to formal governance. Anti-patterns accumulate. The runtime sharpens with every production cycle.
 

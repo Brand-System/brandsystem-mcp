@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and v0.1 proof.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; the sprint is still not about adding tools. It is about making the v0.1 proof story repeatable and truthful.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. The sprint is still not about adding tools. It is about making the v0.1 proof story repeatable and truthful.
 
 ## Latest PO Work
 
@@ -20,6 +20,14 @@ Seeded repo-native sprint coordination and shaped the next Ready lane:
 
 ## Latest Build Work
 
+M001-L02 closed as a docs-only roadmap/product-spine update:
+
+- `specs/brandcode-mcp-use-roadmap-alignment.md` now reflects the now-real 8-tool hosted implementation.
+- Full Brand Runtime is framed as the default hosted Use MCP object.
+- selected Brand Kits and campaign/exploratory kits remain outside default v0.1 until UCS has durable hosted selected-kit publish/share truth.
+- `DESIGN.md` is framed as an adapter/readable brief, not runtime authority.
+- `brand_feedback` is append-only review/hosted patch-request input, not canonical governance mutation.
+
 M001-L01 closed with a repo-native hosted proof harness:
 
 - `scripts/hosted-mcp-smoke.mjs`
@@ -30,9 +38,9 @@ The harness uses env-provided endpoint and bearer keys. It verifies MCP initiali
 
 ## Next Ready Lane
 
-M001-L02 is Ready: Roadmap Alignment Delta.
+No lane is Ready for automation.
 
-The goal is to refresh the Brandcode Use MCP roadmap/product-spine docs so they match the now-real 8-tool hosted implementation, the M001-L01 smoke harness, and UCS portable runtime semantics. Do not start staging DNS/proof or feedback append lanes until L02 is committed.
+M001-L03 remains blocked until DNS/alias/cert and Vercel deployment-protection/client access posture are resolved. M001-L04 remains blocked until a real UCS service token exists for feedback append proof.
 
 ## Known Blockers
 
