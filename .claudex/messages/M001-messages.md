@@ -361,3 +361,38 @@ Remaining blocker:
 Next Ready lane:
 
 - M001-L11 - Hosted Package Asset Smoke Proof.
+
+## 2026-05-09 - M001-L11 Blocked On Hosted Inputs
+
+M001-L11 attempted the hosted package asset proof for the already-repaired UCS
+fixture without changing MCP custody behavior.
+
+Freshness result:
+
+- Required UCS delivery-ref commit: `37585f98 Add Brandcode package asset delivery ref`
+- `/Users/jasonlankow/Desktop/UCS` is still ahead of `origin/main`.
+- `37585f98` is not an ancestor of `origin/main`, and no remote branch contains
+  it.
+- Result: staging freshness cannot be confirmed for the UCS package-data change
+  read by `https://mcp.staging.brandcode.studio/brandcode`.
+
+Hosted smoke result:
+
+- Command:
+  `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg npm run smoke:hosted-mcp -- --json`
+- Status: `blocked`
+- Missing required env:
+  - `BRANDCODE_MCP_SMOKE_URL`
+  - `BRANDCODE_MCP_SMOKE_FULL_KEY`
+- `BRANDCODE_MCP_SMOKE_READ_KEY` is also needed for a fully unblocked
+  insufficient-scope proof.
+
+No hosted `get_brand_asset` package delivery claim was made. The missing input
+is Jason authorization/push/deploy for UCS commit `37585f98` plus hosted smoke
+credentials in the local shell.
+
+Next Ready lane:
+
+- M001-L11 remains the single Ready target until staging freshness and smoke
+  credentials exist. Do not advance to battle testing, publish, submit to MCP
+  directories, add tools, or relax custody.

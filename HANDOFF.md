@@ -8,16 +8,16 @@ The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in
 
 ## Latest Build Work
 
-M001-L10 repaired the upstream UCS package-data fixture locally:
+M001-L11 attempted hosted package asset proof for the UCS package-data fixture:
 
-- UCS source now gives `brandcode:logo:c5-logomark-red.svg` a governed package-safe `deliveryRef.packagePath` of `brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg`, plus `inRuntimePackage: true` and `lifecycle: "production-approved"`.
-- The UCS compiler now preserves package delivery fields from manifest assets into `brandInstance.assets`, `compiled-brand-runtime.ts`, `compiled-brand-asset-manifests.ts`, and `clients/brandcode/.brand/compiled/asset-runtime.json`.
+- The repaired UCS asset is still `brandcode:logo:c5-logomark-red.svg`, with governed package-safe `deliveryRef.packagePath: "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"`, `inRuntimePackage: true`, and `lifecycle: "production-approved"`.
+- UCS delivery-ref commit `37585f98 Add Brandcode package asset delivery ref` is local to `/Users/jasonlankow/Desktop/UCS`; it is not contained in `origin/main`, and no remote branch contains it.
+- Staging freshness cannot be confirmed for the UCS source read by `https://mcp.staging.brandcode.studio/brandcode`.
 - No MCP custody code changed and no private/provider URLs were made public.
-- Local UCS proof passed for the compiled adapter payload, TypeScript, and `git diff --check`.
-- Hosted smoke from this repo remains blocked because the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`.
-- The UCS repair has not been pushed/deployed because Jason's prompt explicitly said not to push unless asked.
+- Hosted smoke from this repo was run with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg` and reported `blocked` because the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`.
+- `BRANDCODE_MCP_SMOKE_READ_KEY` is also needed for a fully unblocked insufficient-scope proof.
 
-M001-L11 is now Ready: confirm the UCS package-data repair is fresh in staging and rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+M001-L11 remains the single Ready target: after Jason authorizes/pushes/deploys UCS commit `37585f98` or otherwise confirms staging freshness, and after hosted smoke credentials are available locally, rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
 
 ## Latest PO Work
 
@@ -109,14 +109,14 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L10 is Ready: UCS Package Asset Delivery Ref Repair.
+M001-L11 is Ready: Hosted Package Asset Smoke Proof.
 
-Do not publish, release, submit to MCP directories, add tools, or relax custody. Repair the upstream UCS/Studio Brandcode package data so one stable asset, preferably `brandcode:logo:c5-logomark-red.svg`, has a real package-safe delivery ref; then rerun hosted smoke until `get_brand_asset` passes package delivery proof.
+Do not publish, release, submit to MCP directories, add tools, or relax custody. Confirm the UCS package-data repair for `brandcode:logo:c5-logomark-red.svg` is fresh in staging, then rerun hosted smoke until `get_brand_asset` passes package delivery proof with no raw private/provider URL exposure.
 
 ## Known Blockers
 
-- Current exact package-fixture blocker: the Brandcode staging package has no asset with a package-safe delivery ref; all six current assets are private-provider-only blocked.
-- Exact upstream data change needed: UCS/Brandcode Studio runtime packaging must materialize one stable Production-approved/runtime Brandcode asset into the runtime package and emit `deliveryRef.packagePath`, top-level `packagePath`, or an equivalent real package-safe delivery ref.
+- Staging freshness blocker: UCS commit `37585f98` with the package-safe delivery ref is local and not present on `origin/main`; hosted staging cannot be claimed fresh until that change is deployed to the source read by `https://mcp.staging.brandcode.studio/brandcode`.
+- Hosted smoke blocker: the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`; provide `BRANDCODE_MCP_SMOKE_READ_KEY` as well for the full smoke matrix.
 - `get_brand_asset` has stable asset-id proof but still needs package-safe delivery proof before release-grade battle testing.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
