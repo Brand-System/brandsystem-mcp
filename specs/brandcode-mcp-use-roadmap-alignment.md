@@ -79,11 +79,13 @@ UCS has moved beyond the original April scaffold assumptions:
 
 Goal: prove `https://mcp.staging.brandcode.studio/{slug}` directly from a real MCP client, not only through Vercel preview or local component tests.
 
-Still blocked by:
+Status: completed for staging on 2026-05-08.
 
-- DNS/alias/certificate setup for `mcp.staging.brandcode.studio`.
-- Vercel deployment-protection or bypass-token posture that allows normal MCP clients to reach the route.
-- Env-provided live smoke inputs: `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`, and preferably `BRANDCODE_MCP_SMOKE_READ_KEY`.
+Proof posture:
+
+- `mcp.staging.brandcode.studio` has DNS/alias/certificate configured.
+- Vercel Authentication is disabled for the hosted MCP route so normal MCP clients can reach the app-level bearer auth gate.
+- Hosted MCP service auth uses `BRANDCODE_MCP_SERVICE_TOKEN`, matching the UCS env var name.
 
 Proof command:
 
@@ -115,10 +117,7 @@ Capture hosted route proof separately from human-visible UI proof. Runtime Admin
 
 Goal: prove `brand_feedback` writes an append-only UCS history entry with review posture and without canonical governance mutation.
 
-Still blocked by:
-
-- A real UCS service token configured for the hosted MCP deployment.
-- A reachable hosted MCP endpoint and scoped feedback key.
+Status: completed for staging on 2026-05-08.
 
 Acceptance:
 

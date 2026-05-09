@@ -354,7 +354,7 @@ async function run() {
     const historyError = assertNoToolError("brand_history", history, {
       blockedErrors: {
         ucs_auth:
-          "Hosted UCS service token rejected or missing; set UCS_SERVICE_TOKEN in the hosted deployment before history proof",
+          "Hosted UCS service token rejected or missing; set BRANDCODE_MCP_SERVICE_TOKEN in the hosted deployment before history proof",
       },
     });
     checks.push(
@@ -386,7 +386,7 @@ async function run() {
       const feedbackError = assertNoToolError("brand_feedback", feedback, {
         blockedErrors: {
           ucs_auth:
-            "Hosted UCS service token rejected or missing; provision UCS_SERVICE_TOKEN in the hosted deployment before feedback append proof",
+            "Hosted UCS service token rejected or missing; provision BRANDCODE_MCP_SERVICE_TOKEN in the hosted deployment before feedback append proof",
         },
       });
       checks.push(

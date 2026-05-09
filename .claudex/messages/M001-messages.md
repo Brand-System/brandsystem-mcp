@@ -85,3 +85,37 @@ Next lane posture:
 - No lane is Ready for automation.
 - M001-L03 remains blocked by DNS/alias/cert and Vercel access/deployment-protection posture.
 - M001-L04 remains blocked by real UCS service-token provisioning.
+
+## 2026-05-08 - M001-L03/L04 Proof Completed
+
+Jason configured DNS for `mcp.staging.brandcode.studio`, disabled Vercel Authentication for the hosted MCP route, and configured shared service-token posture.
+
+The hosted MCP service-token env name was normalized to `BRANDCODE_MCP_SERVICE_TOKEN` so the hosted MCP and UCS use the same variable name. `UCS_SERVICE_TOKEN` is no longer accepted by repo code.
+
+Staging proof:
+
+- Alias: `https://mcp.staging.brandcode.studio/brandcode`
+- Deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
+- Command: `npm run smoke:hosted-mcp -- --json`
+
+Passed:
+
+- MCP `initialize`
+- `tools/list` exact locked 8-tool order
+- `brand_status`
+- `brand_runtime`
+- `brand_search`
+- `list_brand_assets`
+- `brand_check`
+- `brand_history`
+- `brand_feedback` with `append_status: recorded`
+- read-only insufficient-scope behavior for `brand_check`
+- read-only insufficient-scope behavior for `brand_feedback`
+
+Skipped:
+
+- `get_brand_asset`, because no `BRANDCODE_MCP_SMOKE_ASSET_ID` was provided.
+
+Next Ready lane:
+
+- M001-L05 - v0.1 Release Readiness.

@@ -11,16 +11,20 @@
  */
 import http from "node:http";
 import { Readable } from "node:stream";
+import {
+  BRANDCODE_MCP_SERVICE_TOKEN_ENV,
+  readBrandcodeMcpServiceToken,
+} from "./hosted/env.js";
 import { handleHostedRequest } from "./hosted/router.js";
 import type { RouterOptions } from "./hosted/router.js";
 
 function readEnv(): RouterOptions {
   const environment =
     process.env.BRANDCODE_MCP_ENV === "production" ? "production" : "staging";
-  const ucsServiceToken = process.env.UCS_SERVICE_TOKEN;
+  const ucsServiceToken = readBrandcodeMcpServiceToken();
   if (!ucsServiceToken) {
     throw new Error(
-      "UCS_SERVICE_TOKEN is required (matches UCS BRANDCODE_MCP_SERVICE_TOKEN)",
+      `${BRANDCODE_MCP_SERVICE_TOKEN_ENV} is required for hosted MCP to call UCS`,
     );
   }
   return {

@@ -118,7 +118,7 @@ The `.brand` runtime is the product. Two MCPs serve it:
 
 Same `.brand` runtime artifact. Two consumption paths. Build authors it; Use serves it.
 
-Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). The hosted implementation now registers all 8 locked tools, while the current sprint gate is still real MCP-client proof from `https://mcp.staging.brandcode.studio/{slug}` with DNS/Vercel access and service-token blockers called out. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
+Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). The hosted implementation now registers all 8 locked tools, and staging proof is command-backed at `https://mcp.staging.brandcode.studio/{slug}`. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
 
 The Use MCP roadmap alignment lives in [specs/brandcode-mcp-use-roadmap-alignment.md](specs/brandcode-mcp-use-roadmap-alignment.md).
 

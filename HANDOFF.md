@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and v0.1 proof.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. The sprint is still not about adding tools. It is about making the v0.1 proof story repeatable and truthful.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. The sprint is still not about adding tools. It is about making the v0.1 proof story repeatable and truthful.
 
 ## Latest PO Work
 
@@ -36,18 +36,24 @@ M001-L01 closed with a repo-native hosted proof harness:
 
 The harness uses env-provided endpoint and bearer keys. It verifies MCP initialize/list/tools/core hosted calls and insufficient-scope behavior for `brand_check` and `brand_feedback`. It reports missing live dependencies as `blocked` or `skipped` instead of turning them into chat-only proof.
 
+Latest hosted proof:
+
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
+- Service-token env: `BRANDCODE_MCP_SERVICE_TOKEN`
+- `brand_feedback` append proof: `append_status: recorded`
+- Remaining skipped proof: `get_brand_asset` without `BRANDCODE_MCP_SMOKE_ASSET_ID`
+
 ## Next Ready Lane
 
-No lane is Ready for automation.
+M001-L05 is Ready: v0.1 Release Readiness.
 
-M001-L03 remains blocked until DNS/alias/cert and Vercel deployment-protection/client access posture are resolved. M001-L04 remains blocked until a real UCS service token exists for feedback append proof.
+Do not add tools. Prepare the release/readiness posture from the now-proved staging route and call out any remaining CI, GitHub, package/listing, or asset-id proof gaps.
 
 ## Known Blockers
 
-- DNS/alias/cert must be configured before exact `https://mcp.staging.brandcode.studio/{slug}` proof can close.
-- A real UCS service token is required before `brand_feedback` append proof can close.
-- Vercel deployment protection or bypass posture must be resolved before direct external MCP client proof can close.
-- Live harness proof needs `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`, and preferably `BRANDCODE_MCP_SMOKE_READ_KEY`.
+- `get_brand_asset` still needs an explicit stable `BRANDCODE_MCP_SMOKE_ASSET_ID` if v0.1 requires asset fetch proof beyond catalog/list tests.
+- Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 
 ## Local Hygiene
 

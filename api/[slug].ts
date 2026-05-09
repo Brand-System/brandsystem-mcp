@@ -13,6 +13,10 @@
  * path the Phase 0 lock specifies.
  */
 import { handleHostedRequest } from "../src/hosted/router.js";
+import {
+  BRANDCODE_MCP_SERVICE_TOKEN_ENV,
+  readBrandcodeMcpServiceToken,
+} from "../src/hosted/env.js";
 
 function publicUrl(originalUrl: string): string {
   const url = new URL(originalUrl);
@@ -25,12 +29,12 @@ function publicUrl(originalUrl: string): string {
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    const ucsServiceToken = process.env.UCS_SERVICE_TOKEN;
+    const ucsServiceToken = readBrandcodeMcpServiceToken();
     if (!ucsServiceToken) {
       return new Response(
         JSON.stringify({
           error: "misconfigured",
-          message: "UCS_SERVICE_TOKEN is not set on this deployment",
+          message: `${BRANDCODE_MCP_SERVICE_TOKEN_ENV} is not set on this deployment`,
         }),
         { status: 500, headers: { "content-type": "application/json" } },
       );
