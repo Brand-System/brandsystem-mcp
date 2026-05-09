@@ -11,7 +11,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- Local `main` includes M001 coordination through the M001-L12 multi-client battle test and has not been pushed.
+- Local `main` includes M001 coordination through the M001-L13 release-candidate trust review and has not been pushed.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -42,6 +42,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L12 hosted smoke passed with full/read key postures and package-safe asset id `brandcode:logo:c5-logomark-red.svg`.
 - M001-L12 MCP Inspector proof passed: `tools/list` returned the locked 8-tool order, `get_brand_asset` returned package-safe delivery without raw private/provider URLs, and read-only `brand_check` returned structured `insufficient_scope`.
 - M001-L12 Claude Code proof passed through a temporary HTTP MCP config: Claude called `brand_status` and `get_brand_asset`, reported 8 implemented tools, package-safe asset posture, and no raw private/provider URL exposure.
+- M001-L13 completed the release-candidate trust review and did not release, publish, submit to directories, alter package/listing metadata, add tools, relax custody, or introduce selected Brand Kit default behavior.
+- L13 decision: do not claim release-candidate readiness yet; the next release gate is hosted-service terms plus rate-limit/abuse posture.
 
 ## Lanes
 
@@ -59,7 +61,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L10 | Done | `.claudex/packets/M001-L10-ucs-package-asset-delivery-ref.md` | Repair the upstream UCS Brandcode compiled/runtime package data so one stable asset has a real package-safe delivery ref, then rerun hosted smoke. |
 | M001-L11 | Done | `.claudex/packets/M001-L11-hosted-package-asset-smoke-proof.md` | Confirm UCS staging freshness for the local package-safe asset repair and rerun hosted smoke with the package-safe asset id. |
 | M001-L12 | Done | `.claudex/packets/M001-L12-multi-client-battle-test.md` | Battle test the locked hosted 8-tool surface across real MCP clients before any release candidate review. |
-| M001-L13 | Ready | `.claudex/packets/M001-L13-release-candidate-trust-review.md` | Review the pre-release trust posture and decide the next repair lane before any release candidate claim. |
+| M001-L13 | Done | `.claudex/packets/M001-L13-release-candidate-trust-review.md` | Review the pre-release trust posture and decide the next repair lane before any release candidate claim. |
+| M001-L14 | Ready | `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md` | Turn hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture into an explicit release gate. |
 
 ## Blockers And Decisions
 
@@ -68,8 +71,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L11 resolved the hosted package asset proof blocker for `brandcode:logo:c5-logomark-red.svg`.
 - L12 resolved the hosted client credential blocker for Preview through Vercel env provisioning and did not commit secrets to the repo.
 - Rate-limit/abuse posture is documented as `not_reported_by_staging`; production release still needs active enforcement or an explicit Jason-approved blocker owner.
-- Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening hardening/audit lanes.
+- Remaining process decision: whether and when Jason authorizes pushing the
+  local M001 stack so GitHub CI can run before any release-candidate claim.
+- L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L13**. Do not publish, release, submit to directories, add tools, or relax private custody. Review the full pre-release trust posture, including CI/push status, hosted-service terms, rate-limit/abuse posture, directory metadata, and remaining scoring risks; turn any blocker into a durable repair packet or named Jason decision.
+Automation should pick up exactly one Ready lane: **M001-L14**. Do not publish, release, submit to directories, add tools, alter public listing metadata, or relax private custody. Gate hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture before any release-candidate claim.

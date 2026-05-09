@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, and M001-L12 completed multi-client proof with MCP Inspector and Claude Code without relaxing custody. Jason does not want to release yet. The sprint is ready for release-candidate trust review, not release.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, and M001-L13 completed release-candidate trust review. Jason does not want to release yet. The sprint is ready for a hosted terms/rate-limit gate, not release.
 
 ## Latest Build Work
 
@@ -28,6 +28,21 @@ M001-L12 completed multi-client battle testing:
 - Claude Code used a temporary HTTP MCP config, called `brand_status` and `get_brand_asset`, and reported 8 implemented tools, package-safe asset posture, package-path delivery, and no raw private/provider URL exposure.
 - Codex CLI remains available but was not used after MCP Inspector and Claude Code satisfied the two-client acceptance bar.
 
+M001-L13 completed release-candidate trust review:
+
+- Durable review: `specs/brandcode-mcp-release-candidate-trust-review.md`.
+- Before the L13 closeout commit, local `main` was 20 commits ahead of
+  `origin/main`; the M001 stack remains unpushed.
+- Latest remote `main` CI green baseline is `61218ac`; GitHub Actions run
+  `25571869563` passed on 2026-05-08.
+- GitHub CI has not run on the local M001 stack.
+- The hosted surface is strong on staging smoke, package-safe Brandcode asset
+  proof, and two-client proof, but it is not release-candidate ready.
+- Release remains blocked by hosted-service terms, rate-limit/abuse posture,
+  unresolved `@brandcode/mcp` package/source posture, no CI run on the local
+  M001 stack, and no separate Brandcode Use directory metadata.
+- Release/publish remains blocked on Jason approval.
+
 ## Latest PO Work
 
 Seeded repo-native sprint coordination and carried M001 through M001-L12:
@@ -49,6 +64,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L12:
 - `.claudex/packets/M001-L11-hosted-package-asset-smoke-proof.md`
 - `.claudex/packets/M001-L12-multi-client-battle-test.md`
 - `.claudex/packets/M001-L13-release-candidate-trust-review.md`
+- `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -125,15 +141,16 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L13 is Ready: Release Candidate Trust Review.
+M001-L14 is Ready: Hosted Terms And Rate-Limit Gate.
 
-Do not publish, release, submit to MCP directories, add tools, or relax custody. Review the full pre-release trust posture and turn any remaining blocker into a durable repair packet or named Jason decision before any release-candidate claim.
+Do not publish, release, submit to MCP directories, add tools, alter public listing metadata, or relax custody. Gate hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture before any release-candidate claim.
 
 ## Known Blockers
 
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
 - Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.
+- Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
 - Local proof-key note: Vercel Preview now has a sensitive `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive values locally. Future proof sessions need an intentional local secret handoff or a generate-and-run shell flow.
 
 ## Local Hygiene

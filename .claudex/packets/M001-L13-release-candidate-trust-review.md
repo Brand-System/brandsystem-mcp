@@ -1,6 +1,6 @@
 # M001-L13 - Release Candidate Trust Review
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** PO review / release-candidate gate
@@ -76,6 +76,36 @@ M001-L12 proof passed on 2026-05-09:
 
 ## Next Suggested Lane
 
-The next lane should be whichever blocker the trust review ranks highest. Likely
-candidates are hosted-service terms/rate-limit posture, directory metadata, or
-CI/push/PR hardening.
+M001-L14 should be the next Ready lane: **Hosted Terms And Rate-Limit Gate**.
+
+## Closeout - 2026-05-09
+
+M001-L13 completed the release-candidate trust review without publishing,
+releasing, submitting to directories, adding tools, relaxing custody, changing
+package/listing metadata, or introducing selected Brand Kit default behavior.
+
+Durable review:
+
+- `specs/brandcode-mcp-release-candidate-trust-review.md`
+
+Decision:
+
+- Do not claim release-candidate readiness yet.
+- Release/publish remains blocked on Jason approval.
+- The hosted surface is strong on staging proof, package-safe Brandcode asset
+  proof, and two-client proof.
+- The release-candidate trust gate remains blocked by hosted-service terms,
+  rate-limit/abuse posture, unresolved `@brandcode/mcp` package/source posture,
+  no CI run on the local M001 stack, and no separate Brandcode Use directory
+  metadata.
+
+Blocker conversion:
+
+- Repair packet: M001-L14 Hosted Terms And Rate-Limit Gate.
+- Named Jason decision: `@brandcode/mcp` package/source posture.
+- Named Jason decision: explicit approval before any release, publish,
+  production release, directory submission, or public listing change.
+- Product-spine deferral: Brandcode Use directory metadata after terms and
+  rate-limit posture settle.
+- Product-spine deferral: production-key, non-Brandcode brand, and post-push CI
+  proof before any release-candidate claim.

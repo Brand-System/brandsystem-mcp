@@ -540,3 +540,53 @@ Claude Code:
 Next Ready lane:
 
 - M001-L13 - Release Candidate Trust Review.
+
+## 2026-05-09 - M001-L13 Release Candidate Trust Review Closed
+
+M001-L13 completed a docs-only release-candidate trust review without
+publishing, releasing, submitting to MCP directories, changing public listings,
+adding tools, relaxing custody, or introducing selected Brand Kit default
+behavior.
+
+Durable review:
+
+- `specs/brandcode-mcp-release-candidate-trust-review.md`
+
+Evidence checked:
+
+- `git fetch origin` completed.
+- Before the L13 closeout commit, local `main` was ahead of `origin/main` by 20
+  commits.
+- Latest remote `main` CI is GitHub Actions run `25571869563`, which passed on
+  `61218ac Fix npm audit: basic-ftp DoS, fast-uri path traversal,
+  hono/ip-address/postcss XSS`.
+- No GitHub CI has run on the local M001 stack from `c4dc704` through the L13
+  closeout commit.
+- M001-L12 hosted smoke, MCP Inspector proof, and Claude Code proof remain the
+  current hosted/client evidence.
+
+Review decision:
+
+- Do not claim release-candidate readiness yet.
+- Release/publish remains blocked on Jason approval.
+- Strong proof now exists for the locked 8-tool staging surface,
+  package-safe Brandcode asset delivery, and two real clients.
+- The release-candidate gate remains blocked by hosted-service terms,
+  rate-limit/abuse posture reported as `not_reported_by_staging`, unresolved
+  `@brandcode/mcp` package/source posture, no CI run on the local M001 stack,
+  and no separate Brandcode Use directory metadata.
+
+Blocker conversion:
+
+- Repair packet: M001-L14 Hosted Terms And Rate-Limit Gate.
+- Named Jason decision: `@brandcode/mcp` package/source posture.
+- Named Jason decision: explicit approval before any release, publish,
+  production release, directory submission, or public listing change.
+- Product-spine deferral: Brandcode Use directory metadata after terms and
+  rate-limit posture settle.
+- Product-spine deferral: production-key, non-Brandcode brand, and post-push CI
+  proof before any release-candidate claim.
+
+Next Ready lane:
+
+- M001-L14 - Hosted Terms And Rate-Limit Gate.

@@ -1,6 +1,6 @@
 # Brandcode MCP Pre-Release Hardening Plan
 
-**Status:** Draft hardening map
+**Status:** Active hardening map
 **Date:** 2026-05-08
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no public release, npm publish, or MCP directory submission until Jason explicitly authorizes it after hardening.
@@ -146,8 +146,17 @@ Acceptance:
    Complete. Ran hosted smoke plus real-client proof through MCP Inspector and Claude Code. Verified locked 8-tool order, package-safe asset delivery, read-only insufficient-scope behavior, and no raw private/provider URL exposure.
 
 8. **M001-L13 Release Candidate Review**
-   Only after the above, decide whether the repo is ready for a release candidate. This is still not publish unless Jason explicitly says publish.
+   Complete. The review found the hosted surface strong on staging and
+   two-client proof, but not release-candidate ready. Release remains blocked by
+   hosted-service terms, rate-limit/abuse posture, unresolved
+   `@brandcode/mcp` package/source posture, no CI run on the local M001 stack,
+   and no separate Brandcode Use directory metadata.
+
+9. **M001-L14 Hosted Terms And Rate-Limit Gate**
+   Ready. Turn bearer-key access terms, privacy/retention, custody, abuse
+   handling, and rate-limit posture into an explicit release gate before
+   directory metadata or production-key proof work.
 
 ## Current Next Ready Lane
 
-M001-L13 should be the next Ready lane: **Release Candidate Trust Review**.
+M001-L14 should be the next Ready lane: **Hosted Terms And Rate-Limit Gate**.
