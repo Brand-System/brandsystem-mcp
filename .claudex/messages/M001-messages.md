@@ -130,3 +130,21 @@ M001-L05 was reframed from release readiness to pre-release hardening map.
 Next Ready lane:
 
 - M001-L05 - Pre-Release Hardening Map.
+
+## 2026-05-08 - M001-L06 Shaped
+
+M001-L05 is complete as a hardening map. M001-L06 is now the single Ready lane.
+
+Purpose:
+
+- Audit license, package, directory, and trust-facing docs before any public release.
+- Identify license/hosted-service terms questions for Jason.
+- Identify security/privacy and directory/scoring risks grounded in repo files.
+- Produce a durable gap list and exactly one next Ready lane.
+
+Still prohibited:
+
+- No npm publish.
+- No public MCP directory submission.
+- No new tools.
+- No hosted behavior changes unless a critical false claim can be fixed docs-only.

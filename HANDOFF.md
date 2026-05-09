@@ -46,9 +46,9 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L05 is Ready: Pre-Release Hardening Map.
+M001-L06 is Ready: License And Directory Trust Audit.
 
-Do not publish, release, submit to MCP directories, or add tools. Map the hardening work needed before Brandcode MCP can safely make a public first impression.
+Do not publish, release, submit to MCP directories, or add tools. Audit license, package, security, and directory/scoring posture first, then leave exactly one next Ready lane.
 
 ## Known Blockers
 

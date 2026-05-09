@@ -35,7 +35,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L02 | Done | `.claudex/packets/M001-L02-roadmap-alignment-delta.md` | Refresh `specs/brandcode-mcp-use-roadmap-alignment.md` against the now-real 8-tool implementation and latest UCS portable runtime semantics. |
 | M001-L03 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Resolve staging-domain/deployment-protection proof once DNS or Vercel access is available. |
 | M001-L04 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Prove `brand_feedback` append against UCS history once a real service token exists. |
-| M001-L05 | Ready | `.claudex/packets/M001-L05-pre-release-hardening-map.md` | Map license, security, tests, directory scoring, and battle-test work before any release. |
+| M001-L05 | Done | `.claudex/packets/M001-L05-pre-release-hardening-map.md` | Map license, security, tests, directory scoring, and battle-test work before any release. |
+| M001-L06 | Ready | `.claudex/packets/M001-L06-license-directory-trust-audit.md` | Audit license/package/directory/security trust posture and produce a pre-release gap list. |
 
 ## Blockers And Decisions
 
@@ -45,4 +46,4 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L05**. Do not publish, release, submit to directories, or add tools; map pre-release hardening from the now-proved staging surface.
+Automation should pick up exactly one Ready lane: **M001-L06**. Do not publish, release, submit to directories, or add tools; audit license and directory trust posture first.
