@@ -1,6 +1,6 @@
 # M001-L12 - Multi-Client Battle Test
 
-**Status:** Blocked - hosted client credentials unavailable
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted proof / client compatibility
@@ -146,7 +146,72 @@ M001-L12 should remain blocked until those inputs exist. After they exist, rerun
 the hosted smoke first, then exercise Claude Code, Codex CLI, and/or MCP
 Inspector with the same endpoint and key postures.
 
+## Closeout - 2026-05-09
+
+M001-L12 completed multi-client battle testing without changing hosted MCP code,
+adding tools, relaxing custody, publishing, or submitting to directories.
+
+Credential/proof-input repair:
+
+- The empty Preview `BRANDCODE_MCP_TEST_KEYS` value was removed.
+- Fresh staging-only full/read test entries for the `brandcode` slug were
+  generated and added back to Vercel Preview as a sensitive all-Preview-branches
+  env value through the interactive Vercel env flow.
+- `vercel env pull --environment=preview --yes` still redacts sensitive values
+  locally, so future proof runs need either an intentional local secret handoff
+  or the same generate-and-run shell posture.
+- No bearer key was committed to the repo or printed in closeout docs.
+
+Deployment/proof target:
+
+- Latest staging deployment:
+  `https://brandsystem-eipxqt3go-column-five.vercel.app`
+- Alias: `https://mcp.staging.brandcode.studio`
+- MCP endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Package-safe asset id: `brandcode:logo:c5-logomark-red.svg`
+
+Hosted smoke proof:
+
+- Overall status: `pass`
+- `fail: 0`, `blocked: 0`, `skipped: 0`
+- `get_brand_asset` status: `pass`
+- `safe_for_mcp: true`
+- `delivery_ref_kind: "package_path"`
+- `raw_private_provider_url_exposed: false`
+
+MCP Inspector proof:
+
+- `tools/list` returned exactly 8 tools in the locked Phase 0 order.
+- `get_brand_asset` returned package-safe custody:
+  - `safe_for_mcp: true`
+  - `blocked_private_provider_url: false`
+  - `delivery_ref.package_path:
+    "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"`
+  - no raw private/provider URL surfaced.
+- Read-only `brand_check` returned structured insufficient scope:
+  - `error: "insufficient_scope"`
+  - `status: 403`
+  - `required_scope: "check"`
+  - `granted_scopes: ["read"]`
+
+Claude Code proof:
+
+- Claude Code used a temporary HTTP MCP config and did not persist the bearer
+  token in the repo.
+- Claude called `brand_status` and `get_brand_asset`.
+- Claude reported 8 implemented tools, 0 stubs, package-safe asset posture,
+  `blocked_private_provider_url: false`, package-path delivery, and no raw
+  private/provider URL exposure.
+
+Client coverage note:
+
+- Codex CLI was confirmed available earlier, but was not used as a proof client
+  after MCP Inspector and Claude Code satisfied the two-client acceptance bar.
+  If release-candidate review wants a third client, make that a follow-up
+  verification lane rather than weakening this closeout.
+
 ## Next Suggested Lane
 
-After multi-client battle testing, the next lane should repair any blocking
-client findings or begin release-candidate trust review if no blockers remain.
+After multi-client battle testing, the next lane should begin release-candidate
+trust review. This is still not release, publish, or directory submission unless
+Jason explicitly authorizes it later.

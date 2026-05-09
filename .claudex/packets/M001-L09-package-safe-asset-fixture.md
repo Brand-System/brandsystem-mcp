@@ -1,6 +1,6 @@
 # M001-L09 - Package-Safe Asset Fixture Coordination
 
-**Status:** Blocked
+**Status:** Done - upstreamed
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Cross-repo fixture coordination / hosted proof

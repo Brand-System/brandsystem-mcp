@@ -143,11 +143,11 @@ Acceptance:
    Complete. Confirmed the UCS package-data repair is fresh in staging and hosted smoke passes with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
 
 7. **M001-L12 Multi-Client Battle Test**
-   Run staging smoke and manual client proof across real MCP clients and brands.
+   Complete. Ran hosted smoke plus real-client proof through MCP Inspector and Claude Code. Verified locked 8-tool order, package-safe asset delivery, read-only insufficient-scope behavior, and no raw private/provider URL exposure.
 
 8. **M001-L13 Release Candidate Review**
    Only after the above, decide whether the repo is ready for a release candidate. This is still not publish unless Jason explicitly says publish.
 
 ## Current Next Ready Lane
 
-M001-L12 should be the next Ready lane: **Multi-Client Battle Test**.
+M001-L13 should be the next Ready lane: **Release Candidate Trust Review**.

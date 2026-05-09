@@ -486,3 +486,57 @@ Next lane posture:
 
 - No lane is Ready while M001-L12 is blocked on hosted client credentials.
 - Once the keys are available, M001-L12 should resume as the single Ready lane.
+
+## 2026-05-09 - M001-L12 Multi-Client Battle Test Passed
+
+M001-L12 completed hosted smoke and real-client proof without changing hosted
+MCP code, adding tools, relaxing custody, publishing, or submitting to
+directories.
+
+Credential/proof-input repair:
+
+- Removed the empty sensitive Preview `BRANDCODE_MCP_TEST_KEYS` value.
+- Generated fresh staging-only full/read entries for the `brandcode` slug.
+- Added the entries back to Vercel Preview for all Preview branches through the
+  interactive Vercel env flow.
+- `vercel env pull --environment=preview --yes` still redacts the sensitive
+  value locally, so future proof sessions need either an intentional local
+  secret handoff or the same generate-and-run shell posture.
+- No bearer key was committed to the repo or recorded in docs.
+
+Deployment/proof target:
+
+- Latest staging deployment:
+  `https://brandsystem-eipxqt3go-column-five.vercel.app`
+- Alias: `https://mcp.staging.brandcode.studio`
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Package-safe asset id: `brandcode:logo:c5-logomark-red.svg`
+
+Hosted smoke:
+
+- Overall status: `pass`
+- `fail: 0`, `blocked: 0`, `skipped: 0`
+- `get_brand_asset`: `pass`
+- `safe_for_mcp: true`
+- `delivery_ref_kind: "package_path"`
+- `raw_private_provider_url_exposed: false`
+
+MCP Inspector:
+
+- `tools/list` returned the locked 8-tool Phase 0 order.
+- `get_brand_asset` returned package-safe custody with
+  `blocked_private_provider_url: false` and package-path delivery.
+- Read-only `brand_check` returned structured `insufficient_scope` with
+  `status: 403` and `required_scope: "check"`.
+
+Claude Code:
+
+- Used a temporary HTTP MCP config.
+- Called `brand_status` and `get_brand_asset`.
+- Reported 8 implemented tools, 0 stubs, package-safe asset posture,
+  `blocked_private_provider_url: false`, package-path delivery, and no raw
+  private/provider URL exposure.
+
+Next Ready lane:
+
+- M001-L13 - Release Candidate Trust Review.
