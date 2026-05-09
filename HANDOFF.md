@@ -26,6 +26,14 @@ Seeded repo-native sprint coordination and carried M001 through M001-L07:
 
 ## Latest Build Work
 
+M001-L08 is partially hardened locally but not proved hosted:
+
+- `scripts/hosted-mcp-smoke.mjs` now requires `get_brand_asset` to return package-safe custody before passing.
+- `src/hosted/tools/assets.ts` now blocks private-looking `packageUrl` values instead of treating them as package-safe.
+- `test/hosted/tools.test.ts` covers private-looking package URL custody.
+- Hosted proof is blocked because this local environment has no `BRANDCODE_MCP_SMOKE_*` keys, and Vercel Preview env exposes empty sensitive values through `vercel env pull/run`.
+- No stable staging asset id was selected yet because `list_brand_assets` could not be called without a staging bearer key.
+
 M001-L07 closed as a focused hosted security hardening lane:
 
 - `test/hosted/auth.test.ts` covers malformed bearer parsing, wrong-environment key prefixes, and the full 8-tool scope matrix for read/check/feedback/full key postures.
@@ -70,11 +78,12 @@ Latest hosted proof:
 
 M001-L08 is Ready: Asset Fetch And Custody Proof.
 
-Do not publish, release, submit to MCP directories, or add tools. Prove `get_brand_asset` with a stable staging asset id and keep custody proof explicit, then leave exactly one next Ready lane.
+Do not publish, release, submit to MCP directories, or add tools. Provide or expose the staging smoke credentials, select a stable asset id through `list_brand_assets`, then prove `get_brand_asset` with `BRANDCODE_MCP_SMOKE_ASSET_ID`.
 
 ## Known Blockers
 
 - `get_brand_asset` still needs an explicit stable `BRANDCODE_MCP_SMOKE_ASSET_ID` if v0.1 requires asset fetch proof beyond catalog/list tests.
+- Current exact L08 blocker: local shell env has no hosted smoke keys, and Vercel Preview env lists sensitive test keys but exposes empty values through local pull/run commands.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
 - Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.

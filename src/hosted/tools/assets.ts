@@ -156,6 +156,12 @@ function isUrl(value: string): boolean {
   return /^https?:\/\//i.test(value);
 }
 
+function looksPrivateDeliveryUrl(value: string): boolean {
+  return /private|provider|raw|blob|blob\.core\.windows\.net|vercel-storage\.com/i.test(
+    value,
+  );
+}
+
 function hasPrivateCustody(asset: Record<string, unknown>): boolean {
   const custody = [
     asset.custody,
@@ -208,7 +214,21 @@ function deliveryRef(asset: Record<string, unknown>): {
       blockedPrivateProviderUrl: false,
     };
   }
-  if (packageUrl && isUrl(packageUrl) && !hasPrivateCustody(asset)) {
+  if (
+    packageUrl &&
+    isUrl(packageUrl) &&
+    (hasPrivateCustody(asset) || looksPrivateDeliveryUrl(packageUrl))
+  ) {
+    return {
+      ref: {
+        posture: "blocked_private_provider_url",
+        reason: "No package-safe delivery reference is available for this asset",
+      },
+      blockedPrivateProviderUrl: true,
+    };
+  }
+
+  if (packageUrl && isUrl(packageUrl)) {
     return {
       ref: { posture: "package_safe", package_url: stripUrls(packageUrl) },
       blockedPrivateProviderUrl: false,

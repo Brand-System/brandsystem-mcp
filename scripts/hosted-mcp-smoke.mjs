@@ -97,6 +97,63 @@ function summarizePayload(payload) {
   };
 }
 
+function rawPrivateProviderUrlExposed(payload) {
+  return /private-provider|blob\.core\.windows\.net|vercel-storage\.com|oaidalleapiprodscus|https?:\/\/[^"\\\s]+/i.test(
+    JSON.stringify(payload ?? {}),
+  );
+}
+
+function assetCustodyEvidence(assetPayload, assetId) {
+  const asset = assetPayload?.asset;
+  const deliveryRef =
+    asset && typeof asset === "object" && !Array.isArray(asset)
+      ? asset.delivery_ref
+      : null;
+  const custody =
+    asset && typeof asset === "object" && !Array.isArray(asset)
+      ? asset.custody
+      : null;
+  return {
+    asset_id: assetId,
+    custody_safe: assetPayload?.custody_safe ?? null,
+    safe_for_mcp:
+      custody && typeof custody === "object" && !Array.isArray(custody)
+        ? custody.safe_for_mcp ?? null
+        : null,
+    blocked_private_provider_url:
+      custody && typeof custody === "object" && !Array.isArray(custody)
+        ? custody.blocked_private_provider_url ?? null
+        : null,
+    delivery_posture:
+      deliveryRef && typeof deliveryRef === "object" && !Array.isArray(deliveryRef)
+        ? deliveryRef.posture ?? null
+        : null,
+    delivery_ref_kind:
+      deliveryRef && typeof deliveryRef === "object" && !Array.isArray(deliveryRef)
+        ? deliveryRef.package_path
+          ? "package_path"
+          : deliveryRef.package_url
+            ? "package_url"
+            : deliveryRef.posture ?? "unknown"
+        : null,
+    raw_private_provider_url_exposed: rawPrivateProviderUrlExposed(assetPayload),
+  };
+}
+
+function assetIsPackageSafe(assetPayload) {
+  const evidence = assetCustodyEvidence(assetPayload, null);
+  return (
+    Boolean(assetPayload?.asset) &&
+    assetPayload?.custody_safe === true &&
+    evidence.safe_for_mcp === true &&
+    evidence.blocked_private_provider_url === false &&
+    evidence.delivery_posture !== "blocked_private_provider_url" &&
+    evidence.raw_private_provider_url_exposed === false &&
+    (evidence.delivery_ref_kind === "package_path" ||
+      evidence.delivery_ref_kind === "package_url")
+  );
+}
+
 function classifyConnectionError(error) {
   const message = error instanceof Error ? error.message : String(error);
   if (/invalid_token|slug_forbidden|missing_bearer/i.test(message)) {
@@ -299,6 +356,8 @@ async function run() {
               ? listAssets.assets.length
               : null,
             custody_safe: listAssets.custody_safe ?? null,
+            raw_private_provider_url_exposed:
+              rawPrivateProviderUrlExposed(listAssets),
           },
         ),
     );
@@ -312,11 +371,11 @@ async function run() {
         assetError ??
           check(
             "get_brand_asset",
-            asset.asset ? "pass" : "fail",
-            asset.asset
-              ? "get_brand_asset returned the requested asset"
-              : "get_brand_asset did not return an asset object",
-            { asset_id: assetId, custody_safe: asset.custody_safe ?? null },
+            assetIsPackageSafe(asset) ? "pass" : "fail",
+            assetIsPackageSafe(asset)
+              ? "get_brand_asset returned a package-safe asset without raw private provider URLs"
+              : "get_brand_asset did not return a package-safe asset custody posture",
+            assetCustodyEvidence(asset, assetId),
           ),
       );
     } else {

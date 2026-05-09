@@ -28,6 +28,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - The roadmap now frames Full Brand Runtime as the default hosted object, keeps selected/campaign kits out of v0.1 default, and treats `brand_feedback` as append-only review input.
 - M001-L06 completed the license/package/directory/security trust audit and found the release blocker is hosted-service terms plus hosted security/privacy/rate-limit posture, not the MIT license for Build package code.
 - M001-L07 expanded local hosted auth/security coverage for malformed bearer headers, wrong-environment key prefixes, all 8 tool scope requirements, and the canonical service-token env name; `SECURITY.md` now documents hosted auth, scopes, service-token, custody/privacy, and rate-limit posture.
+- M001-L08 local custody hardening is partially implemented: smoke now requires package-safe `get_brand_asset` custody, and asset normalization blocks private-looking package URLs. Hosted proof is blocked because local/Vercel env access does not expose usable staging smoke bearer keys.
 
 ## Lanes
 
@@ -47,6 +48,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Jason decision: no publish, public release, or MCP directory submission until hardening is much stronger and Jason explicitly authorizes release.
 - Jason decision: hosted Brandcode MCP needs explicit service terms before public release; decide package/source license posture for `@brandcode/mcp` and terms for bearer-key access, rate limits, feedback/history privacy, custody, and abuse handling.
 - Remaining hardening decision: whether `get_brand_asset` needs explicit asset-id proof before any release candidate or can remain covered by list/catalog tests until a stable staging asset id is selected.
+- L08 proof blocker: provide or expose `BRANDCODE_MCP_SMOKE_FULL_KEY`, `BRANDCODE_MCP_SMOKE_READ_KEY`, and a stable `BRANDCODE_MCP_SMOKE_ASSET_ID` for `https://mcp.staging.brandcode.studio/brandcode`; Vercel Preview env lists sensitive test keys but local `vercel env pull/run` exposes empty values.
 - Rate-limit/abuse posture is documented as `not_reported_by_staging`; production release still needs active enforcement or an explicit Jason-approved blocker owner.
 - Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening hardening/audit lanes.
 

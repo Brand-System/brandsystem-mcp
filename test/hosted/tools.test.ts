@@ -678,6 +678,13 @@ describe("hosted asset tools", () => {
           providerUrl: "https://private-provider.example/campaign.png",
           custody: "private_provider",
         },
+        {
+          id: "package-url-private",
+          title: "Private package URL",
+          category: "logo",
+          lifecycle: "runtime",
+          packageUrl: "https://private-provider.example/runtime-logo.svg",
+        },
       ],
     },
     brandData: {
@@ -697,7 +704,7 @@ describe("hosted asset tools", () => {
   it("list_brand_assets returns package-safe asset summaries with posture", async () => {
     const { client } = await connectClient(buildContext(ASSET_PACKAGE));
     const json = await call(client, "list_brand_assets", { limit: 10 });
-    expect(json.total_assets).toBe(4);
+    expect(json.total_assets).toBe(5);
     expect(json.next_cursor).toBeNull();
     expect(json.custody_safe).toBe(true);
     expect(json.selected_kit_artifact_support).toBe("not_implemented_in_v1");
@@ -707,6 +714,7 @@ describe("hosted asset tools", () => {
       "logo-primary",
       "hero-runtime",
       "campaign-private",
+      "package-url-private",
       "approved-badge",
     ]);
     expect(assets[0]).toMatchObject({
@@ -734,7 +742,7 @@ describe("hosted asset tools", () => {
     });
     expect(
       (second.assets as Array<Record<string, unknown>>).map((asset) => asset.id),
-    ).toEqual(["campaign-private", "approved-badge"]);
+    ).toEqual(["campaign-private", "package-url-private"]);
 
     const filtered = await call(client, "list_brand_assets", {
       lifecycle: "production",
@@ -769,6 +777,23 @@ describe("hosted asset tools", () => {
     const { client } = await connectClient(buildContext(ASSET_PACKAGE));
     const json = await call(client, "get_brand_asset", {
       asset_id: "campaign-private",
+    });
+    const asset = json.asset as Record<string, unknown>;
+    expect(asset.delivery_ref).toEqual({
+      posture: "blocked_private_provider_url",
+      reason: "No package-safe delivery reference is available for this asset",
+    });
+    expect(asset.custody).toMatchObject({
+      safe_for_mcp: false,
+      blocked_private_provider_url: true,
+    });
+    expect(JSON.stringify(json)).not.toContain("private-provider.example");
+  });
+
+  it("get_brand_asset blocks private-looking package URLs instead of treating them as package-safe", async () => {
+    const { client } = await connectClient(buildContext(ASSET_PACKAGE));
+    const json = await call(client, "get_brand_asset", {
+      asset_id: "package-url-private",
     });
     const asset = json.asset as Record<string, unknown>;
     expect(asset.delivery_ref).toEqual({

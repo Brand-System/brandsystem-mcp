@@ -49,3 +49,39 @@ Inspect and update narrowly:
 - Relevant focused tests pass.
 - Sprint board, messages, and `HANDOFF.md` are updated at closeout.
 - Exactly one next Ready lane remains after closeout.
+
+## Current Attempt - 2026-05-08
+
+Custody hardening landed locally, but hosted proof is still blocked.
+
+Local changes completed:
+
+- `scripts/hosted-mcp-smoke.mjs` now fails `get_brand_asset` unless the
+  returned asset is package-safe, has `custody.safe_for_mcp: true`, does not
+  report `blocked_private_provider_url`, has a package delivery ref, and does
+  not expose raw private/provider URLs.
+- `src/hosted/tools/assets.ts` now blocks private-looking `packageUrl` values
+  instead of treating them as package-safe.
+- `test/hosted/tools.test.ts` covers that private-looking package URL custody
+  case.
+
+Hosted proof blocker:
+
+- Local shell env has no `BRANDCODE_MCP_SMOKE_URL`,
+  `BRANDCODE_MCP_SMOKE_FULL_KEY`, `BRANDCODE_MCP_SMOKE_READ_KEY`, or
+  `BRANDCODE_MCP_SMOKE_ASSET_ID`.
+- Vercel Preview env lists `BRANDCODE_MCP_TEST_KEYS`, but both `vercel env pull
+  --environment=preview --yes` and `vercel env run -e preview` expose empty
+  sensitive values to this local process.
+- Because no staging bearer key is available locally, `list_brand_assets` cannot
+  be run against `https://mcp.staging.brandcode.studio/brandcode`, no stable
+  asset id can be selected, and the required hosted smoke command with
+  `BRANDCODE_MCP_SMOKE_ASSET_ID` cannot complete yet.
+
+L08 remains the single Ready lane until Jason provides or exposes:
+
+- `BRANDCODE_MCP_SMOKE_URL=https://mcp.staging.brandcode.studio/brandcode`
+- `BRANDCODE_MCP_SMOKE_FULL_KEY`
+- `BRANDCODE_MCP_SMOKE_READ_KEY`
+- a stable `BRANDCODE_MCP_SMOKE_ASSET_ID`, or enough access to run
+  `list_brand_assets` and select one without exposing secrets in chat.

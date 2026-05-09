@@ -212,3 +212,38 @@ Still prohibited:
 - No public MCP directory submission.
 - No new tools.
 - No selected-kit hosted publish/share behavior.
+
+## 2026-05-08 - M001-L08 Partial Custody Hardening
+
+M001-L08 local hardening landed, but the required hosted asset proof is blocked
+on unavailable staging smoke credentials.
+
+Completed locally:
+
+- `scripts/hosted-mcp-smoke.mjs` now treats `get_brand_asset` as pass only when
+  the returned asset is package-safe, has `custody.safe_for_mcp: true`, has a
+  package delivery ref, does not report `blocked_private_provider_url`, and does
+  not expose raw private/provider URLs.
+- `src/hosted/tools/assets.ts` now blocks private-looking `packageUrl` values
+  rather than treating them as package-safe.
+- `test/hosted/tools.test.ts` covers private-looking package URL custody.
+
+Hosted proof attempted:
+
+- Checked local shell env: the required `BRANDCODE_MCP_SMOKE_*` values are not
+  set.
+- Checked Vercel Preview env safely: it lists `BRANDCODE_MCP_TEST_KEYS`, but
+  `vercel env pull --environment=preview --yes` and `vercel env run -e preview`
+  expose empty sensitive values to the local process.
+- Result: no staging bearer key was available locally, so
+  `list_brand_assets` could not be run against
+  `https://mcp.staging.brandcode.studio/brandcode`, no stable asset id could be
+  selected, and hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` could not be
+  completed.
+
+Lane posture:
+
+- M001-L08 remains the single Ready lane.
+- Exact blocker: Jason needs to provide/expose the hosted smoke URL, full key,
+  read-only key, and either a stable asset id or enough credential access to
+  list assets without exposing secrets in chat.
