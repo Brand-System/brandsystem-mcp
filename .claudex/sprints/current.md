@@ -11,7 +11,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- Local `main` includes M001 coordination through M001-L08 closeout plus the M001-L09 Ready lane and has not been pushed.
+- Local `main` includes M001 coordination through M001-L09 closeout plus the M001-L10 Ready lane and has not been pushed.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -31,6 +31,9 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L08 deployed the local custody hardening to staging and proved `get_brand_asset` against `https://mcp.staging.brandcode.studio/brandcode` with `brandcode:logo:c5-logomark-red.svg`.
 - L08 proof result: the current Brandcode hosted package has no package-safe asset delivery refs; all six listed staging assets report `blocked_private_provider_url`.
 - The hosted smoke harness now treats that posture as `blocked`, not `fail`, when the MCP returns the asset metadata, marks it unsafe for MCP delivery, and exposes no raw private/provider URLs.
+- M001-L09 traced the package-safe asset fixture upstream to UCS, not the MCP: hosted `get_brand_asset` reads `GET /api/brand/hosted/{slug}/pull`, which uses the UCS compiled Brandcode payload from `app/tools/lib/brand-adapter-runtime.ts`, `app/tools/lib/compiled-brand-runtime.ts`, and `app/tools/lib/compiled-brand-asset-manifests.ts`.
+- The current Brandcode compiled asset `brandcode:logo:c5-logomark-red.svg` has `refs.publicUrl` and root-relative runtime URLs, but no package materialization field accepted by the MCP custody contract: no `deliveryRef.packagePath`, no `packagePath`, no `package_url`, and no equivalent package-safe delivery ref.
+- M001-L09 did not change MCP code or relax custody. The fixture cannot be truthfully created from this repo; it requires a UCS/Studio runtime packaging data change and a staging deploy before hosted smoke can pass asset delivery proof.
 
 ## Lanes
 
@@ -44,7 +47,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L06 | Done | `.claudex/packets/M001-L06-license-directory-trust-audit.md` | Audit license/package/directory/security trust posture and produce a pre-release gap list. |
 | M001-L07 | Done | `.claudex/packets/M001-L07-security-matrix-rate-limit-posture.md` | Expand hosted auth/scope/security verification and document or implement rate-limit posture. |
 | M001-L08 | Done | `.claudex/packets/M001-L08-asset-fetch-custody-proof.md` | Prove `get_brand_asset` with a stable staging asset id and harden custody proof. |
-| M001-L09 | Ready | `.claudex/packets/M001-L09-package-safe-asset-fixture.md` | Coordinate a stable package-safe Brandcode asset fixture so hosted `get_brand_asset` can pass package delivery proof before battle testing. |
+| M001-L09 | Blocked | `.claudex/packets/M001-L09-package-safe-asset-fixture.md` | Coordinate a stable package-safe Brandcode asset fixture so hosted `get_brand_asset` can pass package delivery proof before battle testing. |
+| M001-L10 | Ready | `.claudex/packets/M001-L10-ucs-package-asset-delivery-ref.md` | Repair the upstream UCS Brandcode compiled/runtime package data so one stable asset has a real package-safe delivery ref, then rerun hosted smoke. |
 
 ## Blockers And Decisions
 
@@ -52,9 +56,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Jason decision: hosted Brandcode MCP needs explicit service terms before public release; decide package/source license posture for `@brandcode/mcp` and terms for bearer-key access, rate limits, feedback/history privacy, custody, and abuse handling.
 - L08 resolved the stable asset-id proof gap, but surfaced a stronger upstream blocker: the current staging Brandcode package has no asset with a package-safe delivery ref.
 - Package-safe fixture blocker: UCS/Brandcode runtime packaging needs at least one stable Production-approved/package asset whose hosted MCP response can return `custody.safe_for_mcp: true` and a non-private `delivery_ref`.
+- Exact upstream data change needed: the UCS compiled Brandcode runtime/package source must materialize one asset, preferably `brandcode:logo:c5-logomark-red.svg`, into the runtime package and emit a package-safe delivery field accepted by the MCP, such as `deliveryRef: { posture: "package_safe", packagePath: "brandcode/runtime/assets/logo/c5-logomark-red.svg" }` or an equivalent top-level `packagePath`. Do not satisfy this by exposing raw provider/private URLs or by merely copying the existing public URL into a package field.
 - Rate-limit/abuse posture is documented as `not_reported_by_staging`; production release still needs active enforcement or an explicit Jason-approved blocker owner.
 - Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening hardening/audit lanes.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L09**. Do not publish, release, submit to directories, add tools, or relax private custody. Coordinate or create one stable package-safe Brandcode asset fixture, then rerun hosted smoke until `get_brand_asset` can pass package delivery proof.
+Automation should pick up exactly one Ready lane: **M001-L10**. Do not publish, release, submit to directories, add tools, or relax private custody. Repair the upstream UCS/Studio Brandcode package data so one stable asset has a real package-safe delivery ref, deploy staging freshness, then rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` set to that package-safe asset id.

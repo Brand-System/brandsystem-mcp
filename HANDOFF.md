@@ -4,11 +4,11 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, package-safe asset delivery proof, directory-score readiness, and battle testing before any public package or directory launch.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data and did not relax MCP custody. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, package-safe asset delivery proof, directory-score readiness, and battle testing before any public package or directory launch.
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through M001-L08:
+Seeded repo-native sprint coordination and carried M001 through M001-L09:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -23,10 +23,22 @@ Seeded repo-native sprint coordination and carried M001 through M001-L08:
 - `.claudex/packets/M001-L07-security-matrix-rate-limit-posture.md`
 - `.claudex/packets/M001-L08-asset-fetch-custody-proof.md`
 - `.claudex/packets/M001-L09-package-safe-asset-fixture.md`
+- `.claudex/packets/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
+- `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Latest Build Work
+
+M001-L09 closed as blocked upstream with docs-only coordination:
+
+- Hosted `get_brand_asset` reads UCS package data through `src/hosted/brand-fetcher.ts`, which calls `GET /api/brand/hosted/{slug}/pull`.
+- The UCS route at `/Users/jasonlankow/Desktop/UCS/app/api/brand/hosted/[slug]/pull/route.ts` serves compiled Brandcode packages from `/Users/jasonlankow/Desktop/UCS/app/tools/lib/brand-adapter-runtime.ts`.
+- The concrete generated sources are `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-runtime.ts` and `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-asset-manifests.ts`.
+- `brandcode:logo:c5-logomark-red.svg` exists there with root-relative runtime URL and public URL refs, but no `deliveryRef.packagePath`, top-level `packagePath`, or package-safe `packageUrl`.
+- The MCP correctly refuses to infer package custody from ordinary URL fields; no MCP code changed and no custody rule was relaxed.
+- Hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` was not rerun because no package-safe fixture exists and local smoke env keys are not present.
+- M001-L10 is now Ready to repair the upstream UCS/Studio package asset delivery ref, deploy staging freshness, and rerun hosted smoke.
 
 M001-L08 closed with hosted custody proof and a package fixture blocker:
 
@@ -84,13 +96,14 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L09 is Ready: Package-Safe Asset Fixture Coordination.
+M001-L10 is Ready: UCS Package Asset Delivery Ref Repair.
 
-Do not publish, release, submit to MCP directories, add tools, or relax custody. Coordinate or create one stable package-safe Brandcode asset fixture, then rerun hosted smoke until `get_brand_asset` can pass with a package delivery ref.
+Do not publish, release, submit to MCP directories, add tools, or relax custody. Repair the upstream UCS/Studio Brandcode package data so one stable asset, preferably `brandcode:logo:c5-logomark-red.svg`, has a real package-safe delivery ref; then rerun hosted smoke until `get_brand_asset` passes package delivery proof.
 
 ## Known Blockers
 
 - Current exact package-fixture blocker: the Brandcode staging package has no asset with a package-safe delivery ref; all six current assets are private-provider-only blocked.
+- Exact upstream data change needed: UCS/Brandcode Studio runtime packaging must materialize one stable Production-approved/runtime Brandcode asset into the runtime package and emit `deliveryRef.packagePath`, top-level `packagePath`, or an equivalent real package-safe delivery ref.
 - `get_brand_asset` has stable asset-id proof but still needs package-safe delivery proof before release-grade battle testing.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.

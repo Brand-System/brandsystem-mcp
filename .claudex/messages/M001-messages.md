@@ -279,3 +279,45 @@ New blocker:
 Next Ready lane:
 
 - M001-L09 - Package-Safe Asset Fixture Coordination.
+
+## 2026-05-09 - M001-L09 Blocked Upstream
+
+M001-L09 traced the package-safe asset fixture gap to UCS/Brandcode Studio
+package data, not to the MCP custody layer.
+
+Upstream path:
+
+- Hosted MCP fetcher: `src/hosted/brand-fetcher.ts`
+- UCS pull route:
+  `/Users/jasonlankow/Desktop/UCS/app/api/brand/hosted/[slug]/pull/route.ts`
+- UCS compiled Brandcode payload source:
+  `/Users/jasonlankow/Desktop/UCS/app/tools/lib/brand-adapter-runtime.ts`
+- UCS generated data:
+  `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-runtime.ts`
+  and
+  `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-asset-manifests.ts`
+
+Current asset truth:
+
+- `brandcode:logo:c5-logomark-red.svg` exists in the UCS compiled Brandcode
+  payload.
+- It has `/logo/c5-logomark-red.svg` plus public URL refs.
+- It does not have `deliveryRef.packagePath`, top-level `packagePath`, or a
+  package-safe `packageUrl`.
+- Existing public URL refs are not package materialization proof by themselves.
+
+Lane result:
+
+- No MCP code changed.
+- No custody rule was relaxed.
+- Hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` was not rerun because no
+  package-safe fixture exists and local smoke env keys are not present.
+- Required upstream data change: UCS/Brandcode Studio runtime packaging must
+  materialize one stable Production-approved/runtime Brandcode asset into the
+  runtime package and emit a package-safe delivery ref, preferably for
+  `brandcode:logo:c5-logomark-red.svg`, such as `deliveryRef.packagePath` or an
+  equivalent top-level `packagePath`.
+
+Next Ready lane:
+
+- M001-L10 - UCS Package Asset Delivery Ref Repair.

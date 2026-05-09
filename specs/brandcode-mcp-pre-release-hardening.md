@@ -27,6 +27,7 @@ Brandcode MCP should not ship as soon as the first staging proof passes. The fir
   - read-only insufficient-scope behavior for `brand_check`
   - read-only insufficient-scope behavior for `brand_feedback`
 - Remaining known smoke gap: `get_brand_asset` has stable asset-id proof, but the current Brandcode staging package has no package-safe asset delivery ref. The tool truthfully blocks private-provider-only assets without exposing raw URLs.
+- M001-L09 traced the package-safe asset fixture gap upstream to UCS/Brandcode Studio package data. The Brandcode compiled asset `brandcode:logo:c5-logomark-red.svg` has public URL refs, but no `deliveryRef.packagePath`, top-level `packagePath`, or equivalent package-safe delivery ref that proves runtime/package materialization.
 
 ## Hardening Workstreams
 
@@ -132,14 +133,17 @@ Acceptance:
    Complete. Selected a stable staging asset id, proved `get_brand_asset` blocks private-provider-only custody without leaking raw URLs, and exposed the missing package-safe asset fixture.
 
 4. **M001-L09 Package-Safe Asset Fixture Coordination**
-   Coordinate or create one stable Brandcode staging asset with a package-safe delivery ref, then rerun hosted smoke until `get_brand_asset` can pass package delivery proof.
+   Blocked upstream. Identified the fixture owner/data path: UCS/Brandcode Studio runtime packaging must materialize one stable Brandcode asset into the package and emit a real package-safe delivery ref before the MCP can pass asset delivery proof.
 
-5. **M001-L10 Multi-Client Battle Test**
+5. **M001-L10 UCS Package Asset Delivery Ref Repair**
+   Repair the upstream Brandcode package data, deploy staging freshness, and rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` set to the package-safe asset id.
+
+6. **M001-L11 Multi-Client Battle Test**
    Run staging smoke and manual client proof across real MCP clients and brands.
 
-6. **M001-L11 Release Candidate Review**
+7. **M001-L12 Release Candidate Review**
    Only after the above, decide whether the repo is ready for a release candidate. This is still not publish unless Jason explicitly says publish.
 
 ## Current Next Ready Lane
 
-M001-L09 should be the next Ready lane: **Package-Safe Asset Fixture Coordination**.
+M001-L10 should be the next Ready lane: **UCS Package Asset Delivery Ref Repair**.
