@@ -321,3 +321,43 @@ Lane result:
 Next Ready lane:
 
 - M001-L10 - UCS Package Asset Delivery Ref Repair.
+
+## 2026-05-09 - M001-L10 Local UCS Fixture Repaired
+
+M001-L10 repaired the upstream UCS package-data fixture locally without changing
+MCP custody rules.
+
+UCS result:
+
+- `brandcode:logo:c5-logomark-red.svg` now has `lifecycle:
+  "production-approved"`, `inRuntimePackage: true`, and
+  `deliveryRef.packagePath:
+  "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"`.
+- `app/tools/lib/generate-compiled-brand-runtime.mjs` now preserves package
+  delivery fields from manifest assets into the compiled payload.
+- The regenerated UCS compiled outputs include the package-safe delivery ref in
+  `compiled-brand-runtime.ts`, `compiled-brand-asset-manifests.ts`, and
+  `clients/brandcode/.brand/compiled/asset-runtime.json`.
+- No private/provider URLs were made public.
+
+Verification:
+
+- Local compiled adapter payload inspection confirmed the asset exposes the
+  package-safe delivery ref and no private Blob/provider URL.
+- Focused UCS tests passed for the package-safe logomark and adapter payload.
+- UCS TypeScript passed.
+- UCS `git diff --check` passed.
+- Hosted smoke from this repo was attempted with
+  `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`, but it
+  remained blocked because `BRANDCODE_MCP_SMOKE_URL` and
+  `BRANDCODE_MCP_SMOKE_FULL_KEY` are not present in the current shell.
+
+Remaining blocker:
+
+- The UCS repair has not been pushed/deployed because Jason's prompt explicitly
+  said not to push unless asked. Staging freshness and hosted smoke still need
+  to be proven before `get_brand_asset` can be called release-grade.
+
+Next Ready lane:
+
+- M001-L11 - Hosted Package Asset Smoke Proof.

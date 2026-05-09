@@ -26,8 +26,8 @@ Brandcode MCP should not ship as soon as the first staging proof passes. The fir
   - `brand_feedback` with `append_status: recorded`
   - read-only insufficient-scope behavior for `brand_check`
   - read-only insufficient-scope behavior for `brand_feedback`
-- Remaining known smoke gap: `get_brand_asset` has stable asset-id proof, but the current Brandcode staging package has no package-safe asset delivery ref. The tool truthfully blocks private-provider-only assets without exposing raw URLs.
-- M001-L09 traced the package-safe asset fixture gap upstream to UCS/Brandcode Studio package data. The Brandcode compiled asset `brandcode:logo:c5-logomark-red.svg` has public URL refs, but no `deliveryRef.packagePath`, top-level `packagePath`, or equivalent package-safe delivery ref that proves runtime/package materialization.
+- Remaining known smoke gap: `get_brand_asset` has local package-safe asset fixture proof, but staging freshness and hosted smoke still need to be proven. The tool truthfully blocks private-provider-only assets without exposing raw URLs.
+- M001-L09 traced the package-safe asset fixture gap upstream to UCS/Brandcode Studio package data. M001-L10 repaired that UCS package data locally for `brandcode:logo:c5-logomark-red.svg` by adding `deliveryRef.packagePath: "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"` plus `inRuntimePackage: true` and `lifecycle: "production-approved"`. Hosted proof is still pending because the current shell lacks smoke URL/full-key env and the UCS repair has not been pushed/deployed.
 
 ## Hardening Workstreams
 
@@ -136,14 +136,17 @@ Acceptance:
    Blocked upstream. Identified the fixture owner/data path: UCS/Brandcode Studio runtime packaging must materialize one stable Brandcode asset into the package and emit a real package-safe delivery ref before the MCP can pass asset delivery proof.
 
 5. **M001-L10 UCS Package Asset Delivery Ref Repair**
-   Repair the upstream Brandcode package data, deploy staging freshness, and rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` set to the package-safe asset id.
+   Local fixture repair complete; hosted proof pending. UCS package data now emits a package-safe delivery ref for `brandcode:logo:c5-logomark-red.svg`, but staging freshness and hosted smoke were blocked by missing smoke env and no push authorization.
 
-6. **M001-L11 Multi-Client Battle Test**
+6. **M001-L11 Hosted Package Asset Smoke Proof**
+   Confirm the UCS package-data repair is fresh in staging and rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+
+7. **M001-L12 Multi-Client Battle Test**
    Run staging smoke and manual client proof across real MCP clients and brands.
 
-7. **M001-L12 Release Candidate Review**
+8. **M001-L13 Release Candidate Review**
    Only after the above, decide whether the repo is ready for a release candidate. This is still not publish unless Jason explicitly says publish.
 
 ## Current Next Ready Lane
 
-M001-L10 should be the next Ready lane: **UCS Package Asset Delivery Ref Repair**.
+M001-L11 should be the next Ready lane: **Hosted Package Asset Smoke Proof**.

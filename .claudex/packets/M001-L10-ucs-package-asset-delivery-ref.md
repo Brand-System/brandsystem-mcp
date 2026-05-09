@@ -1,6 +1,6 @@
 # M001-L10 - UCS Package Asset Delivery Ref Repair
 
-**Status:** Ready
+**Status:** Blocked - hosted proof pending
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Cross-repo upstream fixture repair / hosted proof
@@ -81,6 +81,57 @@ has made that URL the governed package delivery contract.
 - Existing locked 8-tool order remains unchanged.
 - Sprint board, messages, and `HANDOFF.md` are updated at closeout.
 - Exactly one next Ready lane remains after closeout.
+
+## Closeout Result
+
+M001-L10 repaired the upstream UCS package-data fixture locally and did not
+change MCP custody code.
+
+UCS files changed:
+
+- `/Users/jasonlankow/Desktop/UCS/clients/brandcode/.brand/brand.json`
+- `/Users/jasonlankow/Desktop/UCS/app/tools/lib/generate-compiled-brand-runtime.mjs`
+- `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-runtime.ts`
+- `/Users/jasonlankow/Desktop/UCS/app/tools/lib/compiled-brand-asset-manifests.ts`
+- `/Users/jasonlankow/Desktop/UCS/clients/brandcode/.brand/compiled/asset-runtime.json`
+- `/Users/jasonlankow/Desktop/UCS/tests/studio/compiled-brand-asset-manifests.test.mjs`
+
+The stable asset `brandcode:logo:c5-logomark-red.svg` now carries:
+
+```json
+{
+  "lifecycle": "production-approved",
+  "inRuntimePackage": true,
+  "deliveryRef": {
+    "posture": "package_safe",
+    "packagePath": "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"
+  }
+}
+```
+
+Local verification passed:
+
+- `node --loader ./tests/studio/ts-extension-loader.mjs --test --test-name-pattern "package-safe logomark delivery|compiled brand adapter payload exposes runtime" tests/studio/compiled-brand-asset-manifests.test.mjs tests/studio/brand-adapter-runtime.test.mjs`
+- `npx tsc --noEmit --pretty false`
+- `git diff --check`
+
+Additional note: running the broader compiled-asset-manifests test file still
+hits pre-existing stale assertions about C5 exploratory scenes and Brandcode
+Emergent LinkedIn v3 graphics. The new package-safe logomark regression passed
+when run directly.
+
+Hosted proof is still blocked:
+
+- The current shell has no `BRANDCODE_MCP_SMOKE_URL` or
+  `BRANDCODE_MCP_SMOKE_FULL_KEY`.
+- `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg npm run
+  smoke:hosted-mcp -- --json` therefore reports `blocked` at the environment
+  check.
+- The UCS package-data change was not pushed or deployed because Jason's prompt
+  said not to push unless explicitly asked.
+
+Next Ready lane: M001-L11 should confirm staging freshness for the UCS
+package-data repair and rerun hosted smoke with the package-safe asset id.
 
 ## Out Of Scope
 

@@ -6,6 +6,19 @@ Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
 The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data and did not relax MCP custody. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, package-safe asset delivery proof, directory-score readiness, and battle testing before any public package or directory launch.
 
+## Latest Build Work
+
+M001-L10 repaired the upstream UCS package-data fixture locally:
+
+- UCS source now gives `brandcode:logo:c5-logomark-red.svg` a governed package-safe `deliveryRef.packagePath` of `brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg`, plus `inRuntimePackage: true` and `lifecycle: "production-approved"`.
+- The UCS compiler now preserves package delivery fields from manifest assets into `brandInstance.assets`, `compiled-brand-runtime.ts`, `compiled-brand-asset-manifests.ts`, and `clients/brandcode/.brand/compiled/asset-runtime.json`.
+- No MCP custody code changed and no private/provider URLs were made public.
+- Local UCS proof passed for the compiled adapter payload, TypeScript, and `git diff --check`.
+- Hosted smoke from this repo remains blocked because the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`.
+- The UCS repair has not been pushed/deployed because Jason's prompt explicitly said not to push unless asked.
+
+M001-L11 is now Ready: confirm the UCS package-data repair is fresh in staging and rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+
 ## Latest PO Work
 
 Seeded repo-native sprint coordination and carried M001 through M001-L09:
@@ -28,7 +41,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L09:
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/messages/M001-messages.md`
 
-## Latest Build Work
+## Previous Build Work
 
 M001-L09 closed as blocked upstream with docs-only coordination:
 
