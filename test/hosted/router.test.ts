@@ -117,6 +117,20 @@ describe("handleHostedRequest — routing + auth", () => {
     expect(body.slug).toBe("acme");
   });
 
+  it("returns 401 missing_bearer for malformed Authorization headers", async () => {
+    const res = await handleHostedRequest(
+      buildRequest("https://mcp.example/acme", {
+        method: "POST",
+        headers: { authorization: "Bearer bck_test_acme_read extra" },
+      }),
+      baseOptions,
+    );
+    expect(res.status).toBe(401);
+    const body = await readJson(res);
+    expect(body.error).toBe("missing_bearer");
+    expect(body.slug).toBe("acme");
+  });
+
   it("returns 401 invalid_token on unknown bearer", async () => {
     const res = await handleHostedRequest(
       buildRequest("https://mcp.example/acme", {

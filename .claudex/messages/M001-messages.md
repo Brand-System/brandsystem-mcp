@@ -175,3 +175,40 @@ Still prohibited:
 - No public MCP directory submission.
 - No new tools.
 - No hosted behavior changes outside narrow security proof/documentation.
+
+## 2026-05-08 - M001-L07 Closed
+
+M001-L07 expanded hosted security proof and documentation without changing the
+locked hosted tool surface.
+
+Implementation and tests:
+
+- `test/hosted/auth.test.ts` now covers malformed bearer headers, the full
+  8-tool scope matrix for read/check/feedback/full key postures, and staging vs
+  production key-prefix rejection/acceptance.
+- `test/hosted/router.test.ts` now proves malformed Authorization headers are
+  rejected at the hosted HTTP boundary.
+- Existing `test/hosted/env.test.ts` continues to prove
+  `BRANDCODE_MCP_SERVICE_TOKEN` is the only accepted hosted service-token env
+  name and `UCS_SERVICE_TOKEN` is not accepted.
+- Existing asset, feedback, and history tests already prove private provider URL
+  redaction and compact history/receipt privacy for the relevant surfaces.
+
+Docs:
+
+- `SECURITY.md` now documents hosted bearer auth, slug-scoped keys, scopes,
+  service-token posture, private custody, feedback/history privacy, and the
+  current rate-limit posture.
+- Rate limits remain documented as `not_reported_by_staging`, which is an
+  explicit pre-release posture, not a production claim.
+
+Next Ready lane:
+
+- M001-L08 - Asset Fetch And Custody Proof.
+
+Still prohibited:
+
+- No npm publish.
+- No public MCP directory submission.
+- No new tools.
+- No selected-kit hosted publish/share behavior.

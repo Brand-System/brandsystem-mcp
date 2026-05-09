@@ -1,6 +1,6 @@
 # M001-L07 - Security Matrix And Rate-Limit Posture
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Security / hosted verification

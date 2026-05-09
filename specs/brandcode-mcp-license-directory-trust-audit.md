@@ -9,7 +9,7 @@
 
 Brandcode MCP is not ready for public release or directory submission. The repo has a solid product lock for the hosted Use MCP, and the current Build package metadata mostly stays scoped to `@brandsystem/mcp`. The trust gap is that the hosted service has security, privacy, rate-limit, terms, and directory-listing obligations that are not covered by the existing MIT license or the current `SECURITY.md`.
 
-Recommended next lane: **M001-L07 Security Matrix And Rate-Limit Posture**. Do not publish, release, submit to directories, add tools, or change hosted behavior as part of this audit.
+M001-L07 completed the next security-matrix lane after this audit. The next Ready lane is **M001-L08 Asset Fetch And Custody Proof**. Do not publish, release, submit to directories, add tools, or change hosted behavior as part of this audit family.
 
 ## Source Surfaces Audited
 
@@ -133,7 +133,7 @@ Likely Glama, LobeHub, Smithery, MCP Registry, or similar review risks:
 
 ## Recommended Follow-Up Lanes
 
-1. **M001-L07 Security Matrix And Rate-Limit Posture** - Expand hosted auth/scope/security test coverage and document rate-limit posture. This should be the next Ready lane.
+1. **M001-L07 Security Matrix And Rate-Limit Posture** - Complete. Expanded hosted auth/scope/security test coverage and documented rate-limit posture.
 2. **M001-L08 Asset Fetch And Custody Proof** - Select a stable staging asset id, prove `get_brand_asset`, and harden private custody redaction proof.
 3. **M001-L09 Multi-Client Battle Test** - Run staging smoke and manual client proof across real MCP clients and brands.
 4. **M001-L10 Release Candidate Review** - Decide whether to prepare release metadata, directory copy, package terms links, and publish/submission steps. This remains a Jason decision gate, not an automatic release.
@@ -146,10 +146,10 @@ Likely Glama, LobeHub, Smithery, MCP Registry, or similar review risks:
 - What retention/privacy commitments apply to `brand_feedback` and `brand_history`?
 - What rate-limit/abuse posture must be implemented before any public directory submission?
 
-## Next Ready Lane
+## Current Ready Lane
 
-Exactly one lane should be Ready after this audit:
+Exactly one lane should be Ready after the M001-L07 closeout:
 
-**M001-L07 - Security Matrix And Rate-Limit Posture**
+**M001-L08 - Asset Fetch And Custody Proof**
 
-Goal: Expand hosted auth/scope/security verification and document or implement rate-limit posture before asset proof, multi-client battle testing, release-candidate review, or public directory metadata work.
+Goal: Prove `get_brand_asset` with a stable staging asset id and harden custody proof before multi-client battle testing, release-candidate review, or public directory metadata work.

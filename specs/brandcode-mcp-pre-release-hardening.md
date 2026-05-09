@@ -126,7 +126,7 @@ Acceptance:
    Complete. Audited license/package/directory/security docs and produced a gap list with no code behavior changes.
 
 2. **M001-L07 Security Matrix And Rate-Limit Posture**
-   Expand hosted auth/scope/security tests and document or implement rate-limit posture.
+   Complete. Expanded hosted auth/scope/security tests and documented the current rate-limit posture.
 
 3. **M001-L08 Asset Fetch And Custody Proof**
    Select a stable staging asset id, prove `get_brand_asset`, and harden private custody redaction proof.
@@ -139,4 +139,4 @@ Acceptance:
 
 ## Current Next Ready Lane
 
-M001-L07 should be the next Ready lane: **Security Matrix And Rate-Limit Posture**.
+M001-L08 should be the next Ready lane: **Asset Fetch And Custody Proof**.

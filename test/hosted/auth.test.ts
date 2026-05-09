@@ -1,11 +1,14 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   parseBearer,
   tokenEnvironment,
   toolHasScope,
   authorizeRequest,
   AuthError,
+  buildDefaultValidator,
+  TOOL_SCOPE_REQUIREMENTS,
 } from "../../src/hosted/auth.js";
+import { HOSTED_TOOL_ORDER } from "../../src/hosted/registrations.js";
 
 describe("parseBearer", () => {
   it("returns null when header is absent", () => {
@@ -15,6 +18,15 @@ describe("parseBearer", () => {
   it("returns null on non-bearer schemes", () => {
     const headers = new Headers({ authorization: "Basic abc123" });
     expect(parseBearer(headers)).toBeNull();
+  });
+
+  it("returns null on malformed bearer headers", () => {
+    expect(
+      parseBearer(new Headers({ authorization: "Bearer" })),
+    ).toBeNull();
+    expect(
+      parseBearer(new Headers({ authorization: "Bearer bck_test_abc extra" })),
+    ).toBeNull();
   });
 
   it("extracts the token verbatim", () => {
@@ -44,8 +56,11 @@ describe("tokenEnvironment", () => {
 describe("toolHasScope", () => {
   it("read scope covers all read tools", () => {
     expect(toolHasScope("brand_runtime", ["read"])).toBe(true);
+    expect(toolHasScope("brand_search", ["read"])).toBe(true);
     expect(toolHasScope("brand_status", ["read"])).toBe(true);
     expect(toolHasScope("list_brand_assets", ["read"])).toBe(true);
+    expect(toolHasScope("get_brand_asset", ["read"])).toBe(true);
+    expect(toolHasScope("brand_history", ["read"])).toBe(true);
   });
   it("check tool requires explicit check scope", () => {
     expect(toolHasScope("brand_check", ["read"])).toBe(false);
@@ -58,6 +73,59 @@ describe("toolHasScope", () => {
   });
   it("unknown tool rejects", () => {
     expect(toolHasScope("nonexistent_tool", ["read"])).toBe(false);
+  });
+
+  it("covers every locked hosted tool for each key posture", () => {
+    const tools = [...HOSTED_TOOL_ORDER];
+    expect(Object.keys(TOOL_SCOPE_REQUIREMENTS).sort()).toEqual(
+      [...HOSTED_TOOL_ORDER].sort(),
+    );
+
+    const matrix = (scopes: Array<"read" | "check" | "feedback">) =>
+      Object.fromEntries(
+        tools.map((tool) => [tool, toolHasScope(tool, scopes)]),
+      );
+
+    expect(matrix(["read"])).toEqual({
+      brand_runtime: true,
+      brand_search: true,
+      brand_status: true,
+      list_brand_assets: true,
+      get_brand_asset: true,
+      brand_history: true,
+      brand_check: false,
+      brand_feedback: false,
+    });
+    expect(matrix(["check"])).toEqual({
+      brand_runtime: false,
+      brand_search: false,
+      brand_status: false,
+      list_brand_assets: false,
+      get_brand_asset: false,
+      brand_history: false,
+      brand_check: true,
+      brand_feedback: false,
+    });
+    expect(matrix(["feedback"])).toEqual({
+      brand_runtime: false,
+      brand_search: false,
+      brand_status: false,
+      list_brand_assets: false,
+      get_brand_asset: false,
+      brand_history: false,
+      brand_check: false,
+      brand_feedback: true,
+    });
+    expect(matrix(["read", "check", "feedback"])).toEqual({
+      brand_runtime: true,
+      brand_search: true,
+      brand_status: true,
+      list_brand_assets: true,
+      get_brand_asset: true,
+      brand_history: true,
+      brand_check: true,
+      brand_feedback: true,
+    });
   });
 });
 
@@ -82,6 +150,20 @@ describe("authorizeRequest", () => {
         ucsServiceToken: "t",
         validateToken: validator,
       }),
+    ).rejects.toMatchObject({ status: 401, code: "missing_bearer" });
+  });
+
+  it("rejects malformed bearer with 401 missing_bearer", async () => {
+    await expect(
+      authorizeRequest(
+        new Headers({ authorization: "Bearer bck_test_acme_read extra" }),
+        "acme",
+        {
+          environment: "staging",
+          ucsServiceToken: "t",
+          validateToken: validator,
+        },
+      ),
     ).rejects.toMatchObject({ status: 401, code: "missing_bearer" });
   });
 
@@ -129,7 +211,7 @@ describe("buildDefaultValidator (env-seeded staging keys)", () => {
 
   beforeEach(() => {
     process.env.BRANDCODE_MCP_TEST_KEYS =
-      "bck_test_primary:acme:read,check,feedback|bck_test_primary:pendium:read|bck_test_readonly:acme:read";
+      "bck_test_primary:acme:read,check,feedback|bck_test_primary:pendium:read|bck_test_readonly:acme:read|bck_live_primary:acme:read,check,feedback";
   });
 
   afterEach(() => {
@@ -141,9 +223,6 @@ describe("buildDefaultValidator (env-seeded staging keys)", () => {
   });
 
   it("parses multi-slug + multi-scope seeds", async () => {
-    const { buildDefaultValidator } = await import(
-      "../../src/hosted/auth.js"
-    );
     const v = buildDefaultValidator("staging");
     const info = await v("bck_test_primary");
     expect(info).not.toBeNull();
@@ -152,17 +231,23 @@ describe("buildDefaultValidator (env-seeded staging keys)", () => {
   });
 
   it("rejects tokens whose prefix mismatches environment", async () => {
-    const { buildDefaultValidator } = await import(
-      "../../src/hosted/auth.js"
-    );
+    const staging = buildDefaultValidator("staging");
+    const production = buildDefaultValidator("production");
+    expect(await staging("bck_live_primary")).toBeNull();
+    expect(await production("bck_test_primary")).toBeNull();
+  });
+
+  it("accepts production-prefixed seeds only in production mode", async () => {
     const v = buildDefaultValidator("production");
-    expect(await v("bck_test_primary")).toBeNull();
+    const info = await v("bck_live_primary");
+    expect(info).toMatchObject({
+      allowedSlugs: ["acme"],
+      environment: "production",
+      scopes: ["read", "check", "feedback"],
+    });
   });
 
   it("rejects unknown tokens", async () => {
-    const { buildDefaultValidator } = await import(
-      "../../src/hosted/auth.js"
-    );
     const v = buildDefaultValidator("staging");
     expect(await v("bck_test_unknown")).toBeNull();
   });
@@ -170,6 +255,3 @@ describe("buildDefaultValidator (env-seeded staging keys)", () => {
 
 // Keep AuthError import used so TS tree-shake doesn't warn
 void AuthError;
-
-// Late import of afterEach to keep grouping with beforeEach above
-import { afterEach } from "vitest";
