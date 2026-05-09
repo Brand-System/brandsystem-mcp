@@ -125,18 +125,22 @@ Acceptance:
 - The stored record is an observation/proposal review input, not an Official Brand mutation.
 - The proof preserves key receipt facts without exposing raw private provider URLs.
 
-### M001-L05: v0.1 Release Readiness
+### M001-L05: Pre-Release Hardening
 
-Goal: cut release/readiness posture only after source, hosted, scope, history, and feedback claims are all true.
+Goal: map license, security, test-depth, directory-scoring, and battle-test work before any release or public directory submission.
 
-Release gate:
+Hardening gate:
 
 - All eight locked tools remain implemented and no ninth tool is introduced.
 - Auth failures, slug authorization, per-tool scopes, upstream errors, not-found states, and rate-limit posture are covered by tests or explicit documented deferrals.
 - Staging proves a real MCP client can call the live hosted route.
-- `brand_feedback` append is proved or explicitly deferred from v0.1 with a named blocker.
+- `brand_feedback` append is proved.
+- License and hosted-service terms posture is explicit.
+- Security/privacy posture is documented for directory reviewers.
+- Directory metadata is reviewed before public submission.
+- Multi-client battle testing is complete or tracked by named packets.
 - Hosted responses distinguish local component/API proof, hosted route proof, and human-visible UI proof.
-- Package metadata and directory listings cross-link `@brandsystem/mcp` for Build and `@brandcode/mcp` for Use without migration pressure.
+- Package metadata and future directory listings cross-link `@brandsystem/mcp` for Build and `@brandcode/mcp` for Use without migration pressure.
 
 ## Explicit Deferrals
 

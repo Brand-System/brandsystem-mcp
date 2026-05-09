@@ -2,9 +2,9 @@
 
 ## Current State
 
-Active sprint: M001 - Brandcode MCP stabilization and v0.1 proof.
+Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. The sprint is still not about adding tools. It is about making the v0.1 proof story repeatable and truthful.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. Jason does not want to release yet. The sprint is now about pre-release hardening: license clarity, security posture, test depth, directory-score readiness, and battle testing before any public package or directory launch.
 
 ## Latest PO Work
 
@@ -46,14 +46,16 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L05 is Ready: v0.1 Release Readiness.
+M001-L05 is Ready: Pre-Release Hardening Map.
 
-Do not add tools. Prepare the release/readiness posture from the now-proved staging route and call out any remaining CI, GitHub, package/listing, or asset-id proof gaps.
+Do not publish, release, submit to MCP directories, or add tools. Map the hardening work needed before Brandcode MCP can safely make a public first impression.
 
 ## Known Blockers
 
 - `get_brand_asset` still needs an explicit stable `BRANDCODE_MCP_SMOKE_ASSET_ID` if v0.1 requires asset fetch proof beyond catalog/list tests.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
+- License/hosted-service terms are not yet settled for `@brandcode/mcp`.
+- Directory scoring and security review posture have not been audited yet.
 
 ## Local Hygiene
 

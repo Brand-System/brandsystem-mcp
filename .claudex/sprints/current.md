@@ -1,13 +1,13 @@
 # Current Sprint
 
-**Active sprint:** M001 - Brandcode MCP stabilization and v0.1 proof
+**Active sprint:** M001 - Brandcode MCP stabilization and pre-release hardening
 **Status:** Active
 **Started:** 2026-05-08
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 
 ## Sprint Objective
 
-Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release candidate with truthful CI posture, repeatable hosted proof, and explicit alignment with UCS portable runtime / Runtime Admin semantics.
+Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release candidate with truthful CI posture, repeatable hosted proof, explicit UCS portable-runtime alignment, license clarity, security hardening, directory-score readiness, and battle-tested functionality.
 
 ## Current Truth
 
@@ -35,13 +35,14 @@ Turn the implemented Brandcode hosted MCP surface into a clean v0.1 release cand
 | M001-L02 | Done | `.claudex/packets/M001-L02-roadmap-alignment-delta.md` | Refresh `specs/brandcode-mcp-use-roadmap-alignment.md` against the now-real 8-tool implementation and latest UCS portable runtime semantics. |
 | M001-L03 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Resolve staging-domain/deployment-protection proof once DNS or Vercel access is available. |
 | M001-L04 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Prove `brand_feedback` append against UCS history once a real service token exists. |
-| M001-L05 | Ready | `.claudex/packets/M001-L05-v0.1-release-readiness.md` | Cut v0.1 release/readiness posture after CI, staged route, real MCP client, scope, and feedback proof are complete. |
+| M001-L05 | Ready | `.claudex/packets/M001-L05-pre-release-hardening-map.md` | Map license, security, tests, directory scoring, and battle-test work before any release. |
 
 ## Blockers And Decisions
 
-- Remaining release-readiness decision: whether `get_brand_asset` needs explicit asset-id proof before v0.1 or can remain covered by list/catalog tests until a stable staging asset id is selected.
-- Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening a release-readiness PR/checkpoint.
+- Jason decision: no publish, public release, or MCP directory submission until hardening is much stronger and Jason explicitly authorizes release.
+- Remaining hardening decision: whether `get_brand_asset` needs explicit asset-id proof before any release candidate or can remain covered by list/catalog tests until a stable staging asset id is selected.
+- Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening hardening/audit lanes.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L05**. Do not add tools; prepare v0.1 release/readiness posture from the now-proved staging surface.
+Automation should pick up exactly one Ready lane: **M001-L05**. Do not publish, release, submit to directories, or add tools; map pre-release hardening from the now-proved staging surface.

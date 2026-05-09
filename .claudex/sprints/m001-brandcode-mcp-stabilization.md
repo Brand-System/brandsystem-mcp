@@ -51,13 +51,13 @@ Once DNS/Vercel access is available, prove `https://mcp.staging.brandcode.studio
 
 Once a real UCS service token exists, prove `brand_feedback` writes an append-only UCS history entry with the expected receipt posture and without canonical governance mutation.
 
-### M001-L05 - v0.1 Release Readiness
+### M001-L05 - Pre-Release Hardening Map
 
-Prepare the v0.1 release posture only after the previous proof gates are complete. The output should be a release checklist, package/listing updates if appropriate, and no inflated claims.
+Map license, security, test-depth, directory-scoring, and battle-test work before any public package release or MCP directory submission. The output should be a hardening plan and exactly one next Ready lane, not a publish plan.
 
 ## Acceptance For Sprint Close
 
-- GitHub CI is green at the release candidate commit.
+- GitHub CI is green on the current hardening branch or main checkpoint before any release claim.
 - Hosted smoke harness exists and is documented.
 - `tools/list` proves exactly 8 tools in locked Phase 0 order.
 - `brand_status` reports all tools truthfully.
@@ -65,3 +65,4 @@ Prepare the v0.1 release posture only after the previous proof gates are complet
 - `brand_runtime`, `brand_search`, `brand_check`, `brand_history`, and `brand_feedback` are each proved against staging or explicitly named as blocked with the exact missing dependency.
 - The roadmap alignment doc no longer describes implemented tools as stubs.
 - `@brandsystem/mcp` remains Build and `@brandcode/mcp` remains Use.
+- No public release, npm publish, or MCP directory submission happens until Jason explicitly authorizes it after hardening.

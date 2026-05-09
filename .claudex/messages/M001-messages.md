@@ -116,6 +116,17 @@ Skipped:
 
 - `get_brand_asset`, because no `BRANDCODE_MCP_SMOKE_ASSET_ID` was provided.
 
+## 2026-05-08 - Release Posture Reframed
+
+Jason explicitly does not want to release yet.
+
+Reason:
+
+- MCP directories and review/scoring sites can ingest first releases quickly and then take weeks or months to update negative initial reviews.
+- Brandcode MCP should reach a much stronger production-trust bar before publish: license clarity, security hardening, test depth, multi-client battle testing, and high-quality directory metadata.
+
+M001-L05 was reframed from release readiness to pre-release hardening map.
+
 Next Ready lane:
 
-- M001-L05 - v0.1 Release Readiness.
+- M001-L05 - Pre-Release Hardening Map.
