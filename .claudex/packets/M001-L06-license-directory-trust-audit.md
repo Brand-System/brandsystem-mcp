@@ -1,6 +1,6 @@
 # M001-L06 - License And Directory Trust Audit
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Audit / docs hardening

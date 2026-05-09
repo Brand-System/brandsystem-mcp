@@ -11,7 +11,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- Local `main` includes M001 coordination through M001-L02 plus hosted env-name normalization and has not been pushed.
+- Local `main` includes M001 coordination through M001-L06 plus hosted env-name normalization and has not been pushed.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -26,6 +26,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - The smoke harness help and env-missing paths run locally without secrets; live hosted proof still requires `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`, and optional read/asset/feedback inputs.
 - M001-L02 refreshed the Use MCP roadmap/product spine so it no longer describes implemented hosted tools as stubs.
 - The roadmap now frames Full Brand Runtime as the default hosted object, keeps selected/campaign kits out of v0.1 default, and treats `brand_feedback` as append-only review input.
+- M001-L06 completed the license/package/directory/security trust audit and found the release blocker is hosted-service terms plus hosted security/privacy/rate-limit posture, not the MIT license for Build package code.
 
 ## Lanes
 
@@ -36,14 +37,16 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L03 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Resolve staging-domain/deployment-protection proof once DNS or Vercel access is available. |
 | M001-L04 | Done | Manual proof captured in `.claudex/messages/M001-messages.md` | Prove `brand_feedback` append against UCS history once a real service token exists. |
 | M001-L05 | Done | `.claudex/packets/M001-L05-pre-release-hardening-map.md` | Map license, security, tests, directory scoring, and battle-test work before any release. |
-| M001-L06 | Ready | `.claudex/packets/M001-L06-license-directory-trust-audit.md` | Audit license/package/directory/security trust posture and produce a pre-release gap list. |
+| M001-L06 | Done | `.claudex/packets/M001-L06-license-directory-trust-audit.md` | Audit license/package/directory/security trust posture and produce a pre-release gap list. |
+| M001-L07 | Ready | `.claudex/packets/M001-L07-security-matrix-rate-limit-posture.md` | Expand hosted auth/scope/security verification and document or implement rate-limit posture. |
 
 ## Blockers And Decisions
 
 - Jason decision: no publish, public release, or MCP directory submission until hardening is much stronger and Jason explicitly authorizes release.
+- Jason decision: hosted Brandcode MCP needs explicit service terms before public release; decide package/source license posture for `@brandcode/mcp` and terms for bearer-key access, rate limits, feedback/history privacy, custody, and abuse handling.
 - Remaining hardening decision: whether `get_brand_asset` needs explicit asset-id proof before any release candidate or can remain covered by list/catalog tests until a stable staging asset id is selected.
 - Remaining process decision: whether to push the local M001 commits plus env-name normalization before opening hardening/audit lanes.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L06**. Do not publish, release, submit to directories, or add tools; audit license and directory trust posture first.
+Automation should pick up exactly one Ready lane: **M001-L07**. Do not publish, release, submit to directories, add tools, or change hosted behavior beyond narrow security proof/documentation; harden hosted auth/scope/security and rate-limit posture first.

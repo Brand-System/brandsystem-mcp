@@ -123,7 +123,7 @@ Acceptance:
 ## Suggested Lane Sequence
 
 1. **M001-L06 License And Directory Trust Audit**
-   Audit license/package/directory/security docs and produce a gap list with no code behavior changes.
+   Complete. Audited license/package/directory/security docs and produced a gap list with no code behavior changes.
 
 2. **M001-L07 Security Matrix And Rate-Limit Posture**
    Expand hosted auth/scope/security tests and document or implement rate-limit posture.
@@ -139,4 +139,4 @@ Acceptance:
 
 ## Current Next Ready Lane
 
-M001-L06 should be the next Ready lane: **License And Directory Trust Audit**.
+M001-L07 should be the next Ready lane: **Security Matrix And Rate-Limit Posture**.

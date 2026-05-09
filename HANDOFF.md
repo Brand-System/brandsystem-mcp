@@ -4,11 +4,11 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. Jason does not want to release yet. The sprint is now about pre-release hardening: license clarity, security posture, test depth, directory-score readiness, and battle testing before any public package or directory launch.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, security posture, test depth, directory-score readiness, and battle testing before any public package or directory launch.
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through the first two lanes:
+Seeded repo-native sprint coordination and carried M001 through M001-L06:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -16,9 +16,22 @@ Seeded repo-native sprint coordination and carried M001 through the first two la
 - `.claudex/prompts/M001-L01-hosted-proof-harness.md`
 - `.claudex/packets/M001-L02-roadmap-alignment-delta.md`
 - `.claudex/prompts/M001-L02-roadmap-alignment-delta.md`
+- `.claudex/packets/M001-L05-pre-release-hardening-map.md`
+- `.claudex/prompts/M001-L05-pre-release-hardening-map.md`
+- `.claudex/packets/M001-L06-license-directory-trust-audit.md`
+- `.claudex/prompts/M001-L06-license-directory-trust-audit.md`
+- `.claudex/packets/M001-L07-security-matrix-rate-limit-posture.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Latest Build Work
+
+M001-L06 closed as a docs-only license and directory trust audit:
+
+- `specs/brandcode-mcp-license-directory-trust-audit.md` records the current release blockers.
+- MIT remains clean for the existing `@brandsystem/mcp` Build package code, and `@brandcode/mcp` package/source can likely inherit MIT if Jason chooses that posture.
+- Hosted Brandcode MCP still needs explicit service terms for bearer-key access, rate limits, feedback/history retention, private custody, client-owned brand data, and abuse handling.
+- Existing listing metadata is Build-oriented and should remain Build-only until a separate Brandcode MCP Use listing is intentionally authored.
+- `SECURITY.md` is too thin for hosted Use MCP review; it needs bearer auth, scopes, service-token posture, private custody, feedback/history privacy, and rate-limit/abuse language.
 
 M001-L02 closed as a docs-only roadmap/product-spine update:
 
@@ -46,16 +59,16 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L06 is Ready: License And Directory Trust Audit.
+M001-L07 is Ready: Security Matrix And Rate-Limit Posture.
 
-Do not publish, release, submit to MCP directories, or add tools. Audit license, package, security, and directory/scoring posture first, then leave exactly one next Ready lane.
+Do not publish, release, submit to MCP directories, or add tools. Expand hosted auth/scope/security verification and document or implement rate-limit posture first, then leave exactly one next Ready lane.
 
 ## Known Blockers
 
 - `get_brand_asset` still needs an explicit stable `BRANDCODE_MCP_SMOKE_ASSET_ID` if v0.1 requires asset fetch proof beyond catalog/list tests.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
-- License/hosted-service terms are not yet settled for `@brandcode/mcp`.
-- Directory scoring and security review posture have not been audited yet.
+- License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
+- Directory scoring and security review posture have been audited, but the hosted security/rate-limit proof work is not complete.
 
 ## Local Hygiene
 

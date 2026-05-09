@@ -1,6 +1,6 @@
 # M001-L05 - Pre-Release Hardening Map
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And v0.1 Proof
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** PO/build-lane planning

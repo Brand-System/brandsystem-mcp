@@ -148,3 +148,30 @@ Still prohibited:
 - No public MCP directory submission.
 - No new tools.
 - No hosted behavior changes unless a critical false claim can be fixed docs-only.
+
+## 2026-05-08 - M001-L06 Closed
+
+M001-L06 completed the license, package, directory, and trust audit as a docs-only lane.
+
+Audit doc:
+
+- `specs/brandcode-mcp-license-directory-trust-audit.md`
+
+Core findings:
+
+- `@brandcode/mcp` can likely inherit MIT for package/source-code distribution if the package ships from this repo or sibling code under the same copyright posture, but MIT does not cover hosted-service access.
+- Hosted Brandcode MCP needs explicit service terms before public release for bearer-key access, rate limits, feedback/history retention, private asset custody, client-owned brand data, and abuse handling.
+- Current `package.json`, `server.json`, `smithery.yaml`, `glama.json`, and `llms.txt` are mostly Build-oriented for `@brandsystem/mcp`; that is acceptable now, but Brandcode MCP needs separate Use listing metadata before any directory submission.
+- `SECURITY.md` is not yet strong enough for hosted Use MCP review because it omits bearer auth, scopes, service-token posture, private custody, feedback/history privacy, and rate-limit/abuse posture.
+- Public docs mostly preserve the locked 8-tool/read-append posture, no canonical mutation, no selected-kit default, and no unauthenticated public read; a few "any MCP client" / "agents anywhere" phrases need auth qualifiers before release copy is submitted.
+
+Next Ready lane:
+
+- M001-L07 - Security Matrix And Rate-Limit Posture.
+
+Still prohibited:
+
+- No npm publish.
+- No public MCP directory submission.
+- No new tools.
+- No hosted behavior changes outside narrow security proof/documentation.
