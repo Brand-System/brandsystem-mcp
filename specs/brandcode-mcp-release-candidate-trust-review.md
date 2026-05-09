@@ -14,12 +14,13 @@ locked 8-tool surface is implemented, staging smoke passes, package-safe
 M001-L12 passed two-client proof through MCP Inspector and Claude Code.
 
 It is still not a release candidate. The blocking gap is no longer "does the
-staging route basically work"; it is production trust. Public release remains
-blocked by unresolved hosted-service terms, unresolved package/source posture
-for `@brandcode/mcp`, rate-limit/abuse posture still reported as
-`not_reported_by_staging`, no CI run on the local M001 stack because the M001
-stack remains unpushed, and no separate Brandcode Use directory metadata
-package.
+staging route basically work"; it is production trust. M001-L14 converted the
+hosted-service terms and rate-limit gap into an explicit blocked gate. Public
+release remains blocked by unresolved hosted-service terms, unresolved
+package/source posture for `@brandcode/mcp`, rate-limit/abuse posture still
+reported as `not_reported_by_staging`, no CI run on the local M001 stack
+because the M001 stack remains unpushed, and no separate Brandcode Use
+directory metadata package.
 
 ## Evidence Reviewed
 
@@ -50,7 +51,7 @@ package.
 | Local-vs-remote source truth | Blocked | The local M001 stack remains unpushed; CI has not run on the M001 stack. This prevents a release-candidate claim. |
 | Package/source license | Jason decision | The repo package is MIT for `@brandsystem/mcp`; `@brandcode/mcp` source/package posture still needs Jason's decision before npm or directory launch. |
 | Hosted-service terms | Blocked | Bearer-key access, privacy, feedback/history retention, custody, abuse handling, service availability, and rate limits need explicit terms before release. |
-| Rate limits / abuse | Blocked | `SECURITY.md` truthfully reports staging as `not_reported_by_staging`. Public release needs active enforcement or Jason-approved owner/blocker language. |
+| Rate limits / abuse | Blocked | `SECURITY.md` and `brand_status.rate_limits` report staging as `not_reported_by_staging` with `release_gate: "blocked"`. Public release needs active enforcement or Jason-approved Brandcode operations owner/blocker language. |
 | Directory metadata | Deferred | `server.json`, `smithery.yaml`, `glama.json`, `llms.txt`, and README remain Build-oriented for `@brandsystem/mcp`. Brandcode Use needs separate listing metadata after terms/rate-limit posture is settled. |
 | Production-key proof | Deferred | Staging `bck_test_` proof is good. Production `bck_live_` proof should happen after production env and terms/rate-limit posture exist, not in this review lane. |
 | Another brand proof | Deferred | Brandcode fixture proof is adequate for the current gate. A non-Brandcode Studio brand should be proven before public launch if one is available with package-safe assets. |
@@ -59,14 +60,13 @@ package.
 
 Every remaining blocker is converted below. None is left as chat-only work.
 
-### Repair Packet - M001-L14 Hosted Terms And Rate-Limit Gate
+### Repair Gate - M001-L14 Hosted Terms And Rate-Limit Gate
 
-The next Ready lane is M001-L14. It should produce the terms/rate-limit release
-gate for hosted Brandcode MCP access, covering bearer-key access, privacy,
-feedback/history retention, custody guarantees, abuse handling, and rate-limit
-reporting/enforcement. This is the highest-leverage repair because directory
-metadata, production-key proof, and public launch copy all depend on the same
-service posture.
+M001-L14 produced the terms/rate-limit release gate for hosted Brandcode MCP
+access, covering bearer-key access, privacy, feedback/history retention,
+custody guarantees, abuse handling, and rate-limit reporting/enforcement. The
+gate is blocked, not satisfied. Directory metadata, production-key proof, and
+public launch copy all remain downstream of that service posture.
 
 ### Named Jason Decision - Package/Source Posture
 
@@ -100,6 +100,6 @@ reasons to weaken the current hosted terms/rate-limit gate.
 ## Release Candidate Decision
 
 Do not claim release-candidate readiness yet. The correct next step is one
-repair lane: M001-L14 Hosted Terms And Rate-Limit Gate.
+Ready lane: M001-L15 Hosted Service Terms Decision Brief.
 
 Release/publish remains blocked on Jason approval.

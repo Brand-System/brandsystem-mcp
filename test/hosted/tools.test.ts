@@ -1301,6 +1301,10 @@ describe("brand_status (hosted)", () => {
     });
     expect(json.rate_limits).toEqual({
       status: "not_reported_by_staging",
+      release_gate: "blocked",
+      blocker_owner: "Jason decision / Brandcode operations owner",
+      required_before_public_release:
+        "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
     });
 
     const summary = json.brand_summary as Record<string, unknown>;
@@ -1325,6 +1329,10 @@ describe("brand_status (hosted)", () => {
     });
     expect(json.rate_limits).toEqual({
       status: "not_reported_by_staging",
+      release_gate: "blocked",
+      blocker_owner: "Jason decision / Brandcode operations owner",
+      required_before_public_release:
+        "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
     });
     const availability = json.capability_availability as Record<
       string,

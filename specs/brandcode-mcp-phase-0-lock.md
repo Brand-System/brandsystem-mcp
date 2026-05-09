@@ -16,8 +16,8 @@ Phase 0 confirms the charter direction: `@brandsystem/mcp` remains the local **B
 | Naming | Package `@brandcode/mcp`, binary `brandcode-mcp`, listing name "Brandcode MCP". |
 | URL | Production `https://mcp.brandcode.studio/{slug}`. Staging `https://mcp.staging.brandcode.studio/{slug}`. |
 | Hosting | Vercel Fluid Compute is the primary target. Fly.io remains the fallback if the Vercel spike fails in deployment. |
-| Pricing | Free in v1 for active Brandcode Studio brands, protected by rate limits and per-brand caps. |
-| Migration story | "Two MCPs, one brand." `@brandsystem/mcp` builds and syncs; Brandcode MCP uses the live hosted brand from any MCP client. |
+| Pricing | Product intent: free in v1 for active Brandcode Studio brands, protected by rate limits and per-brand caps. Public pricing copy remains gated by hosted-service terms and rate-limit approval. |
+| Migration story | "Two MCPs, one brand." `@brandsystem/mcp` builds and syncs; Brandcode MCP uses the live hosted brand from authorized MCP clients. |
 
 ## Locked Tool Surface
 
@@ -133,5 +133,5 @@ Building a new brand? Use @brandsystem/mcp to extract, compile, and sync your br
 Cross-reference line for `@brandsystem/mcp` listings:
 
 ```text
-Already have a hosted Brandcode Studio brand? Brandcode MCP connects your live brand to any MCP client.
+Already have a hosted Brandcode Studio brand? Brandcode MCP connects your live brand to authorized MCP clients.
 ```

@@ -346,6 +346,10 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
           },
           rate_limits: {
             status: "not_reported_by_staging",
+            release_gate: "blocked",
+            blocker_owner: "Jason decision / Brandcode operations owner",
+            required_before_public_release:
+              "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
           },
           brand_summary: {
             readiness_stage: summary.readiness_stage,

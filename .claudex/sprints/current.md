@@ -44,6 +44,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L12 Claude Code proof passed through a temporary HTTP MCP config: Claude called `brand_status` and `get_brand_asset`, reported 8 implemented tools, package-safe asset posture, and no raw private/provider URL exposure.
 - M001-L13 completed the release-candidate trust review and did not release, publish, submit to directories, alter package/listing metadata, add tools, relax custody, or introduce selected Brand Kit default behavior.
 - L13 decision: do not claim release-candidate readiness yet; the next release gate is hosted-service terms plus rate-limit/abuse posture.
+- M001-L14 completed the hosted terms and rate-limit gate without release, publish, directory submission, package/listing metadata changes, hosted tool additions, selected Brand Kit default behavior, or custody relaxation.
+- The L14 durable gate is `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`.
+- `brand_status.rate_limits` still reports `status: "not_reported_by_staging"` and now also reports `release_gate: "blocked"` with blocker owner `Jason decision / Brandcode operations owner`.
+- The hosted terms/rate-limit gate is blocked, not satisfied. Required Jason decisions remain hosted-service terms, privacy/retention, abuse/rate-limit operations owner, public "free in v1" copy, and `@brandcode/mcp` package/source posture.
 
 ## Lanes
 
@@ -62,7 +66,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L11 | Done | `.claudex/packets/M001-L11-hosted-package-asset-smoke-proof.md` | Confirm UCS staging freshness for the local package-safe asset repair and rerun hosted smoke with the package-safe asset id. |
 | M001-L12 | Done | `.claudex/packets/M001-L12-multi-client-battle-test.md` | Battle test the locked hosted 8-tool surface across real MCP clients before any release candidate review. |
 | M001-L13 | Done | `.claudex/packets/M001-L13-release-candidate-trust-review.md` | Review the pre-release trust posture and decide the next repair lane before any release candidate claim. |
-| M001-L14 | Ready | `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md` | Turn hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture into an explicit release gate. |
+| M001-L14 | Done | `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md` | Turn hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture into an explicit release gate. |
+| M001-L15 | Ready | `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md` | Prepare the compact Jason decision brief for hosted-service terms, retention, rate-limit/abuse ownership, pricing copy, and package/source posture. |
 
 ## Blockers And Decisions
 
@@ -70,11 +75,13 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Jason decision: hosted Brandcode MCP needs explicit service terms before public release; decide package/source license posture for `@brandcode/mcp` and terms for bearer-key access, rate limits, feedback/history privacy, custody, and abuse handling.
 - L11 resolved the hosted package asset proof blocker for `brandcode:logo:c5-logomark-red.svg`.
 - L12 resolved the hosted client credential blocker for Preview through Vercel env provisioning and did not commit secrets to the repo.
-- Rate-limit/abuse posture is documented as `not_reported_by_staging`; production release still needs active enforcement or an explicit Jason-approved blocker owner.
+- Rate-limit/abuse posture is documented as `not_reported_by_staging` with `release_gate: "blocked"`; production release still needs active enforcement or an explicit Jason-approved Brandcode operations owner and abuse-handling policy.
 - Remaining process decision: whether and when Jason authorizes pushing the
   local M001 stack so GitHub CI can run before any release-candidate claim.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
+- L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
+- Full-suite local test deferral: `npm test` currently fails two visual extraction smoke cases in `test/tools/smoke.test.ts` for invalid MCP content from `brand_extract_visual` and `brand_extract_site` without `.brand/`. Hosted L14 verification passed, but full-suite green should be repaired before any push/CI release-candidate claim.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L14**. Do not publish, release, submit to directories, add tools, alter public listing metadata, or relax private custody. Gate hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture before any release-candidate claim.
+Automation should pick up exactly one Ready lane: **M001-L15**. Do not publish, release, submit to directories, add tools, alter public listing metadata, push, or relax private custody. Prepare the hosted service terms decision brief so Jason can settle the blocked L14 gate.

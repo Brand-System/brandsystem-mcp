@@ -76,7 +76,8 @@ M001-L12 proof passed on 2026-05-09:
 
 ## Next Suggested Lane
 
-M001-L14 should be the next Ready lane: **Hosted Terms And Rate-Limit Gate**.
+M001-L14 completed after this review. Current next Ready lane is
+**M001-L15 Hosted Service Terms Decision Brief**.
 
 ## Closeout - 2026-05-09
 

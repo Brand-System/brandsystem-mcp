@@ -1,6 +1,6 @@
 # M001-L14 - Hosted Terms And Rate-Limit Gate
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Trust / policy / release gate
@@ -96,3 +96,44 @@ After this gate closes, choose exactly one of:
 
 Do not advance to release, publish, or directory submission without Jason's
 explicit approval.
+
+## Closeout
+
+M001-L14 completed the gate without publishing, releasing, submitting to
+directories, adding tools, changing package posture, or relaxing custody.
+
+Durable gate:
+
+- `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`
+
+Implementation/doc updates:
+
+- `brand_status.rate_limits` now reports `release_gate: "blocked"` while
+  preserving `status: "not_reported_by_staging"`.
+- `SECURITY.md` names the blocked hosted-service release gate, retention gap,
+  custody limits, and rate-limit/abuse owner requirement.
+- README and `llms.txt` now qualify hosted Use MCP access as authorized and
+  pre-release-gated.
+- `specs/brandcode-mcp-phase-0-lock.md` keeps "free in v1" as product intent,
+  not approved public pricing copy.
+
+Decision:
+
+- The hosted terms/rate-limit gate is blocked, not satisfied.
+- Required Jason decisions remain hosted-service terms, privacy/retention,
+  abuse/rate-limit operations owner, public pricing copy, and `@brandcode/mcp`
+  package/source posture.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/tools.test.ts` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` still fails two unrelated visual extraction smoke cases in
+  `test/tools/smoke.test.ts`: `brand_extract_visual` and `brand_extract_site`
+  return invalid MCP content when exercised without `.brand/`.
+
+Next Ready lane:
+
+- M001-L15 - Hosted Service Terms Decision Brief.

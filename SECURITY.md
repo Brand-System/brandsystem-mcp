@@ -22,6 +22,28 @@ The hosted `@brandcode/mcp` Use MCP is pre-release. Do not publish,
 release, or submit it to MCP directories until Jason explicitly authorizes
 release after hardening.
 
+### Hosted Service Release Gate
+
+The hosted-service terms and rate-limit gate is **blocked**. Staging proof is
+strong enough to review the locked 8-tool surface, but it is not production
+service approval.
+
+Public Brandcode MCP release requires Jason approval for:
+
+- hosted bearer-key access terms;
+- client-owned brand data and privacy commitments;
+- `brand_feedback` and `brand_history` retention/visibility;
+- private custody guarantees and package-safe delivery limits;
+- abuse handling, service availability, and operational ownership;
+- rate-limit enforcement or a named Brandcode operations owner;
+- public copy for "free in v1 for active Brandcode Studio brands";
+- `@brandcode/mcp` source/package posture: MIT, proprietary, dual-positioned,
+  or service-only.
+
+Until those decisions are made, Brandcode MCP directory metadata, public
+listing copy, npm publish, production release, and launch claims remain
+deferred.
+
 ### Auth And Scopes
 
 - Hosted clients connect with `Authorization: Bearer ...` on a brand-scoped
@@ -54,11 +76,15 @@ release after hardening.
   be returned.
 - `get_brand_asset` blocks private-provider-only delivery instead of
   substituting or exposing the raw private URL.
-- `brand_feedback` writes explicit operator feedback to UCS history for review;
-  it is not general telemetry.
-- `brand_history` is read-only and returns compact run/receipt summaries. It
-  redacts URL-like strings and avoids returning large nested support or
-  verification blobs.
+- `brand_feedback` writes explicit operator feedback to UCS history for
+  review. It is append-only review input, not general telemetry, approval,
+  or canonical governance mutation.
+- `brand_history` is read-only and returns compact run/receipt summaries scoped
+  by brand and key permissions. It redacts URL-like strings and avoids
+  returning large nested support or verification blobs.
+- Retention policy for feedback/history is not approved for public release
+  yet. Public launch requires an explicit retention/visibility policy or a
+  named Jason-approved blocker owner before directory submission.
 - General hosted AgentRun telemetry POST remains deferred; only explicit
   `brand_feedback` append is active.
 
@@ -68,5 +94,9 @@ release after hardening.
   abuse controls before public release.
 - Current staging status reports rate limits as `not_reported_by_staging`.
   This is an explicit pre-release posture, not a production claim.
-- Public release requires either active rate-limit enforcement or release docs
-  that name the remaining blocker and operational owner.
+- `brand_status.rate_limits` reports this as `release_gate: "blocked"` with
+  blocker owner `Jason decision / Brandcode operations owner`.
+- Public release requires command-backed rate-limit reporting/enforcement or a
+  Jason-approved operational owner and abuse-handling policy. A directory
+  listing must not claim production rate-limit protection from staging's
+  `not_reported_by_staging` response.

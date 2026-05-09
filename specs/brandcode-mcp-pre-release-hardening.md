@@ -153,10 +153,18 @@ Acceptance:
    and no separate Brandcode Use directory metadata.
 
 9. **M001-L14 Hosted Terms And Rate-Limit Gate**
-   Ready. Turn bearer-key access terms, privacy/retention, custody, abuse
-   handling, and rate-limit posture into an explicit release gate before
-   directory metadata or production-key proof work.
+   Complete. Added an explicit hosted-service release gate in
+   `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`, `SECURITY.md`,
+   README, and `llms.txt`. The gate is blocked until Jason decides hosted
+   service terms, retention/privacy, rate-limit/abuse ownership, public pricing
+   copy, and `@brandcode/mcp` package/source posture.
+
+10. **M001-L15 Hosted Service Terms Decision Brief**
+    Ready. Convert the blocked L14 gate into a compact Jason decision brief
+    without publishing, changing package metadata, or submitting directory
+    listings.
 
 ## Current Next Ready Lane
 
-M001-L14 should be the next Ready lane: **Hosted Terms And Rate-Limit Gate**.
+M001-L15 should be the next Ready lane: **Hosted Service Terms Decision
+Brief**.

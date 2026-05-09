@@ -17,7 +17,7 @@ This MCP server is the authoring half of the **"Two MCPs, One Brand"** model. It
 
 - **Claude Design** reads the `.brand/` directory natively when pointed at a governed repo
 - **Claude Code**, **Cursor**, **ChatGPT**, **Windsurf**, and any other MCP client load `brand-runtime.json` at generation time
-- **@brandcode/mcp** (the hosted Use MCP) serves the same runtime over HTTP for teams that want live reads at `mcp.brandcode.studio/{slug}`
+- **@brandcode/mcp** (the hosted Use MCP) serves the same runtime over HTTP for teams that want authenticated live reads at `mcp.brandcode.studio/{slug}`
 
 With brand-runtime.json loaded, agent prompts collapse from 200-400 tokens of inline brand context to just the delta. First output is on-brand. No review bottleneck.
 
@@ -114,11 +114,11 @@ The `.brand` runtime is the product. Two MCPs serve it:
 
 **`@brandsystem/mcp` — Build (this package).** Author and compile the `.brand` runtime locally. Extract from websites, Figma, and PDFs. Compile governance (anti-patterns, proof-point status, voice rules, application rules) plus DTCG tokens, brand-runtime.json, and interaction-policy.json into a single `.brand/` directory. Portable, versionable, ready to commit to any repo.
 
-**`@brandcode/mcp` — Use (hosted).** Connect any MCP client to the live Full Brand Runtime at `https://mcp.brandcode.studio/{slug}`. Agents fetch the current runtime, search approved knowledge, check drafts, retrieve package-safe assets, and leave append-only review feedback — no per-tool guideline copy, no stale snapshots, no canonical mutation from the MCP. Tagline: *"Your brand, live in every AI tool."*
+**`@brandcode/mcp` — Use (hosted).** Connect authorized MCP clients to the live Full Brand Runtime at `https://mcp.brandcode.studio/{slug}` with Brandcode bearer-key auth. Agents fetch the current runtime, search approved knowledge, check drafts, retrieve package-safe assets, and leave append-only review feedback — no per-tool guideline copy, no stale snapshots, no canonical mutation from the MCP. Tagline: *"Your brand, live in every AI tool."*
 
 Same `.brand` runtime artifact. Two consumption paths. Build authors it; Use serves it.
 
-Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). The hosted implementation now registers all 8 locked tools, and staging proof is command-backed at `https://mcp.staging.brandcode.studio/{slug}`. Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
+Phase 0 for Brandcode MCP is locked in [specs/brandcode-mcp-phase-0-lock.md](specs/brandcode-mcp-phase-0-lock.md) (8-tool read/append-only surface, per-brand API keys, scope-based auth). The hosted implementation now registers all 8 locked tools, and staging proof is command-backed at `https://mcp.staging.brandcode.studio/{slug}`. Production release is still gated by hosted-service terms, privacy/retention commitments, custody guarantees, abuse handling, and rate-limit posture; see [specs/brandcode-mcp-hosted-terms-rate-limit-gate.md](specs/brandcode-mcp-hosted-terms-rate-limit-gate.md). Until the production launch, use `@brandsystem/mcp` for local build/sync, and Live Mode (`brand_brandcode_live`) for connected reads that refresh from the hosted runtime within a short cache TTL.
 
 The Use MCP roadmap alignment lives in [specs/brandcode-mcp-use-roadmap-alignment.md](specs/brandcode-mcp-use-roadmap-alignment.md).
 
@@ -532,7 +532,7 @@ Four verbs stack — Build, Use, Evolve, Deploy. `@brandsystem/mcp` owns Build. 
 
 **Build** — this package. Extract identity. Compile governance. Produce a `.brand/` directory.
 
-**Use** — `@brandcode/mcp` hosted at `mcp.brandcode.studio/{slug}`. Any MCP client fetches the live Full Brand Runtime by default.
+**Use** — `@brandcode/mcp` hosted at `mcp.brandcode.studio/{slug}`. Authorized MCP clients fetch the live Full Brand Runtime by default.
 
 **Evolve** — [Brandcode Studio](https://brandcode.studio). Taste notes graduate from memory to formal governance. Anti-patterns accumulate. The runtime sharpens with every production cycle.
 
@@ -549,7 +549,7 @@ Each stage builds on the previous. Stop anywhere — you get value immediately.
 | **3. Visual identity** | Composition rules, patterns, anti-patterns, VIM | Session 2: `brand_deepen_identity` → `brand_compile` |
 | **4. Core messaging** | Voice profile, perspective, brand story | Session 3: `brand_extract_messaging` → `brand_compile_messaging` |
 | **5. Studio sync** | Hosted package pull, sync history, shared distribution | `brand_brandcode_connect` → `brand_brandcode_sync` → `brand_brandcode_live` for Live Mode reads |
-| **6. Live Use MCP** | Agents anywhere hit `mcp.brandcode.studio/{slug}` for current runtime, knowledge search, draft checks, asset fetch | `@brandcode/mcp` connects once; reads stay fresh across agent sessions |
+| **6. Live Use MCP** | Authorized agents hit `mcp.brandcode.studio/{slug}` for current runtime, knowledge search, draft checks, asset fetch | `@brandcode/mcp` connects once with bearer-key auth; reads stay fresh across agent sessions |
 | **7. Deploy to Claude Design** | Claude Design grounds on the `.brand/` directory natively — governance, narratives, proof points, taste notes all load without translation | Point Claude Design at a repo containing `.brand/`; output is on-brand from the first generation |
 
 Stages 1–4 are the standalone local MCP flow. Open source, fully portable, no account required.
@@ -564,7 +564,7 @@ Stages 5–7 are the Deploy path — where the `.brand` runtime becomes shared, 
 | `.brand/` directory (the runtime) | Fully — the portable artifact that travels with your brand | Client |
 | Brandcode framework (schema + stances + U-mech) | Fully — universal layer imported by every brand instance | Open |
 | Client claims, narratives, rules (I-content) | Per-instance — unique to each brand | Client |
-| `@brandcode/mcp` (hosted Use MCP) | Serves the runtime — any MCP client connects | Brandcode |
+| `@brandcode/mcp` (hosted Use MCP) | Serves the runtime — authorized MCP clients connect | Brandcode |
 
 ---
 

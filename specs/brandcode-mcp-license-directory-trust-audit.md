@@ -9,7 +9,10 @@
 
 Brandcode MCP is not ready for public release or directory submission. The repo has a solid product lock for the hosted Use MCP, and the current Build package metadata mostly stays scoped to `@brandsystem/mcp`. The trust gap is that the hosted service has security, privacy, rate-limit, terms, and directory-listing obligations that are not covered by the existing MIT license or the current `SECURITY.md`.
 
-M001-L07 completed the next security-matrix lane after this audit. The next Ready lane is **M001-L08 Asset Fetch And Custody Proof**. Do not publish, release, submit to directories, add tools, or change hosted behavior as part of this audit family.
+M001-L14 has now converted the hosted-service terms and rate-limit gap into an
+explicit blocked release gate. The next Ready lane is **M001-L15 Hosted Service
+Terms Decision Brief**. Do not publish, release, submit to directories, add
+tools, or change hosted behavior as part of this audit family.
 
 ## Source Surfaces Audited
 
@@ -93,11 +96,15 @@ Current evidence:
 - Phase 0 rejects build/extract/compile/local filesystem tools, canonical governance mutation, extra tools, and public unauthenticated share-token read mode (`specs/brandcode-mcp-phase-0-lock.md:37`-`specs/brandcode-mcp-phase-0-lock.md:42`).
 - The roadmap repeats that the eight-tool lock stays closed, selected/campaign kits are not the v0.1 default, checks are read-only, feedback is append-only, and history is scoped (`specs/brandcode-mcp-use-roadmap-alignment.md:67`-`specs/brandcode-mcp-use-roadmap-alignment.md:74`, `specs/brandcode-mcp-use-roadmap-alignment.md:145`-`specs/brandcode-mcp-use-roadmap-alignment.md:153`).
 - README explains the hosted Use MCP as live Full Brand Runtime access, package-safe asset reads, append-only review feedback, and no canonical mutation (`README.md:111`-`README.md:121`).
-- README also says "Any MCP client fetches the live Full Brand Runtime by default" and "Agents anywhere hit `mcp.brandcode.studio/{slug}`" (`README.md:533`-`README.md:553`), which is product-true but not release-safe without an adjacent bearer-auth qualifier.
+- README now qualifies the hosted Use path as authorized bearer-key access and
+  points to the blocked L14 service gate before production launch.
 
 Audit answer:
 
-The docs do not currently imply canonical mutation, selected-kit default behavior, or capabilities outside the locked 8 tools when read together with the specs. They also explicitly reject unauthenticated public read mode. The weak spot is public-facing shorthand: "any MCP client" and "agents anywhere" can be read as public unauthenticated availability if separated from the Phase 0 auth block.
+The docs do not currently imply canonical mutation, selected-kit default
+behavior, capabilities outside the locked 8 tools, or unauthenticated public
+availability when read together with the specs. Hosted Use copy now keeps
+bearer-key authorization adjacent to the production-launch gate.
 
 Required before release:
 
@@ -126,17 +133,25 @@ Likely Glama, LobeHub, Smithery, MCP Registry, or similar review risks:
 - Existing `glama.json` is too sparse to help trust scoring beyond maintainer identity.
 - `SECURITY.md` omits hosted auth, service-token, custody, feedback/history, and rate-limit posture.
 - Service terms are unresolved for hosted access.
-- No public-facing privacy/retention note for `brand_feedback` and `brand_history`.
+- Public-facing privacy/retention notes now exist in `SECURITY.md` and the L14
+  gate spec, but the actual retention policy remains a Jason decision before
+  release.
 - `get_brand_asset` proof is still skipped without a stable staging asset id.
 - CI has not run on all local M001 commits because `main` is ahead of origin.
 - Current docs include staging proof and command-backed evidence, but public listing copy needs a clean separation between local proof, hosted route proof, and human-visible UI proof.
 
 ## Recommended Follow-Up Lanes
 
-1. **M001-L07 Security Matrix And Rate-Limit Posture** - Complete. Expanded hosted auth/scope/security test coverage and documented rate-limit posture.
-2. **M001-L08 Asset Fetch And Custody Proof** - Select a stable staging asset id, prove `get_brand_asset`, and harden private custody redaction proof.
-3. **M001-L09 Multi-Client Battle Test** - Run staging smoke and manual client proof across real MCP clients and brands.
-4. **M001-L10 Release Candidate Review** - Decide whether to prepare release metadata, directory copy, package terms links, and publish/submission steps. This remains a Jason decision gate, not an automatic release.
+1. **M001-L14 Hosted Terms And Rate-Limit Gate** - Complete. Preserved
+   `not_reported_by_staging` as a blocked release gate and named the missing
+   Jason decisions.
+2. **M001-L15 Hosted Service Terms Decision Brief** - Prepare the compact
+   decision brief Jason needs to approve or revise service terms, retention,
+   rate-limit/abuse ownership, pricing copy, and package/source posture.
+3. **CI And Push Proof For M001 Stack** - Run only after Jason authorizes push
+   or PR proof for the local M001 stack.
+4. **Brandcode Use Directory Metadata** - Defer until the hosted service gate
+   is settled.
 
 ## Jason Decisions Before Public Release
 
@@ -148,8 +163,9 @@ Likely Glama, LobeHub, Smithery, MCP Registry, or similar review risks:
 
 ## Current Ready Lane
 
-Exactly one lane should be Ready after the M001-L07 closeout:
+Exactly one lane should be Ready after the M001-L14 closeout:
 
-**M001-L08 - Asset Fetch And Custody Proof**
+**M001-L15 - Hosted Service Terms Decision Brief**
 
-Goal: Prove `get_brand_asset` with a stable staging asset id and harden custody proof before multi-client battle testing, release-candidate review, or public directory metadata work.
+Goal: Turn the blocked hosted terms/rate-limit gate into a Jason-facing
+decision brief without release, directory, package, or custody changes.

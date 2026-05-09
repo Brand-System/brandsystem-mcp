@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, and M001-L13 completed release-candidate trust review. Jason does not want to release yet. The sprint is ready for a hosted terms/rate-limit gate, not release.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, and M001-L14 completed the hosted terms/rate-limit gate. Jason does not want to release yet. The sprint is ready for a hosted service terms decision brief, not release.
 
 ## Latest Build Work
 
@@ -43,6 +43,26 @@ M001-L13 completed release-candidate trust review:
   M001 stack, and no separate Brandcode Use directory metadata.
 - Release/publish remains blocked on Jason approval.
 
+M001-L14 completed the hosted terms and rate-limit gate:
+
+- Durable gate: `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`.
+- The gate is blocked, not satisfied.
+- `brand_status.rate_limits` preserves `status: "not_reported_by_staging"`
+  and now reports `release_gate: "blocked"`, blocker owner
+  `Jason decision / Brandcode operations owner`, and the required public
+  release condition.
+- `SECURITY.md` now names the hosted-service release gate, feedback/history
+  retention gap, custody limits, and rate-limit/abuse owner requirement.
+- README and `llms.txt` now qualify hosted Use MCP access as authorized and
+  pre-release-gated.
+- `specs/brandcode-mcp-phase-0-lock.md` keeps "free in v1" as product intent,
+  not approved public pricing copy.
+- Verification passed for `git diff --check`, hosted tool tests, lint, and
+  build. Full `npm test` still fails two unrelated visual extraction smoke
+  cases in `test/tools/smoke.test.ts` around invalid MCP content for
+  `brand_extract_visual` and `brand_extract_site` without `.brand/`.
+- M001-L15 is the next Ready lane for a compact Jason decision brief.
+
 ## Latest PO Work
 
 Seeded repo-native sprint coordination and carried M001 through M001-L12:
@@ -65,10 +85,12 @@ Seeded repo-native sprint coordination and carried M001 through M001-L12:
 - `.claudex/packets/M001-L12-multi-client-battle-test.md`
 - `.claudex/packets/M001-L13-release-candidate-trust-review.md`
 - `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md`
+- `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
 - `.claudex/prompts/M001-L13-release-candidate-trust-review.md`
+- `.claudex/prompts/M001-L15-hosted-service-terms-decision-brief.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -141,16 +163,20 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L14 is Ready: Hosted Terms And Rate-Limit Gate.
+M001-L15 is Ready: Hosted Service Terms Decision Brief.
 
-Do not publish, release, submit to MCP directories, add tools, alter public listing metadata, or relax custody. Gate hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture before any release-candidate claim.
+Do not publish, release, submit to MCP directories, add tools, alter public listing metadata, push, or relax custody. Prepare the compact Jason decision brief for hosted-service terms, privacy/retention, abuse/rate-limit ownership, public pricing copy, and `@brandcode/mcp` package/source posture.
 
 ## Known Blockers
 
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
-- Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.
+- Rate limits remain documented as `not_reported_by_staging` with `release_gate: "blocked"`; production release needs active enforcement or an explicit Jason-approved Brandcode operations owner and abuse-handling policy.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
+- Full `npm test` currently fails two visual extraction smoke cases in
+  `test/tools/smoke.test.ts` for invalid MCP content from
+  `brand_extract_visual` and `brand_extract_site` without `.brand/`; repair
+  before any push/CI release-candidate claim.
 - Local proof-key note: Vercel Preview now has a sensitive `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive values locally. Future proof sessions need an intentional local secret handoff or a generate-and-run shell flow.
 
 ## Local Hygiene

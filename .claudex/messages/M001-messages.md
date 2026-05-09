@@ -590,3 +590,70 @@ Blocker conversion:
 Next Ready lane:
 
 - M001-L14 - Hosted Terms And Rate-Limit Gate.
+
+## 2026-05-09 - M001-L14 Hosted Terms And Rate-Limit Gate Closed
+
+M001-L14 completed a narrowly scoped hosted trust gate without publishing,
+releasing, submitting to directories, changing public listing metadata, adding
+hosted tools, introducing selected Brand Kit default behavior, pushing, or
+relaxing custody.
+
+Durable gate:
+
+- `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`
+
+Code/docs updated:
+
+- `src/hosted/tools/status.ts`
+- `test/hosted/tools.test.ts`
+- `SECURITY.md`
+- `README.md`
+- `llms.txt`
+- `specs/brandcode-mcp-phase-0-lock.md`
+- `specs/brandcode-mcp-pre-release-hardening.md`
+- `specs/brandcode-mcp-license-directory-trust-audit.md`
+- `specs/brandcode-mcp-release-candidate-trust-review.md`
+- `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md`
+- `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md`
+- `.claudex/prompts/M001-L15-hosted-service-terms-decision-brief.md`
+
+Gate decision:
+
+- The hosted terms/rate-limit gate is blocked, not satisfied.
+- `brand_status.rate_limits.status` remains `not_reported_by_staging`.
+- `brand_status.rate_limits.release_gate` is now `blocked`.
+- The named blocker owner is `Jason decision / Brandcode operations owner`.
+- Public release requires command-backed rate-limit enforcement or a
+  Jason-approved operations owner and abuse-handling policy.
+
+Remaining Jason decisions:
+
+- Hosted bearer-key access terms.
+- Client-owned brand data, feedback, and history privacy/retention.
+- Rate-limit/abuse operations owner and launch policy.
+- Whether "free in v1 for active Brandcode Studio brands" is approved public
+  copy.
+- Whether `@brandcode/mcp` package/source posture is MIT, proprietary,
+  dual-positioned, or service-only.
+- Explicit approval before any release, publish, production release, directory
+  submission, public listing change, or push for CI proof.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/tools.test.ts` passed: 45 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` ran 526 tests: 524 passed and 2 failed in
+  `test/tools/smoke.test.ts`.
+- Deterministic failing cases:
+  - `brand_extract_visual returns gracefully without .brand/`
+  - `brand_extract_site returns gracefully without .brand/ when merge is false`
+- Failure shape: MCP SDK rejected an invalid tool result because the first
+  content item had no valid text/image/audio/resource payload. This is outside
+  the hosted terms/rate-limit gate and should become a separate smoke repair if
+  Jason wants full-suite green before push.
+
+Next Ready lane:
+
+- M001-L15 - Hosted Service Terms Decision Brief.
