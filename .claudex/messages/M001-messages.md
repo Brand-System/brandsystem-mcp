@@ -396,3 +396,36 @@ Next Ready lane:
 - M001-L11 remains the single Ready target until staging freshness and smoke
   credentials exist. Do not advance to battle testing, publish, submit to MCP
   directories, add tools, or relax custody.
+
+## 2026-05-09 - M001-L11 Hosted Package Asset Proof Passed
+
+M001-L11 completed the hosted package asset smoke proof.
+
+Freshness:
+
+- UCS `origin/main` contains `37585f98 Add Brandcode package asset delivery ref`.
+- `git -C /Users/jasonlankow/Desktop/UCS merge-base --is-ancestor 37585f98 origin/main`
+  exited `0`.
+- `git -C /Users/jasonlankow/Desktop/UCS branch -r --contains 37585f98`
+  returned `origin/main`.
+
+Hosted smoke:
+
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Asset id: `brandcode:logo:c5-logomark-red.svg`
+- Overall status: `pass`
+- `tools/list` returned the locked 8-tool Phase 0 order.
+- `get_brand_asset` returned package-safe custody:
+  - `custody_safe: true`
+  - `safe_for_mcp: true`
+  - `blocked_private_provider_url: false`
+  - `delivery_posture: "package_safe"`
+  - `delivery_ref_kind: "package_path"`
+  - `raw_private_provider_url_exposed: false`
+- `brand_feedback` append proof still returned `append_status: recorded`.
+- Read-only insufficient-scope proof still passed for `brand_check` and
+  `brand_feedback`.
+
+Next Ready lane:
+
+- M001-L12 - Multi-Client Battle Test.

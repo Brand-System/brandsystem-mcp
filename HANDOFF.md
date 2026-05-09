@@ -4,24 +4,24 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data and did not relax MCP custody. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, package-safe asset delivery proof, directory-score readiness, and battle testing before any public package or directory launch.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, and M001-L11 proved the package-safe asset through hosted MCP smoke without relaxing custody. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, directory-score readiness, and battle testing before any public package or directory launch.
 
 ## Latest Build Work
 
-M001-L11 attempted hosted package asset proof for the UCS package-data fixture:
+M001-L11 completed hosted package asset proof for the UCS package-data fixture:
 
 - The repaired UCS asset is still `brandcode:logo:c5-logomark-red.svg`, with governed package-safe `deliveryRef.packagePath: "brandcode-brand-runtime/visual/assets/logo/c5-logomark-red.svg"`, `inRuntimePackage: true`, and `lifecycle: "production-approved"`.
-- UCS delivery-ref commit `37585f98 Add Brandcode package asset delivery ref` is local to `/Users/jasonlankow/Desktop/UCS`; it is not contained in `origin/main`, and no remote branch contains it.
-- Staging freshness cannot be confirmed for the UCS source read by `https://mcp.staging.brandcode.studio/brandcode`.
+- UCS `origin/main` contains `37585f98 Add Brandcode package asset delivery ref`.
 - No MCP custody code changed and no private/provider URLs were made public.
-- Hosted smoke from this repo was run with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg` and reported `blocked` because the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`.
-- `BRANDCODE_MCP_SMOKE_READ_KEY` is also needed for a fully unblocked insufficient-scope proof.
+- Hosted smoke from this repo passed against `https://mcp.staging.brandcode.studio/brandcode` with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+- `get_brand_asset` returned `custody_safe: true`, `safe_for_mcp: true`, `blocked_private_provider_url: false`, `delivery_posture: "package_safe"`, `delivery_ref_kind: "package_path"`, and `raw_private_provider_url_exposed: false`.
+- The full smoke also passed locked tool order, package-safe catalog shape, feedback append, and read-only insufficient-scope checks for `brand_check` and `brand_feedback`.
 
-M001-L11 remains the single Ready target: after Jason authorizes/pushes/deploys UCS commit `37585f98` or otherwise confirms staging freshness, and after hosted smoke credentials are available locally, rerun hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+M001-L12 is now Ready: battle test the locked 8-tool hosted MCP surface across real MCP clients before any release candidate review.
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through M001-L09:
+Seeded repo-native sprint coordination and carried M001 through M001-L12:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -37,8 +37,11 @@ Seeded repo-native sprint coordination and carried M001 through M001-L09:
 - `.claudex/packets/M001-L08-asset-fetch-custody-proof.md`
 - `.claudex/packets/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/packets/M001-L10-ucs-package-asset-delivery-ref.md`
+- `.claudex/packets/M001-L11-hosted-package-asset-smoke-proof.md`
+- `.claudex/packets/M001-L12-multi-client-battle-test.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
+- `.claudex/prompts/M001-L12-multi-client-battle-test.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -51,7 +54,7 @@ M001-L09 closed as blocked upstream with docs-only coordination:
 - `brandcode:logo:c5-logomark-red.svg` exists there with root-relative runtime URL and public URL refs, but no `deliveryRef.packagePath`, top-level `packagePath`, or package-safe `packageUrl`.
 - The MCP correctly refuses to infer package custody from ordinary URL fields; no MCP code changed and no custody rule was relaxed.
 - Hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID` was not rerun because no package-safe fixture exists and local smoke env keys are not present.
-- M001-L10 is now Ready to repair the upstream UCS/Studio package asset delivery ref, deploy staging freshness, and rerun hosted smoke.
+- M001-L10 became the repair lane for the upstream UCS/Studio package asset delivery ref.
 
 M001-L08 closed with hosted custody proof and a package fixture blocker:
 
@@ -101,23 +104,21 @@ The harness uses env-provided endpoint and bearer keys. It verifies MCP initiali
 Latest hosted proof:
 
 - Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Package-safe asset id: `brandcode:logo:c5-logomark-red.svg`
 - Latest asset-custody deployment: `https://brandsystem-qhfz5p7o6-column-five.vercel.app`
 - Earlier feedback-proof deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
 - Service-token env: `BRANDCODE_MCP_SERVICE_TOKEN`
 - `brand_feedback` append proof: `append_status: recorded`
-- Remaining blocked proof: `get_brand_asset` cannot pass package delivery until staging includes a package-safe asset fixture.
+- `get_brand_asset` package delivery proof: passed with `delivery_ref_kind: "package_path"` and no raw private/provider URL exposure.
 
 ## Next Ready Lane
 
-M001-L11 is Ready: Hosted Package Asset Smoke Proof.
+M001-L12 is Ready: Multi-Client Battle Test.
 
-Do not publish, release, submit to MCP directories, add tools, or relax custody. Confirm the UCS package-data repair for `brandcode:logo:c5-logomark-red.svg` is fresh in staging, then rerun hosted smoke until `get_brand_asset` passes package delivery proof with no raw private/provider URL exposure.
+Do not publish, release, submit to MCP directories, add tools, or relax custody. Battle test the locked 8-tool hosted MCP surface across real MCP clients and turn any failure into a durable repair packet before release-candidate review.
 
 ## Known Blockers
 
-- Staging freshness blocker: UCS commit `37585f98` with the package-safe delivery ref is local and not present on `origin/main`; hosted staging cannot be claimed fresh until that change is deployed to the source read by `https://mcp.staging.brandcode.studio/brandcode`.
-- Hosted smoke blocker: the current shell lacks `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY`; provide `BRANDCODE_MCP_SMOKE_READ_KEY` as well for the full smoke matrix.
-- `get_brand_asset` has stable asset-id proof but still needs package-safe delivery proof before release-grade battle testing.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
 - Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.

@@ -1,6 +1,6 @@
 # M001-L11 - Hosted Package Asset Smoke Proof
 
-**Status:** Ready - blocked on external inputs
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted proof / staging freshness
@@ -103,6 +103,46 @@ Required next input:
 
 The lane remains the single Ready target so automation does not move on to
 battle testing before package asset delivery proof is real.
+
+## Closeout - 2026-05-09
+
+M001-L11 completed hosted package asset smoke proof without changing MCP custody
+rules.
+
+Freshness result:
+
+- UCS delivery-ref commit: `37585f98 Add Brandcode package asset delivery ref`
+- `git -C /Users/jasonlankow/Desktop/UCS fetch origin main --quiet` completed.
+- `git -C /Users/jasonlankow/Desktop/UCS merge-base --is-ancestor 37585f98 origin/main`
+  exited `0`.
+- `git -C /Users/jasonlankow/Desktop/UCS branch -r --contains 37585f98`
+  returned `origin/main`.
+
+Hosted smoke result:
+
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Asset id: `brandcode:logo:c5-logomark-red.svg`
+- Command shape:
+  `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg npm run smoke:hosted-mcp -- --json`
+- Overall status: `pass`
+- `tools/list` returned the locked 8-tool Phase 0 order.
+- `list_brand_assets` returned a package-safe catalog shape with
+  `custody_safe: true` and no raw private/provider URL exposure.
+- `get_brand_asset` passed with:
+  - `custody_safe: true`
+  - `safe_for_mcp: true`
+  - `blocked_private_provider_url: false`
+  - `delivery_posture: "package_safe"`
+  - `delivery_ref_kind: "package_path"`
+  - `raw_private_provider_url_exposed: false`
+- `brand_feedback` append proof still records successfully.
+- Read-only insufficient-scope proof still passes for `brand_check` and
+  `brand_feedback`.
+
+Next lane:
+
+- M001-L12 should battle test the locked 8-tool hosted surface across real MCP
+  clients before any release candidate review.
 
 ## Out Of Scope
 
