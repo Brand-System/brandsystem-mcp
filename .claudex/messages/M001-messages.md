@@ -429,3 +429,60 @@ Hosted smoke:
 Next Ready lane:
 
 - M001-L12 - Multi-Client Battle Test.
+
+## 2026-05-09 - M001-L12 Blocked On Hosted Client Credentials
+
+M001-L12 attempted the multi-client battle-test lane, but could not complete
+hosted smoke or real-client proof in the current environment.
+
+Smoke result:
+
+- Command: `npm run smoke:hosted-mcp -- --json`
+- Status: `blocked`
+- Missing required env:
+  - `BRANDCODE_MCP_SMOKE_URL`
+  - `BRANDCODE_MCP_SMOKE_FULL_KEY`
+
+Preview env check:
+
+- `vercel env pull --environment=preview --yes` succeeded into a temporary file.
+- The pulled preview env lists `BRANDCODE_MCP_TEST_KEYS` and
+  `BRANDCODE_MCP_SERVICE_TOKEN`.
+- `BRANDCODE_MCP_TEST_KEYS` is an empty quoted value, so no `brandcode`
+  full/read key entries can be derived for local proof.
+- A second smoke attempt with endpoint
+  `https://mcp.staging.brandcode.studio/brandcode` and asset id
+  `brandcode:logo:c5-logomark-red.svg` stayed blocked because
+  `BRANDCODE_MCP_SMOKE_FULL_KEY` was unavailable.
+
+Client paths checked:
+
+- Claude Code is installed and supports HTTP MCP servers with Authorization
+  headers.
+- Codex CLI is installed and supports Streamable HTTP MCP servers with a
+  bearer-token env var.
+- MCP Inspector is reachable through `npx -y @modelcontextprotocol/inspector`
+  and supports CLI HTTP mode plus headers.
+
+No client proof was claimed because none of those clients can truthfully
+exercise the target endpoint without usable full/read bearer keys for the
+`brandcode` slug. Treating unauthenticated rejection as multi-client proof would
+be false.
+
+Required next input:
+
+- Expose `BRANDCODE_MCP_SMOKE_URL=https://mcp.staging.brandcode.studio/brandcode`.
+- Expose `BRANDCODE_MCP_SMOKE_FULL_KEY` for `brandcode` with
+  `read,check,feedback`.
+- Expose `BRANDCODE_MCP_SMOKE_READ_KEY` for `brandcode` with `read` only.
+- Expose `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`.
+- Or populate non-empty `BRANDCODE_MCP_TEST_KEYS` preview entries for the
+  `brandcode` slug so local proof can derive those keys.
+
+No hosted code changed, no custody rule was relaxed, and no release, publish, or
+directory action was taken.
+
+Next lane posture:
+
+- No lane is Ready while M001-L12 is blocked on hosted client credentials.
+- Once the keys are available, M001-L12 should resume as the single Ready lane.

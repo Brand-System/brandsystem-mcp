@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, and M001-L11 proved the package-safe asset through hosted MCP smoke without relaxing custody. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, directory-score readiness, and battle testing before any public package or directory launch.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, and M001-L11 proved the package-safe asset through hosted MCP smoke without relaxing custody. M001-L12 attempted the multi-client battle test, but the current environment has no usable hosted smoke/client bearer keys for the `brandcode` slug. Jason does not want to release yet. The sprint is blocked on credentials before pre-release battle testing can continue.
 
 ## Latest Build Work
 
@@ -17,7 +17,15 @@ M001-L11 completed hosted package asset proof for the UCS package-data fixture:
 - `get_brand_asset` returned `custody_safe: true`, `safe_for_mcp: true`, `blocked_private_provider_url: false`, `delivery_posture: "package_safe"`, `delivery_ref_kind: "package_path"`, and `raw_private_provider_url_exposed: false`.
 - The full smoke also passed locked tool order, package-safe catalog shape, feedback append, and read-only insufficient-scope checks for `brand_check` and `brand_feedback`.
 
-M001-L12 is now Ready: battle test the locked 8-tool hosted MCP surface across real MCP clients before any release candidate review.
+M001-L12 is now blocked: battle testing the locked 8-tool hosted MCP surface across real MCP clients needs usable full/read bearer keys for the `brandcode` slug.
+
+M001-L12 attempt result:
+
+- Direct smoke command `npm run smoke:hosted-mcp -- --json` returned `blocked` because `BRANDCODE_MCP_SMOKE_URL` and `BRANDCODE_MCP_SMOKE_FULL_KEY` are missing from the shell.
+- `vercel env pull --environment=preview --yes` succeeds into a temporary file and shows `BRANDCODE_MCP_TEST_KEYS` plus `BRANDCODE_MCP_SERVICE_TOKEN`, but `BRANDCODE_MCP_TEST_KEYS` is an empty quoted value.
+- No `brandcode` full/read test-key entries can be derived locally for hosted smoke.
+- Claude Code, Codex CLI, and MCP Inspector are available client paths, but none can truthfully exercise the endpoint without usable full/read bearer keys.
+- No hosted code changed, no custody rule was relaxed, and no release/publish/directory action was taken.
 
 ## Latest PO Work
 
@@ -113,13 +121,14 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L12 is Ready: Multi-Client Battle Test.
+No lane is Ready while M001-L12 is blocked on hosted client credentials.
 
-Do not publish, release, submit to MCP directories, add tools, or relax custody. Battle test the locked 8-tool hosted MCP surface across real MCP clients and turn any failure into a durable repair packet before release-candidate review.
+Do not publish, release, submit to MCP directories, add tools, or relax custody. Once `brandcode` full/read keys are available locally or through non-empty preview test keys, resume M001-L12 as the single Ready lane: run hosted smoke first, then battle test the locked 8-tool hosted MCP surface across real MCP clients and turn any failure into a durable repair packet before release-candidate review.
 
 ## Known Blockers
 
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
+- M001-L12 is blocked by missing usable hosted smoke/client bearer keys for the `brandcode` slug; Vercel preview currently exposes `BRANDCODE_MCP_TEST_KEYS` as an empty value to local env pull.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
 - Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.
 
