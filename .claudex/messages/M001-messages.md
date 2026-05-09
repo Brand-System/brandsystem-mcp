@@ -247,3 +247,35 @@ Lane posture:
 - Exact blocker: Jason needs to provide/expose the hosted smoke URL, full key,
   read-only key, and either a stable asset id or enough credential access to
   list assets without exposing secrets in chat.
+
+## 2026-05-08 - M001-L08 Closed With Package Fixture Blocker
+
+M001-L08 deployed the custody hardening to staging and completed hosted asset
+proof against a stable Brandcode asset id.
+
+Proof target:
+
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
+- Deployment: `https://brandsystem-qhfz5p7o6-column-five.vercel.app`
+- Asset id: `brandcode:logo:c5-logomark-red.svg`
+
+Result:
+
+- `list_brand_assets` returned six assets and `custody_safe: true`.
+- All six currently available staging assets report
+  `delivery_ref.posture: "blocked_private_provider_url"`.
+- `get_brand_asset` correctly returned the selected asset as blocked for
+  private-provider-only delivery, with `custody.safe_for_mcp: false`.
+- No raw private/provider URL was exposed.
+- The smoke harness now classifies this truthful custody block as `blocked`
+  rather than `fail`, while package-safe assets must still satisfy the strict
+  pass criteria.
+
+New blocker:
+
+- Brandcode staging needs at least one stable package-safe asset fixture before
+  `get_brand_asset` can pass package delivery proof.
+
+Next Ready lane:
+
+- M001-L09 - Package-Safe Asset Fixture Coordination.

@@ -1,6 +1,6 @@
 # M001-L08 - Asset Fetch And Custody Proof
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted proof / custody hardening
@@ -78,10 +78,52 @@ Hosted proof blocker:
   asset id can be selected, and the required hosted smoke command with
   `BRANDCODE_MCP_SMOKE_ASSET_ID` cannot complete yet.
 
-L08 remains the single Ready lane until Jason provides or exposes:
+L08 remained the single Ready lane until Jason provided/exposed:
 
 - `BRANDCODE_MCP_SMOKE_URL=https://mcp.staging.brandcode.studio/brandcode`
 - `BRANDCODE_MCP_SMOKE_FULL_KEY`
 - `BRANDCODE_MCP_SMOKE_READ_KEY`
 - a stable `BRANDCODE_MCP_SMOKE_ASSET_ID`, or enough access to run
   `list_brand_assets` and select one without exposing secrets in chat.
+
+## Closeout - 2026-05-08
+
+L08 completed as custody proof with a real upstream package-fixture blocker.
+
+Deployed proof target:
+
+- Staging URL: `https://mcp.staging.brandcode.studio/brandcode`
+- Deployment: `https://brandsystem-qhfz5p7o6-column-five.vercel.app`
+- Selected asset id: `brandcode:logo:c5-logomark-red.svg`
+
+Hosted findings:
+
+- `list_brand_assets` returned six assets and `custody_safe: true`.
+- All six staging assets currently report `delivery_ref.posture: "blocked_private_provider_url"`.
+- No package-safe asset delivery ref exists in the current Brandcode staging package.
+- `get_brand_asset` returned the selected asset as unsafe for MCP delivery with
+  `blocked_private_provider_url: true`.
+- The response exposed no raw private/provider URLs.
+
+Harness behavior after this lane:
+
+- Package-safe asset responses still pass only when `custody.safe_for_mcp: true`,
+  a package delivery ref is present, no private/provider URL is exposed, and the
+  asset is not blocked for private provider custody.
+- Private-provider-only asset responses are now classified as `blocked` instead
+  of `fail` when the MCP truthfully blocks delivery and exposes no raw URL.
+- Any response that exposes a raw private/provider URL or falsely claims package
+  safety still fails.
+
+Verification:
+
+- `git diff --check`
+- `npm test -- --run test/scripts/hosted-mcp-smoke.test.ts test/hosted/tools.test.ts`
+- `npm run lint`
+- `npm run build`
+- Hosted smoke with `BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg`
+
+Next lane:
+
+- M001-L09 should coordinate or create a stable package-safe Brandcode asset
+  fixture before multi-client battle testing.

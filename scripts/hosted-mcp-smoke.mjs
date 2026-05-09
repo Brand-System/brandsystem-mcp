@@ -154,6 +154,18 @@ function assetIsPackageSafe(assetPayload) {
   );
 }
 
+function assetIsBlockedPrivateProvider(assetPayload) {
+  const evidence = assetCustodyEvidence(assetPayload, null);
+  return (
+    Boolean(assetPayload?.asset) &&
+    assetPayload?.custody_safe === true &&
+    evidence.safe_for_mcp === false &&
+    evidence.blocked_private_provider_url === true &&
+    evidence.delivery_posture === "blocked_private_provider_url" &&
+    evidence.raw_private_provider_url_exposed === false
+  );
+}
+
 function classifyConnectionError(error) {
   const message = error instanceof Error ? error.message : String(error);
   if (/invalid_token|slug_forbidden|missing_bearer/i.test(message)) {
@@ -371,9 +383,15 @@ async function run() {
         assetError ??
           check(
             "get_brand_asset",
-            assetIsPackageSafe(asset) ? "pass" : "fail",
+            assetIsPackageSafe(asset)
+              ? "pass"
+              : assetIsBlockedPrivateProvider(asset)
+                ? "blocked"
+                : "fail",
             assetIsPackageSafe(asset)
               ? "get_brand_asset returned a package-safe asset without raw private provider URLs"
+              : assetIsBlockedPrivateProvider(asset)
+                ? "get_brand_asset blocked private-provider-only delivery without exposing raw URLs"
               : "get_brand_asset did not return a package-safe asset custody posture",
             assetCustodyEvidence(asset, assetId),
           ),

@@ -4,11 +4,11 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, asset custody proof, directory-score readiness, and battle testing before any public package or directory launch.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. Jason does not want to release yet. The sprint is now about pre-release hardening: hosted-service terms, package-safe asset delivery proof, directory-score readiness, and battle testing before any public package or directory launch.
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through M001-L07:
+Seeded repo-native sprint coordination and carried M001 through M001-L08:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -22,17 +22,24 @@ Seeded repo-native sprint coordination and carried M001 through M001-L07:
 - `.claudex/prompts/M001-L06-license-directory-trust-audit.md`
 - `.claudex/packets/M001-L07-security-matrix-rate-limit-posture.md`
 - `.claudex/packets/M001-L08-asset-fetch-custody-proof.md`
+- `.claudex/packets/M001-L09-package-safe-asset-fixture.md`
+- `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Latest Build Work
 
-M001-L08 is partially hardened locally but not proved hosted:
+M001-L08 closed with hosted custody proof and a package fixture blocker:
 
 - `scripts/hosted-mcp-smoke.mjs` now requires `get_brand_asset` to return package-safe custody before passing.
+- Private-provider-only asset responses are classified as `blocked` when the MCP truthfully marks the asset unsafe for MCP delivery and exposes no raw private/provider URL.
 - `src/hosted/tools/assets.ts` now blocks private-looking `packageUrl` values instead of treating them as package-safe.
 - `test/hosted/tools.test.ts` covers private-looking package URL custody.
-- Hosted proof is blocked because this local environment has no `BRANDCODE_MCP_SMOKE_*` keys, and Vercel Preview env exposes empty sensitive values through `vercel env pull/run`.
-- No stable staging asset id was selected yet because `list_brand_assets` could not be called without a staging bearer key.
+- Hosted proof ran against `https://mcp.staging.brandcode.studio/brandcode` on deployment `https://brandsystem-qhfz5p7o6-column-five.vercel.app`.
+- Selected asset id: `brandcode:logo:c5-logomark-red.svg`.
+- `list_brand_assets` returned six assets and `custody_safe: true`.
+- All six staging assets currently report `delivery_ref.posture: "blocked_private_provider_url"`.
+- `get_brand_asset` returned the selected asset as blocked for private-provider-only delivery, exposed no raw private/provider URL, and the smoke harness reported that as `blocked`, not `fail`.
+- No package-safe asset delivery ref exists in the current Brandcode staging package.
 
 M001-L07 closed as a focused hosted security hardening lane:
 
@@ -69,21 +76,22 @@ The harness uses env-provided endpoint and bearer keys. It verifies MCP initiali
 Latest hosted proof:
 
 - Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
-- Deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
+- Latest asset-custody deployment: `https://brandsystem-qhfz5p7o6-column-five.vercel.app`
+- Earlier feedback-proof deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
 - Service-token env: `BRANDCODE_MCP_SERVICE_TOKEN`
 - `brand_feedback` append proof: `append_status: recorded`
-- Remaining skipped proof: `get_brand_asset` without `BRANDCODE_MCP_SMOKE_ASSET_ID`
+- Remaining blocked proof: `get_brand_asset` cannot pass package delivery until staging includes a package-safe asset fixture.
 
 ## Next Ready Lane
 
-M001-L08 is Ready: Asset Fetch And Custody Proof.
+M001-L09 is Ready: Package-Safe Asset Fixture Coordination.
 
-Do not publish, release, submit to MCP directories, or add tools. Provide or expose the staging smoke credentials, select a stable asset id through `list_brand_assets`, then prove `get_brand_asset` with `BRANDCODE_MCP_SMOKE_ASSET_ID`.
+Do not publish, release, submit to MCP directories, add tools, or relax custody. Coordinate or create one stable package-safe Brandcode asset fixture, then rerun hosted smoke until `get_brand_asset` can pass with a package delivery ref.
 
 ## Known Blockers
 
-- `get_brand_asset` still needs an explicit stable `BRANDCODE_MCP_SMOKE_ASSET_ID` if v0.1 requires asset fetch proof beyond catalog/list tests.
-- Current exact L08 blocker: local shell env has no hosted smoke keys, and Vercel Preview env lists sensitive test keys but exposes empty values through local pull/run commands.
+- Current exact package-fixture blocker: the Brandcode staging package has no asset with a package-safe delivery ref; all six current assets are private-provider-only blocked.
+- `get_brand_asset` has stable asset-id proof but still needs package-safe delivery proof before release-grade battle testing.
 - Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
 - License for `@brandcode/mcp` package/source and hosted-service terms are Jason decisions before release.
 - Rate limits remain documented as `not_reported_by_staging`; production release needs active enforcement or an explicit Jason-approved blocker owner.

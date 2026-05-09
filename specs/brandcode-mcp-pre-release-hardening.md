@@ -26,7 +26,7 @@ Brandcode MCP should not ship as soon as the first staging proof passes. The fir
   - `brand_feedback` with `append_status: recorded`
   - read-only insufficient-scope behavior for `brand_check`
   - read-only insufficient-scope behavior for `brand_feedback`
-- Remaining known smoke gap: `get_brand_asset` needs a stable `BRANDCODE_MCP_SMOKE_ASSET_ID`.
+- Remaining known smoke gap: `get_brand_asset` has stable asset-id proof, but the current Brandcode staging package has no package-safe asset delivery ref. The tool truthfully blocks private-provider-only assets without exposing raw URLs.
 
 ## Hardening Workstreams
 
@@ -70,7 +70,7 @@ Required coverage expansion:
 
 - Hosted auth matrix: missing bearer, invalid token, wrong environment prefix, wrong slug, read-only key, check-only key, feedback-only key, full key.
 - Tool behavior for malformed or partial hosted packages.
-- `get_brand_asset` with a real stable asset id.
+- `get_brand_asset` with a real stable asset id and at least one package-safe delivery fixture.
 - Asset redaction tests for private provider URLs.
 - `brand_feedback` append contract and upstream error mapping.
 - `brand_history` receipt-chain shape.
@@ -79,7 +79,7 @@ Required coverage expansion:
 Acceptance:
 
 - Full local suite passes.
-- Hosted smoke passes in staging with full/read-only keys and, ideally, a real asset id.
+- Hosted smoke passes in staging with full/read-only keys and a package-safe real asset id.
 - CI runs on the M001 state before any release claim.
 
 ### 4. Directory And Scoring Model Prep
@@ -129,14 +129,17 @@ Acceptance:
    Complete. Expanded hosted auth/scope/security tests and documented the current rate-limit posture.
 
 3. **M001-L08 Asset Fetch And Custody Proof**
-   Select a stable staging asset id, prove `get_brand_asset`, and harden private custody redaction proof.
+   Complete. Selected a stable staging asset id, proved `get_brand_asset` blocks private-provider-only custody without leaking raw URLs, and exposed the missing package-safe asset fixture.
 
-4. **M001-L09 Multi-Client Battle Test**
+4. **M001-L09 Package-Safe Asset Fixture Coordination**
+   Coordinate or create one stable Brandcode staging asset with a package-safe delivery ref, then rerun hosted smoke until `get_brand_asset` can pass package delivery proof.
+
+5. **M001-L10 Multi-Client Battle Test**
    Run staging smoke and manual client proof across real MCP clients and brands.
 
-5. **M001-L10 Release Candidate Review**
+6. **M001-L11 Release Candidate Review**
    Only after the above, decide whether the repo is ready for a release candidate. This is still not publish unless Jason explicitly says publish.
 
 ## Current Next Ready Lane
 
-M001-L08 should be the next Ready lane: **Asset Fetch And Custody Proof**.
+M001-L09 should be the next Ready lane: **Package-Safe Asset Fixture Coordination**.
