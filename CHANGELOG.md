@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- **GitHub Actions Node 24 compatibility.** CI now tests Node 20, 22, and 24; publish and benchmark workflows run on Node 24; first-party GitHub actions were updated to Node 24 runtime majors.
+
 ## 0.9.3 (2026-05-06)
 
 ### Changed
