@@ -1,6 +1,6 @@
 # Brandcode MCP Hosted Terms And Rate-Limit Gate
 
-**Status:** M001-L14 complete - release gate blocked
+**Status:** M001-L15 approved posture - release gate still blocked
 **Date:** 2026-05-09
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no public release, npm publish, package listing, MCP
@@ -13,7 +13,9 @@ blocked on hosted-service trust. Staging and two-client proof remain useful, but
 they do not settle terms, privacy/retention, rate limits, abuse handling, or
 the package/source posture for `@brandcode/mcp`.
 
-This gate is **not satisfied**. Keep `not_reported_by_staging` as a truthful
+The hosted-service posture is approved in
+`specs/brandcode-mcp-hosted-service-terms-decision-brief.md`, but this gate is
+still **not release-satisfied**. Keep `not_reported_by_staging` as a truthful
 rate-limit status and treat it as an explicit release blocker until either:
 
 - `brand_status` reports active per-brand rate-limit enforcement with
@@ -36,6 +38,23 @@ rate-limit status and treat it as an explicit release blocker until either:
 | `@brandcode/mcp` package/source | Jason decision | Decide MIT, proprietary, dual-positioned, or service-only posture before npm/package/listing work. |
 | Directory metadata | Deferred | Author separate Brandcode Use metadata only after this gate is satisfied or explicitly approved with blocker language. |
 
+## Approved Service-Terms Posture - 2026-05-10
+
+Jason approved the recommended terms posture:
+
+- approved-brand, bearer-key-only, pre-release hosted access;
+- client-owned or client-controlled brand data;
+- hosted runtime data used only to serve MCP tools and governance workflows;
+- append-only `brand_feedback`, not canonical mutation;
+- scoped, compact, redacted `brand_history`;
+- package-safe asset delivery only, with no raw private/provider URL exposure;
+- no public "free in v1" launch copy until pricing/limits are settled;
+- package/source posture may likely inherit MIT if Jason approves, while hosted
+  service access remains separate from source/license access.
+
+This approval does not authorize release, npm publish, directory submission, or
+public listing changes.
+
 ## Current Implementation Truth
 
 - `brand_status.rate_limits.status` remains `not_reported_by_staging`.
@@ -50,19 +69,16 @@ rate-limit status and treat it as an explicit release blocker until either:
 - Hosted asset responses must remain package-safe. Private-provider-only
   delivery must stay blocked, not substituted.
 
-## Jason Decisions
+## Remaining Decisions And Operational Gates
 
-Jason must decide:
+Jason approved the recommended terms posture. Remaining release blockers are:
 
-- what terms cover hosted Brandcode MCP bearer-key access;
-- what privacy and retention commitments apply to client brand data,
-  `brand_feedback`, and `brand_history`;
-- who owns abuse handling and rate-limit operations for public launch;
-- whether rate-limit enforcement is required before launch, or whether a named
-  operational owner/blocker is acceptable for an explicitly limited release;
-- whether public copy may say "free in v1 for active Brandcode Studio brands";
-- whether `@brandcode/mcp` source/package posture is MIT, proprietary,
-  dual-positioned, or service-only.
+- final feedback/history retention/deletion/export language;
+- active rate-limit enforcement evidence, or a named Brandcode operations owner
+  and abuse-handling runbook for a limited launch;
+- final `@brandcode/mcp` npm package/source posture;
+- full-suite green and CI proof for the local M001 stack;
+- explicit Jason approval for any release/publish/listing action.
 
 ## Release Rule
 
@@ -70,7 +86,8 @@ Do not claim release-candidate readiness, publish, submit to directories, alter
 public listing metadata, or change package posture until this gate is settled
 and Jason explicitly approves the release path.
 
-The next Ready lane should be **CI And Push Proof For M001 Stack** if Jason
-authorizes push/PR proof. If Jason does not authorize push yet, automation
-should pause on that named decision rather than inventing release or directory
-work.
+The next Ready lane is **M001-L16 Full Suite Visual Extraction Smoke Repair**.
+After full-suite green, the next lane should be push/CI proof for the local
+M001 stack if Jason authorizes push or PR proof. If Jason does not authorize
+push, automation should pause on that named decision rather than inventing
+release or directory work.

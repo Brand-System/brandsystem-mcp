@@ -1,6 +1,6 @@
 # M001-L15 - Hosted Service Terms Decision Brief
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Trust / decision brief / release gate
@@ -61,3 +61,39 @@ Produce a compact decision brief covering:
 - Directory metadata remains deferred.
 - `git diff --check` passes.
 - Sprint board, messages, and `HANDOFF.md` are updated at closeout.
+
+## Closeout - 2026-05-10
+
+Jason approved all recommended hosted-service posture items.
+
+Durable decision brief:
+
+- `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`
+
+Approved posture:
+
+- hosted Use access is approved-brand, bearer-key-only, and pre-release;
+- brand/runtime/content/assets remain client-owned or client-controlled;
+- hosted runtime data is used only to serve MCP tools and governance workflows;
+- no raw private/provider URLs, private blob URLs, service tokens, or raw
+  custody paths are exposed through hosted MCP responses;
+- `brand_feedback` is append-only review input, not canonical governance
+  mutation;
+- `brand_history` is scoped to brand/key posture and returns compact redacted
+  summaries;
+- feedback/history retention remains limited and review-oriented, with final
+  deletion/export language still needed before public launch copy;
+- active rate-limit enforcement is preferred, and any limited launch without
+  command-backed enforcement requires a named Brandcode operations owner and
+  abuse policy;
+- public "free in v1" copy is not approved as launch copy yet;
+- `@brandcode/mcp` package/source can likely inherit the repo MIT posture if
+  Jason approves that package posture, but hosted service access remains
+  separate from source/license access.
+
+Release status:
+
+- No release, npm publish, public listing, directory submission, production
+  release, package posture change, or release-candidate claim is approved.
+- Next Ready lane is M001-L16 to repair the known full-suite smoke failures
+  before push/CI or any release-candidate claim.

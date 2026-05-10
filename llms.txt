@@ -40,7 +40,7 @@ Tested in production: visual consistency is near-instant from the runtime. Voice
 ## Two MCPs, one brand
 @brandsystem/mcp is the **Build** MCP — author and compile the `.brand` runtime locally. @brandcode/mcp is the **Use** MCP — serves a live governed brand over HTTP to authorized MCP clients at `mcp.brandcode.studio/{slug}`. Same runtime artifact, two consumption paths.
 
-Hosted Brandcode MCP is pre-release. Do not describe it as publicly launched or directory-ready until hosted-service terms, privacy/retention, private custody, abuse handling, and rate-limit posture are approved. Current staging `brand_status.rate_limits.status` is `not_reported_by_staging` and the release gate remains blocked.
+Hosted Brandcode MCP is pre-release. The hosted-service posture is approved for authorized pre-release access, but do not describe it as publicly launched or directory-ready until final retention/deletion/export language, abuse handling, rate-limit operations, package/source posture, full-suite/CI proof, and explicit Jason release approval are complete. Current staging `brand_status.rate_limits.status` is `not_reported_by_staging` and the release gate remains blocked.
 
 ## For agent-to-agent handoff
 Load brand-runtime.json into any sub-agent's context. It contains identity (colors, typography, logo), visual rules (composition, anti-patterns), voice constraints (tone, never-say words), and content strategy (personas, journey stages, themes). One file replaces hundreds of tokens of per-prompt boilerplate. Claude Design reads the same artifact directly when given repo access — no translation layer needed.

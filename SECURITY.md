@@ -24,24 +24,24 @@ release after hardening.
 
 ### Hosted Service Release Gate
 
-The hosted-service terms and rate-limit gate is **blocked**. Staging proof is
-strong enough to review the locked 8-tool surface, but it is not production
-service approval.
+The hosted-service terms posture is approved, but the release gate remains
+**blocked**. Staging proof is strong enough to review the locked 8-tool
+surface, but it is not production service approval.
 
-Public Brandcode MCP release requires Jason approval for:
+Jason approved this hosted-service posture:
 
-- hosted bearer-key access terms;
-- client-owned brand data and privacy commitments;
-- `brand_feedback` and `brand_history` retention/visibility;
-- private custody guarantees and package-safe delivery limits;
-- abuse handling, service availability, and operational ownership;
-- rate-limit enforcement or a named Brandcode operations owner;
-- public copy for "free in v1 for active Brandcode Studio brands";
-- `@brandcode/mcp` source/package posture: MIT, proprietary, dual-positioned,
-  or service-only.
+- approved-brand, bearer-key-only, pre-release hosted access;
+- client-owned or client-controlled brand data;
+- append-only `brand_feedback`, not canonical mutation;
+- scoped, compact, redacted `brand_history`;
+- package-safe asset delivery only;
+- no public "free in v1" launch copy until pricing/limits are settled;
+- hosted service access stays separate from source/package license.
 
-Until those decisions are made, Brandcode MCP directory metadata, public
-listing copy, npm publish, production release, and launch claims remain
+Public Brandcode MCP release still requires explicit Jason approval plus final
+retention/deletion/export language, abuse handling, rate-limit operations,
+package/source posture, and QC/CI gates. Brandcode MCP directory metadata,
+public listing copy, npm publish, production release, and launch claims remain
 deferred.
 
 ### Auth And Scopes
@@ -82,9 +82,10 @@ deferred.
 - `brand_history` is read-only and returns compact run/receipt summaries scoped
   by brand and key permissions. It redacts URL-like strings and avoids
   returning large nested support or verification blobs.
-- Retention policy for feedback/history is not approved for public release
-  yet. Public launch requires an explicit retention/visibility policy or a
-  named Jason-approved blocker owner before directory submission.
+- Retention posture is approved as limited and review-oriented, but final
+  public retention/deletion/export language is not approved for launch yet.
+  Public launch requires that language or a named Jason-approved blocker owner
+  before directory submission.
 - General hosted AgentRun telemetry POST remains deferred; only explicit
   `brand_feedback` append is active.
 

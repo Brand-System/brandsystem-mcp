@@ -160,11 +160,18 @@ Acceptance:
    copy, and `@brandcode/mcp` package/source posture.
 
 10. **M001-L15 Hosted Service Terms Decision Brief**
-    Ready. Convert the blocked L14 gate into a compact Jason decision brief
-    without publishing, changing package metadata, or submitting directory
-    listings.
+    Complete. Jason approved the recommended hosted-service posture for
+    approved-brand bearer-key access, client-owned data, append-only feedback,
+    scoped history, custody, launch-copy restraint, and package/source
+    separation. Release remains blocked on QC/CI, final retention/export
+    language, rate-limit/abuse operations, package posture, and explicit Jason
+    release approval.
+
+11. **M001-L16 Full Suite Visual Extraction Smoke Repair**
+    Repair the two failing visual extraction smoke tests so full local test
+    proof can precede push/CI or any release-candidate claim.
 
 ## Current Next Ready Lane
 
-M001-L15 should be the next Ready lane: **Hosted Service Terms Decision
-Brief**.
+M001-L16 should be the next Ready lane: **Full Suite Visual Extraction Smoke
+Repair**.

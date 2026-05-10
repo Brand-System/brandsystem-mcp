@@ -1,0 +1,57 @@
+# M001-L16 - Full Suite Visual Extraction Smoke Repair
+
+**Status:** Ready
+**Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
+**Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
+**Lane type:** QC / test repair
+**Recommended commit:** `Repair visual extraction smoke responses`
+
+## Why
+
+M001-L14 verification found that focused hosted tests, lint, and build passed,
+but full `npm test` still fails two Build MCP smoke cases:
+
+- `brand_extract_visual returns gracefully without .brand/`
+- `brand_extract_site returns gracefully without .brand/ when merge is false`
+
+Both failures are invalid MCP content responses when tools are exercised without
+`.brand/`. Full-suite green should precede push/CI proof or any
+release-candidate claim.
+
+## Scope
+
+Repair the two smoke failures without changing hosted Brandcode MCP behavior.
+
+Inspect:
+
+- `test/tools/smoke.test.ts`
+- `src/tools/brand-extract-visual.ts`
+- `src/tools/brand-extract-site.ts`
+- shared response helpers only if the invalid content shape is produced there
+
+## Out Of Scope
+
+- No hosted Use MCP tool changes unless a shared response helper is truly
+  responsible.
+- No release, publish, npm publish, directory submission, listing changes,
+  selected-kit work, custody relaxation, or push unless Jason asks.
+
+## Acceptance
+
+- `npm test -- --run test/tools/smoke.test.ts` passes.
+- `npm run lint` and `npm run build` pass if TypeScript/tool code changes.
+- Full `npm test` is attempted and recorded.
+- Sprint board, messages, and `HANDOFF.md` are updated.
+- Exactly one next Ready lane remains.
+
+## Starting Evidence
+
+M001-L14 full-suite verification ran 526 tests: 524 passed and 2 failed. The
+failure shape was an MCP SDK rejection of an invalid tool result because the
+first content item had no valid text, image, audio, or resource payload.
+
+## Next Suggested Lane
+
+After full-suite green, the next lane should be push/CI proof for the local
+M001 stack if Jason authorizes push or PR proof. If Jason does not authorize
+push, pause on that named decision.
