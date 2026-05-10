@@ -735,3 +735,39 @@ Named decision:
 
 - Do not push the local M001 stack or seek CI proof until Jason explicitly
   authorizes push or PR proof.
+
+## 2026-05-10 - M001-L17 Push CI Proof Closed
+
+Jason explicitly authorized push in-thread.
+
+Push proof:
+
+- Branch: `main`
+- Pushed range: `61218ac..2cf291c`
+- Pushed tip: `2cf291c Repair visual extraction smoke responses`
+
+GitHub CI proof:
+
+- Workflow: CI
+- Run id: `25641439073`
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25641439073`
+- Result: success
+- Matrix jobs: Node 20 and Node 22 both passed.
+- Steps passed in both jobs: `npm ci`, `npm run build`, `npm run lint`,
+  `npm test`, and `npm audit --audit-level=high`.
+
+CI annotation:
+
+- GitHub reported Node.js 20 Actions deprecation for `actions/checkout@v4`
+  and `actions/setup-node@v4`.
+- This is not a current failure, but it should be repaired or explicitly
+  hardened before release-candidate claims.
+
+No release, npm publish, public MCP directory submission, public listing
+change, hosted tool addition, selected-kit default behavior, or custody
+relaxation happened.
+
+Next Ready lane:
+
+- M001-L18 - GitHub Actions Node 24 Compatibility.

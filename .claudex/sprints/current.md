@@ -11,7 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- Local `main` includes M001 coordination through the M001-L15 hosted service terms decision brief and has not been pushed.
+- `main` includes M001 coordination through M001-L17. The accumulated M001
+  stack was pushed to `origin/main` on 2026-05-10.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -56,6 +57,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L15 approval settles the pre-release service-terms direction, but does not authorize release, npm publish, directory submission, public listing changes, or release-candidate readiness claims.
 - M001-L16 repaired the invalid MCP image content returned by visual extraction tools by normalizing Puppeteer screenshot bytes through valid base64 encoding before emitting image content.
 - L16 restored local full-suite proof: `npm test -- --run test/tools/smoke.test.ts`, `npm run lint`, `npm run build`, and full `npm test` all passed. Full `npm test` passed 39 files and 526 tests.
+- M001-L17 pushed `main` from `61218ac` to `2cf291c` after Jason authorized
+  push.
+- GitHub CI run `25641439073` passed on pushed tip `2cf291c` across Node 20
+  and Node 22 matrix jobs. Both jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- The CI run emitted a Node.js 20 Actions deprecation annotation for
+  `actions/checkout@v4` and `actions/setup-node@v4`; this is the next release
+  trust hygiene lane.
 
 ## Lanes
 
@@ -77,7 +86,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L14 | Done | `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md` | Turn hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture into an explicit release gate. |
 | M001-L15 | Done | `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md` | Prepare the compact Jason decision brief for hosted-service terms, retention, rate-limit/abuse ownership, pricing copy, and package/source posture. |
 | M001-L16 | Done | `.claudex/packets/M001-L16-full-suite-visual-extraction-smoke-repair.md` | Repair the two failing visual extraction smoke tests so full local suite proof can precede push/CI or any release-candidate claim. |
-| M001-L17 | Ready | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
+| M001-L17 | Done | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
+| M001-L18 | Ready | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
 
 ## Blockers And Decisions
 
@@ -86,12 +96,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L11 resolved the hosted package asset proof blocker for `brandcode:logo:c5-logomark-red.svg`.
 - L12 resolved the hosted client credential blocker for Preview through Vercel env provisioning and did not commit secrets to the repo.
 - Rate-limit/abuse posture is documented as `not_reported_by_staging` with `release_gate: "blocked"`; production release still needs active enforcement or an explicit Jason-approved Brandcode operations owner and abuse-handling policy.
-- Remaining process decision: whether and when Jason authorizes pushing the
-  local M001 stack so GitHub CI can run before any release-candidate claim.
+- Push/CI proof for the M001 stack is complete: GitHub CI run `25641439073`
+  passed on pushed tip `2cf291c`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
-- Full-suite local test deferral is resolved by M001-L16. Push/CI proof remains blocked on Jason authorization to push the local M001 stack.
+- Full-suite local test deferral is resolved by M001-L16.
+- CI hardening deferral: M001-L17 passed, but GitHub annotated Node.js 20
+  Actions deprecation for `actions/checkout@v4` and `actions/setup-node@v4`.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L17**. Do not publish, release, submit to directories, add tools, alter public listing metadata, push without Jason authorization, or relax private custody. Resolve the push/CI proof gap after full-suite green, and treat absent push authorization as the named Jason decision blocker.
+Automation should pick up exactly one Ready lane: **M001-L18**. Do not publish, release, submit to directories, add tools, alter public listing metadata, or relax private custody. Repair the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run.

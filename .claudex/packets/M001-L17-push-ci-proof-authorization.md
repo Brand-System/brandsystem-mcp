@@ -1,6 +1,6 @@
 # M001-L17 - Push CI Proof Authorization
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Coordination / proof gate
@@ -45,3 +45,34 @@ M001-L16 local verification passed:
 - `npm run lint`: passed.
 - `npm run build`: passed.
 - `npm test`: 39 files and 526 tests passed.
+
+## Closeout - 2026-05-10
+
+Jason explicitly authorized push in-thread.
+
+Push proof:
+
+- Branch: `main`
+- Remote: `origin`
+- Pushed range: `61218ac..2cf291c`
+- Pushed tip: `2cf291c Repair visual extraction smoke responses`
+
+GitHub CI proof:
+
+- Workflow: CI
+- Run: `25641439073`
+- URL: `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25641439073`
+- Result: success
+- Matrix jobs: Node 20 and Node 22 both passed.
+- Steps passed in both jobs: `npm ci`, `npm run build`, `npm run lint`,
+  `npm test`, and `npm audit --audit-level=high`.
+
+CI annotation:
+
+- GitHub reported that Node.js 20 actions are deprecated for
+  `actions/checkout@v4` and `actions/setup-node@v4`.
+- This does not fail the current CI run, but it should become the next
+  hardening lane before release-candidate claims.
+
+No release, npm publish, directory submission, listing change, hosted tool
+addition, selected-kit default behavior, or custody relaxation happened.

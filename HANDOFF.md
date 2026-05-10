@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, and M001-L16 restored full local test-suite proof. Jason does not want to release yet. The sprint is ready for push/CI proof only if Jason authorizes push, not release.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, and M001-L17 pushed the M001 stack with green GitHub CI. Jason does not want to release yet. The sprint is ready for GitHub Actions Node runtime hardening, not release.
 
 ## Latest Build Work
 
@@ -31,16 +31,15 @@ M001-L12 completed multi-client battle testing:
 M001-L13 completed release-candidate trust review:
 
 - Durable review: `specs/brandcode-mcp-release-candidate-trust-review.md`.
-- Before the L13 closeout commit, local `main` was 20 commits ahead of
-  `origin/main`; the M001 stack remains unpushed.
-- Latest remote `main` CI green baseline is `61218ac`; GitHub Actions run
-  `25571869563` passed on 2026-05-08.
-- GitHub CI has not run on the local M001 stack.
+- At L13 closeout time, local `main` was 20 commits ahead of `origin/main`.
+  That push/CI gap was later resolved by M001-L17.
+- The pre-M001 remote `main` CI green baseline was `61218ac`; GitHub Actions
+  run `25571869563` passed on 2026-05-08.
 - The hosted surface is strong on staging smoke, package-safe Brandcode asset
   proof, and two-client proof, but it is not release-candidate ready.
-- Release remains blocked by hosted-service terms, rate-limit/abuse posture,
-  unresolved `@brandcode/mcp` package/source posture, no CI run on the local
-  M001 stack, and no separate Brandcode Use directory metadata.
+- Release remains blocked by rate-limit/abuse posture, unresolved
+  `@brandcode/mcp` package/source posture, final public retention/export
+  language, and no separate Brandcode Use directory metadata.
 - Release/publish remains blocked on Jason approval.
 
 M001-L14 completed the hosted terms and rate-limit gate:
@@ -87,8 +86,19 @@ M001-L16 completed the full suite visual extraction smoke repair:
 - `npm run lint` passed.
 - `npm run build` passed.
 - Full `npm test` passed: 39 files, 526 tests.
-- M001-L17 is the next Ready lane to resolve push/CI proof, but pushing remains
-  blocked until Jason explicitly authorizes push or PR proof.
+
+M001-L17 completed push/CI proof:
+
+- Jason explicitly authorized push in-thread.
+- Pushed `main` from `61218ac` to `2cf291c`.
+- GitHub CI run `25641439073` passed:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25641439073`.
+- Node 20 and Node 22 matrix jobs both passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- CI emitted a Node.js 20 Actions deprecation annotation for
+  `actions/checkout@v4` and `actions/setup-node@v4`.
+- M001-L18 is the next Ready lane to repair or explicitly harden the GitHub
+  Actions Node runtime posture.
 
 ## Latest PO Work
 
@@ -115,6 +125,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L17:
 - `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md`
 - `.claudex/packets/M001-L16-full-suite-visual-extraction-smoke-repair.md`
 - `.claudex/packets/M001-L17-push-ci-proof-authorization.md`
+- `.claudex/packets/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -122,6 +133,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L17:
 - `.claudex/prompts/M001-L15-hosted-service-terms-decision-brief.md`
 - `.claudex/prompts/M001-L16-full-suite-visual-extraction-smoke-repair.md`
 - `.claudex/prompts/M001-L17-push-ci-proof-authorization.md`
+- `.claudex/prompts/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -194,20 +206,22 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L17 is Ready: Push CI Proof Authorization.
+M001-L18 is Ready: GitHub Actions Node 24 Compatibility.
 
-Do not publish, release, submit to MCP directories, add tools, alter public listing metadata, push without Jason authorization, or relax custody. Resolve the push/CI proof gap after full-suite green, and treat absent push authorization as the named Jason decision blocker.
+Do not publish, release, submit to MCP directories, add tools, alter public listing metadata, or relax custody. Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run.
 
 ## Known Blockers
 
-- Local M001 commits are not pushed yet, so GitHub CI has not run for this sprint work.
+- M001 push/CI proof is complete: `origin/main` includes pushed tip `2cf291c`
+  and GitHub CI run `25641439073` passed.
 - Jason approved the recommended hosted-service posture, but final public
   retention/deletion/export language and `@brandcode/mcp` package/source
   posture remain launch blockers.
 - Rate limits remain documented as `not_reported_by_staging` with `release_gate: "blocked"`; production release needs active enforcement or an explicit Jason-approved Brandcode operations owner and abuse-handling policy.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
-- Full-suite local proof is green after M001-L16, but hosted/pushed CI proof is
-  still unavailable until Jason authorizes push or PR proof.
+- CI hardening remains: the passing M001-L17 CI run emitted a Node.js 20
+  Actions deprecation annotation for `actions/checkout@v4` and
+  `actions/setup-node@v4`.
 - Local proof-key note: Vercel Preview now has a sensitive `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive values locally. Future proof sessions need an intentional local secret handoff or a generate-and-run shell flow.
 
 ## Local Hygiene
