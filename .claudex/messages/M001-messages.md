@@ -697,3 +697,41 @@ Release status:
 Next Ready lane:
 
 - M001-L16 - Full Suite Visual Extraction Smoke Repair.
+
+## 2026-05-10 - M001-L16 Full Suite Visual Extraction Smoke Repair Closed
+
+M001-L16 repaired the two deterministic full-suite smoke failures without
+changing hosted Brandcode MCP behavior, publishing, releasing, pushing,
+submitting to directories, changing listing metadata, adding hosted tools, or
+relaxing custody.
+
+Cause:
+
+- Puppeteer screenshots can arrive as Uint8Array values in the current runtime.
+- Calling `.toString("base64")` directly on those values produced
+  comma-separated byte text rather than valid base64.
+- The MCP SDK rejected the first image content block from `brand_extract_visual`
+  and `brand_extract_site` as invalid.
+
+Repair:
+
+- Added shared `screenshotToBase64()` encoding in
+  `src/lib/visual-extractor.ts`.
+- Updated `brand_extract_visual`, `brand_extract_site`, and `brand_start` to
+  use the shared encoder before returning screenshot image content.
+
+Verification:
+
+- `npm test -- --run test/tools/smoke.test.ts` passed: 50 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 526 tests.
+
+Next Ready lane:
+
+- M001-L17 - Push CI Proof Authorization.
+
+Named decision:
+
+- Do not push the local M001 stack or seek CI proof until Jason explicitly
+  authorizes push or PR proof.

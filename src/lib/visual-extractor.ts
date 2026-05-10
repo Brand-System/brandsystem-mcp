@@ -67,6 +67,10 @@ export interface VisualExtractionError {
 
 export type VisualExtractionResult = VisualExtraction | VisualExtractionError;
 
+export function screenshotToBase64(screenshot: Buffer | Uint8Array): string {
+  return Buffer.from(screenshot).toString("base64");
+}
+
 export interface SitePageCandidate {
   url: string;
   pageType: string;

@@ -19,6 +19,7 @@ import {
   extractVisual,
   inferRolesFromVisual,
   isVisualExtractionAvailable,
+  screenshotToBase64,
   type VisualColorCandidate,
 } from "../lib/visual-extractor.js";
 import { mergeColorWithPriority, mergeTypographyWithPriority } from "../lib/confidence.js";
@@ -207,7 +208,7 @@ async function handler(input: Params) {
     content: [
       {
         type: "image",
-        data: result.screenshot.toString("base64"),
+        data: screenshotToBase64(result.screenshot),
         mimeType: "image/png",
       } as unknown as { type: "text"; text: string },
       textContent,

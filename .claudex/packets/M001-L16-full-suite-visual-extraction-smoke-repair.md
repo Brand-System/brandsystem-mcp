@@ -1,6 +1,6 @@
 # M001-L16 - Full Suite Visual Extraction Smoke Repair
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** QC / test repair
@@ -49,6 +49,27 @@ Inspect:
 M001-L14 full-suite verification ran 526 tests: 524 passed and 2 failed. The
 failure shape was an MCP SDK rejection of an invalid tool result because the
 first content item had no valid text, image, audio, or resource payload.
+
+## Closeout
+
+The smoke failures were caused by Puppeteer screenshot bytes being handled with
+`.toString("base64")` directly. In the current runtime, screenshots can be
+Uint8Array values; direct `toString("base64")` produced comma-separated byte
+text instead of valid base64, so the MCP SDK rejected the image content block.
+
+Repair:
+
+- Added `screenshotToBase64()` in `src/lib/visual-extractor.ts`.
+- Updated `brand_extract_visual`, `brand_extract_site`, and `brand_start` to
+  encode screenshots through the shared helper before returning MCP image
+  content.
+
+Verification:
+
+- `npm test -- --run test/tools/smoke.test.ts` passed: 50 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 526 tests.
 
 ## Next Suggested Lane
 

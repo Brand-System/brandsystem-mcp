@@ -54,6 +54,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   blockers.
 - M001-L15 captured Jason approval for the recommended hosted-service posture in `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`.
 - L15 approval settles the pre-release service-terms direction, but does not authorize release, npm publish, directory submission, public listing changes, or release-candidate readiness claims.
+- M001-L16 repaired the invalid MCP image content returned by visual extraction tools by normalizing Puppeteer screenshot bytes through valid base64 encoding before emitting image content.
+- L16 restored local full-suite proof: `npm test -- --run test/tools/smoke.test.ts`, `npm run lint`, `npm run build`, and full `npm test` all passed. Full `npm test` passed 39 files and 526 tests.
 
 ## Lanes
 
@@ -74,7 +76,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L13 | Done | `.claudex/packets/M001-L13-release-candidate-trust-review.md` | Review the pre-release trust posture and decide the next repair lane before any release candidate claim. |
 | M001-L14 | Done | `.claudex/packets/M001-L14-hosted-terms-rate-limit-gate.md` | Turn hosted-service terms, privacy/retention, custody, abuse handling, and rate-limit posture into an explicit release gate. |
 | M001-L15 | Done | `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md` | Prepare the compact Jason decision brief for hosted-service terms, retention, rate-limit/abuse ownership, pricing copy, and package/source posture. |
-| M001-L16 | Ready | `.claudex/packets/M001-L16-full-suite-visual-extraction-smoke-repair.md` | Repair the two failing visual extraction smoke tests so full local suite proof can precede push/CI or any release-candidate claim. |
+| M001-L16 | Done | `.claudex/packets/M001-L16-full-suite-visual-extraction-smoke-repair.md` | Repair the two failing visual extraction smoke tests so full local suite proof can precede push/CI or any release-candidate claim. |
+| M001-L17 | Ready | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
 
 ## Blockers And Decisions
 
@@ -87,8 +90,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   local M001 stack so GitHub CI can run before any release-candidate claim.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
-- Full-suite local test deferral: `npm test` currently fails two visual extraction smoke cases in `test/tools/smoke.test.ts` for invalid MCP content from `brand_extract_visual` and `brand_extract_site` without `.brand/`. Hosted L14 verification passed, but full-suite green should be repaired before any push/CI release-candidate claim.
+- Full-suite local test deferral is resolved by M001-L16. Push/CI proof remains blocked on Jason authorization to push the local M001 stack.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L16**. Do not publish, release, submit to directories, add tools, alter public listing metadata, push, or relax private custody. Repair the known full-suite visual extraction smoke failures before push/CI or any release-candidate claim.
+Automation should pick up exactly one Ready lane: **M001-L17**. Do not publish, release, submit to directories, add tools, alter public listing metadata, push without Jason authorization, or relax private custody. Resolve the push/CI proof gap after full-suite green, and treat absent push authorization as the named Jason decision blocker.

@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BrandDir } from "../lib/brand-dir.js";
 import { buildResponse } from "../lib/response.js";
-import { extractSite, isVisualExtractionAvailable } from "../lib/visual-extractor.js";
+import { extractSite, isVisualExtractionAvailable, screenshotToBase64 } from "../lib/visual-extractor.js";
 import { persistSiteExtraction } from "../lib/site-evidence.js";
 import { ERROR_CODES } from "../types/index.js";
 
@@ -75,7 +75,7 @@ async function handler(input: Params) {
     .slice(0, 2)
     .map((viewport) => ({
       type: "image",
-      data: viewport.screenshot.toString("base64"),
+      data: screenshotToBase64(viewport.screenshot),
       mimeType: "image/png",
     } as unknown as { type: "text"; text: string }));
 

@@ -11,7 +11,7 @@ import { mergeColor, mergeTypography, needsClarification } from "../lib/confiden
 import { getVersion } from "../lib/version.js";
 import { generateColorName, isCssArtifactName } from "../lib/color-namer.js";
 import { safeFetch, readResponseWithLimit, MAX_HTML_BYTES, MAX_CSS_BYTES } from "../lib/url-validator.js";
-import { extractSite, extractVisual, inferRolesFromVisual, isVisualExtractionAvailable } from "../lib/visual-extractor.js";
+import { extractSite, extractVisual, inferRolesFromVisual, isVisualExtractionAvailable, screenshotToBase64 } from "../lib/visual-extractor.js";
 import { isFirecrawlAvailable, scrapeWithFirecrawl } from "../lib/firecrawl.js";
 import { compileDTCG } from "../lib/dtcg-compiler.js";
 import { compileRuntime } from "../lib/runtime-compiler.js";
@@ -895,7 +895,7 @@ async function handleAutoMode(input: Params, brandDir: BrandDir): Promise<Return
       content: [
         {
           type: "image",
-          data: visualScreenshot.toString("base64"),
+          data: screenshotToBase64(visualScreenshot),
           mimeType: "image/png",
         } as unknown as { type: "text"; text: string },
         textContent,
