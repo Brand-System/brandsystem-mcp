@@ -13,7 +13,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
   CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed coordination/proof docs through M001-L26.
+  unpushed coordination/proof docs through M001-L27.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -201,6 +201,15 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   package/listing metadata, release/publish posture, directory submission,
   public source/license posture, production client keys, or production endpoint
   access.
+- M001-L27 added
+  `specs/brandcode-mcp-limited-client-support-intake-ledger.md`, documenting
+  limited-client support intake for access setup, auth/scope, custody,
+  quality, feedback/history, deletion/export, abuse/security, incidents, and
+  offboarding.
+- M001-L27 was docs-only. It preserved manual pre-release deletion/export ops
+  review and did not add public SLA language, self-serve operations, hosted
+  tools, custody changes, production keys, release/publish posture, package
+  metadata, directory submission, or public source posture.
 
 ## Lanes
 
@@ -232,7 +241,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L24 | Done | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist and test it against the internal Brandcode staging instance. |
 | M001-L25 | Done | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Prove the Column Five Brandcode staging endpoint through a real MCP client config without exposing keys. |
 | M001-L26 | Done | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
-| M001-L27 | Ready | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
+| M001-L27 | Done | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
+| M001-L28 | Ready | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
 
 ## Blockers And Decisions
 
@@ -271,15 +281,18 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L26 turned the key-generation, handoff, rotation, revocation,
   leak-response, and redacted proof process into a limited-client key
   operations runbook.
-- The next useful hardening step is M001-L27: add a limited-client support
-  intake ledger for setup, auth/scope, custody, feedback/history,
-  deletion/export, abuse/security, incident, and offboarding requests.
+- M001-L27 turned support, incident, deletion/export, and offboarding intake
+  into a redacted limited-client ledger without promising public SLA or
+  self-serve operations.
+- The next useful hardening step is M001-L28: prepare the Jason/legal/ops
+  deletion/export launch decision brief so the remaining public launch blocker
+  is framed as explicit decisions instead of vague policy risk.
 
 ## Ready Lane Rule
 
 Exactly one lane is Ready for automation:
 
-- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
+- `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md`
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

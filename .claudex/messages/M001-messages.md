@@ -1323,3 +1323,53 @@ production endpoint proof happened.
 Current Ready lane remains:
 
 - M001-L27 - Limited Client Support Intake Ledger.
+
+## 2026-05-11 - M001-L27 Completed
+
+Closed M001-L27 as a docs-only limited-client support hardening lane.
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-support-intake-ledger.md`
+
+Updated pointers and coordination:
+
+- `SECURITY.md`
+- `README.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
+- `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md`
+- `.claudex/prompts/M001-L28-deletion-export-launch-decision-brief.md`
+- `HANDOFF.md`
+
+Ledger coverage:
+
+- access setup, auth/scope, custody, quality, feedback/history,
+  deletion/export, abuse/security, incident, and offboarding intake;
+- endpoint, brand slug, key posture, non-secret key id/label, owner, status,
+  evidence, next action, and escalation owner fields;
+- status vocabulary for `new`, `triaging`, `waiting_on_client`,
+  `waiting_on_ops`, `blocked_decision`, `blocked_custody`, `blocked_secret`,
+  `in_progress`, `resolved`, and `closed_no_action`;
+- redaction rules for bearer keys, service tokens, private/provider URLs, raw
+  custody paths, sensitive env values, key-bearing configs, screenshots/logs,
+  and large support blobs;
+- deletion/export intake as manual pre-release ops review through Brandcode
+  Studio Ops.
+
+Verification:
+
+- `git diff --check` passed.
+- `git diff --cached --check` passed after staging.
+- No code changes were made, so lint/build/tests were skipped as docs-only.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, package/source posture change, production client key generation,
+self-serve deletion/export operation, public SLA, or production endpoint proof
+happened.
+
+Next Ready lane:
+
+- M001-L28 - Deletion Export Launch Decision Brief.

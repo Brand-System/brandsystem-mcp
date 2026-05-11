@@ -28,6 +28,8 @@ The limited-client onboarding template is
 [`specs/brandcode-mcp-limited-client-onboarding-template.md`](specs/brandcode-mcp-limited-client-onboarding-template.md),
 the limited-client key operations runbook is
 [`specs/brandcode-mcp-limited-client-key-ops-runbook.md`](specs/brandcode-mcp-limited-client-key-ops-runbook.md),
+the limited-client support intake ledger is
+[`specs/brandcode-mcp-limited-client-support-intake-ledger.md`](specs/brandcode-mcp-limited-client-support-intake-ledger.md),
 and the internal Column Five Brandcode staging proof is
 [`specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`](specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md).
 
@@ -51,12 +53,12 @@ Jason chose to defer public `@brandcode/mcp` package/source distribution for
 v0.1 limited-client work. Approved limited clients may use the hosted service
 with brand-scoped bearer keys only after client/brand approval, scoped key
 issuance, per-client hosted smoke proof, support/abuse/deletion/export intake,
-package-safe custody checks, and the key operations runbook. Public Brandcode
-MCP release still requires explicit Jason approval plus final deletion/export
-request handling, support/legal launch language, any future public
-package/source posture, directory metadata, and QC/CI gates. Brandcode MCP
-directory metadata, public listing copy, npm publish, production release, and
-launch claims remain deferred.
+package-safe custody checks, the key operations runbook, and the support intake
+ledger. Public Brandcode MCP release still requires explicit Jason approval
+plus final deletion/export request handling, support/legal launch language, any
+future public package/source posture, directory metadata, and QC/CI gates.
+Brandcode MCP directory metadata, public listing copy, npm publish, production
+release, and launch claims remain deferred.
 
 ### Auth And Scopes
 
