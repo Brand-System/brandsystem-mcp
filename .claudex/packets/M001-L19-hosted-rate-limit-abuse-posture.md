@@ -119,6 +119,18 @@ Verification:
 - `npm run build` passed.
 - Full `npm test` passed: 39 files, 527 tests.
 
+Remote CI proof:
+
+- Jason authorized push.
+- Pushed commit: `74d72f5 Harden hosted rate limit abuse posture`.
+- GitHub CI run: `25684546273`.
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25684546273`.
+- Result: success.
+- Matrix jobs: Node 20, Node 22, and Node 24 all passed.
+- Steps passed in all three jobs: `npm ci`, `npm run build`, `npm run lint`,
+  `npm test`, and `npm audit --audit-level=high`.
+
 No release, npm publish, public MCP directory submission, public listing
 change, hosted tool addition, selected-kit default behavior, UCS change, or
 custody relaxation happened.

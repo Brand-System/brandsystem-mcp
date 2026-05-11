@@ -85,6 +85,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   pre-release enforcement, not durable shared production enforcement. Public
   release still needs Jason to choose durable shared rate-limit infrastructure
   or approve a named Brandcode operations owner plus abuse-handling runbook.
+- M001-L19 was pushed after Jason authorized push. GitHub CI run `25684546273`
+  passed on pushed tip `74d72f5` across Node 20, Node 22, and Node 24. All
+  three jobs passed `npm ci`, `npm run build`, `npm run lint`, `npm test`, and
+  `npm audit --audit-level=high`.
 
 ## Lanes
 
@@ -122,6 +126,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   and abuse-handling policy.
 - Push/CI proof for the M001 stack is complete: GitHub CI run `25641439073`
   passed on pushed tip `2cf291c`.
+- Push/CI proof for L19 is complete: GitHub CI run `25684546273` passed on
+  pushed tip `74d72f5`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
