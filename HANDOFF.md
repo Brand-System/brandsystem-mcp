@@ -369,6 +369,7 @@ limited-client key operations runbook closeout:
 - `.claudex/prompts/M001-L24-limited-client-onboarding-template.md`
 - `.claudex/prompts/M001-L25-column-five-brandcode-client-config-dry-run.md`
 - `.claudex/prompts/M001-L26-limited-client-key-ops-runbook.md`
+- `.claudex/prompts/M001-L27-limited-client-support-intake-ledger.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -458,6 +459,8 @@ Latest hosted proof:
 Exactly one lane is Ready:
 
 - `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
+- Convenience prompt:
+  `.claudex/prompts/M001-L27-limited-client-support-intake-ledger.md`
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, issue production client keys, name a real client without

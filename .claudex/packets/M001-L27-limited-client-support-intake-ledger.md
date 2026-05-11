@@ -5,6 +5,7 @@
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client operations / support hardening
 **Recommended commit:** `Add Brandcode MCP limited client support ledger`
+**Prompt:** `.claudex/prompts/M001-L27-limited-client-support-intake-ledger.md`
 
 ## Why
 
