@@ -149,6 +149,16 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L22 was docs-only. It did not change code, hosted tools, custody,
   package/listing metadata, release/publish posture, directory submission, or
   public source/license posture.
+- M001-L23 added
+  `specs/brandcode-mcp-limited-client-readiness-plan.md` and turned Option 4
+  into approved-client rollout guardrails: client/brand eligibility, staging vs
+  production endpoint posture, key issuance/rotation/revocation/leak response,
+  per-client smoke proof, support/abuse/deletion/export/incident intake,
+  package-safe custody, rate-limit/service-token checks, no-public-package
+  guardrails, and future Option 3 signals.
+- M001-L23 was docs-only. It did not change code, hosted tools, custody,
+  package/listing metadata, release/publish posture, directory submission,
+  public source/license posture, or production client keys.
 
 ## Lanes
 
@@ -176,7 +186,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L20 | Done | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and prove hosted durable rate-limit posture. |
 | M001-L21 | Done | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
 | M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
-| M001-L23 | Ready | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
+| M001-L23 | Done | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
+| M001-L24 | Ready | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist without issuing production keys. |
 
 ## Blockers And Decisions
 
@@ -205,15 +216,16 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   proof shows `brand_status.rate_limits.status: "active_durable_shared"`.
   M001-L21 drafted hosted data-policy language. M001-L22 framed package/source
   posture options, and Jason chose Option 4 for v0.1 limited-client work.
-  Release remains blocked by final deletion/export launch approval, future
-  public package/source approval, directory metadata, and Jason explicit
-  release approval.
+  M001-L23 added the limited-client readiness plan. Release remains blocked by
+  final deletion/export launch approval, future public package/source approval,
+  directory metadata, and Jason explicit release approval.
 
 ## Ready Lane Rule
 
-M001-L23 is Ready for automation:
-`.claudex/packets/M001-L23-limited-client-readiness-plan.md`.
+M001-L24 is Ready for automation:
+`.claudex/packets/M001-L24-limited-client-onboarding-template.md`.
 
 Do not publish, release, submit to directories, add tools, alter public listing
-metadata, or relax private custody. Jason approval remains a hard blocker for
-any release or publish action.
+metadata, issue production client keys, name a real client without approval, or
+relax private custody. Jason approval remains a hard blocker for any release or
+publish action.

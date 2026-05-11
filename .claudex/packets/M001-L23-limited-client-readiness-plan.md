@@ -1,6 +1,6 @@
 # M001-L23 - Limited Client Readiness Plan
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client launch readiness / operations
@@ -60,14 +60,38 @@ Implement narrowly:
 
 ## Acceptance
 
-- The repo records Option 4 as the v0.1 limited-client package/source posture.
-- A limited-client readiness plan exists and is concrete enough to guide the
+- Done: the repo records Option 4 as the v0.1 limited-client package/source
+  posture.
+- Done: a limited-client readiness plan exists and is concrete enough to guide the
   first approved client rollout.
-- The plan names any remaining Jason/legal/ops blockers instead of implying
+- Done: the plan names any remaining Jason/legal/ops blockers instead of implying
   public release readiness.
-- No public package/source/listing/release action is taken.
-- `git diff --check` passes.
-- If no code changes are made, lint/build/tests may be skipped with a clear
+- Done: no public package/source/listing/release action was taken.
+- Done: `git diff --check` passes.
+- Done: no code changes were made, so lint/build/tests were skipped with a clear
   docs-only note.
-- Exactly one next Ready lane remains, or a named Jason decision blocker is
-  recorded.
+- Done: exactly one next Ready lane remains:
+  `.claudex/packets/M001-L24-limited-client-onboarding-template.md`.
+
+## Starting Evidence
+
+- Jason chose Option 4 for v0.1 limited-client work: defer public
+  `@brandcode/mcp` package/source distribution.
+- Hosted staging proof has passed for the locked 8-tool surface, package-safe
+  asset custody, multi-client access, and durable shared rate limiting.
+- Public release remains blocked on final deletion/export launch language,
+  future public package/source approval, directory metadata, and explicit Jason
+  release approval.
+
+## Closeout
+
+- Added `specs/brandcode-mcp-limited-client-readiness-plan.md`.
+- Covered approved client/brand eligibility, staging vs production endpoint
+  posture, API key issuance/rotation/revocation/leak response, per-client smoke
+  proof, support/abuse/deletion/export/incident intake, package-safe custody,
+  rate-limit/service-token checks, Option 4 guardrails, and future Option 3
+  signals to capture.
+- Updated `SECURITY.md`, `README.md`, `llms.txt`, sprint current, messages, and
+  `HANDOFF.md` to point at the plan while preserving release blockers.
+- Added the next Ready lane:
+  `.claudex/packets/M001-L24-limited-client-onboarding-template.md`.

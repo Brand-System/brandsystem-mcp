@@ -21,7 +21,9 @@ We will acknowledge within 48 hours and provide a fix timeline within 7 days.
 The hosted `@brandcode/mcp` Use MCP is pre-release. Do not publish,
 release, or submit it to MCP directories until Jason explicitly authorizes
 release after hardening. The current hosted data-policy draft is
-[`specs/brandcode-mcp-hosted-data-policy.md`](specs/brandcode-mcp-hosted-data-policy.md).
+[`specs/brandcode-mcp-hosted-data-policy.md`](specs/brandcode-mcp-hosted-data-policy.md),
+and the limited-client rollout guardrails live in
+[`specs/brandcode-mcp-limited-client-readiness-plan.md`](specs/brandcode-mcp-limited-client-readiness-plan.md).
 
 ### Hosted Service Release Gate
 
@@ -40,11 +42,15 @@ Jason approved this hosted-service posture:
 - hosted service access stays separate from source/package license.
 
 Jason chose to defer public `@brandcode/mcp` package/source distribution for
-v0.1 limited-client work. Public Brandcode MCP release still requires explicit
-Jason approval plus final deletion/export request handling, support/legal
-launch language, any future public package/source posture, directory metadata,
-and QC/CI gates. Brandcode MCP directory metadata, public listing copy, npm
-publish, production release, and launch claims remain deferred.
+v0.1 limited-client work. Approved limited clients may use the hosted service
+with brand-scoped bearer keys only after client/brand approval, scoped key
+issuance, per-client hosted smoke proof, support/abuse/deletion/export intake,
+and package-safe custody checks. Public Brandcode MCP release still requires
+explicit Jason approval plus final deletion/export request handling,
+support/legal launch language, any future public package/source posture,
+directory metadata, and QC/CI gates. Brandcode MCP directory metadata, public
+listing copy, npm publish, production release, and launch claims remain
+deferred.
 
 ### Auth And Scopes
 

@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, and M001-L22 prepared the package/source posture decision brief. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, M001-L22 prepared the package/source posture decision brief, and M001-L23 added the limited-client readiness plan. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
 
 ## Latest Build Work
 
@@ -241,6 +241,24 @@ Jason then chose the v0.1 package/source posture:
   service-controlled hosted implementation and bearer-key-gated brand data
   access, after separate approval and hardening.
 
+M001-L23 completed the limited-client readiness plan:
+
+- Durable plan:
+  `specs/brandcode-mcp-limited-client-readiness-plan.md`.
+- The plan covers approved client/brand eligibility, staging vs production
+  endpoint posture, API key issuance/scope/rotation/revocation/leak response,
+  per-client smoke proof, support/abuse/deletion/export/incident intake,
+  package-safe custody expectations, rate-limit and service-token env checks,
+  Option 4 no-public-package/no-directory/no-listing guardrails, and future
+  Option 3 signals to capture.
+- Limited-client handoff still requires client/brand approval and, for
+  production access, explicit Jason approval plus fresh production smoke.
+- No code, hosted tools, custody behavior, package metadata, public listing,
+  directory submission, release, publish, public source posture, production
+  client key generation, or real client naming changed.
+- M001-L24 is the next Ready lane for a reusable limited-client onboarding
+  template/checklist.
+
 ## Latest PO Work
 
 Seeded repo-native sprint coordination and carried M001 through the M001-L22
@@ -273,6 +291,7 @@ decision-blocker closeout:
 - `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`
 - `.claudex/packets/M001-L22-package-source-posture-decision-brief.md`
 - `.claudex/packets/M001-L23-limited-client-readiness-plan.md`
+- `.claudex/packets/M001-L24-limited-client-onboarding-template.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -286,6 +305,7 @@ decision-blocker closeout:
 - `.claudex/prompts/M001-L21-hosted-retention-export-deletion-policy.md`
 - `.claudex/prompts/M001-L22-package-source-posture-decision-brief.md`
 - `.claudex/prompts/M001-L23-limited-client-readiness-plan.md`
+- `.claudex/prompts/M001-L24-limited-client-onboarding-template.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -363,15 +383,16 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L23 is Ready:
-`.claudex/packets/M001-L23-limited-client-readiness-plan.md`.
+M001-L24 is Ready:
+`.claudex/packets/M001-L24-limited-client-onboarding-template.md`.
 
-Goal: turn the approved Option 4 posture into an operational limited-client
-readiness plan and guardrails without publishing, listing, or changing package
-metadata.
+Goal: turn the L23 limited-client readiness plan into a reusable per-client
+onboarding template/checklist without issuing production keys, naming a real
+client, publishing, listing, or changing package metadata.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
-listing metadata, or relax custody.
+listing metadata, issue production client keys, name a real client without
+approval, or relax custody.
 
 
 ## Known Blockers
@@ -384,9 +405,10 @@ listing metadata, or relax custody.
   and GitHub CI run `25687209671` passed.
 - Jason approved the recommended hosted-service posture, M001-L21 drafted
   hosted data-policy language, and Jason chose Option 4 from M001-L22 for v0.1
-  limited-client posture. Final deletion/export launch approval, limited-client
-  onboarding/runbook readiness, future public package/source approval, and
-  explicit release approval remain launch blockers.
+  limited-client posture. M001-L23 added the limited-client readiness plan.
+  Final deletion/export launch approval, limited-client onboarding/runbook
+  readiness, future public package/source approval, and explicit release
+  approval remain launch blockers.
 - Rate limits have command-backed hosted durable shared Redis REST proof on the staging MCP route; local/test traffic can still use the in-process fallback when no shared store env exists.
 - Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke, rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security risk, or service-stability risk.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.

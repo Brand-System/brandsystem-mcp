@@ -1092,3 +1092,38 @@ Updated:
 Next Ready lane:
 
 - M001-L23 - Limited Client Readiness Plan.
+
+## 2026-05-11 - M001-L23 Limited Client Readiness Plan Closed
+
+M001-L23 closed as a docs-only limited-client readiness lane.
+
+Changed:
+
+- Added `specs/brandcode-mcp-limited-client-readiness-plan.md`.
+- Recorded the approved Option 4 v0.1 posture as operational guardrails:
+  public `@brandcode/mcp` package/source distribution remains deferred, while
+  approved clients may use the hosted Brandcode MCP with brand-scoped bearer
+  keys after approval and proof.
+- Covered approved client/brand eligibility, staging vs production endpoint
+  posture, API key issuance/scope/rotation/revocation/leak response,
+  per-client smoke proof, support/abuse/deletion/export/incident intake,
+  package-safe custody expectations, rate-limit and service-token env checks,
+  no-public-package/no-directory/no-listing guardrails, and future Option 3
+  signals to capture.
+- Updated `SECURITY.md`, `README.md`, `llms.txt`, the L23 packet, sprint
+  board, and `HANDOFF.md`.
+- Added exactly one next Ready lane:
+  `.claudex/packets/M001-L24-limited-client-onboarding-template.md`.
+
+Verification:
+
+- `git diff --check` passed.
+- No code or package metadata changed, so lint/build/tests were not required.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, or real client naming happened.
+
+Next Ready lane:
+
+- M001-L24 - Limited Client Onboarding Template.
