@@ -20,7 +20,8 @@ We will acknowledge within 48 hours and provide a fix timeline within 7 days.
 
 The hosted `@brandcode/mcp` Use MCP is pre-release. Do not publish,
 release, or submit it to MCP directories until Jason explicitly authorizes
-release after hardening.
+release after hardening. The current hosted data-policy draft is
+[`specs/brandcode-mcp-hosted-data-policy.md`](specs/brandcode-mcp-hosted-data-policy.md).
 
 ### Hosted Service Release Gate
 
@@ -39,10 +40,10 @@ Jason approved this hosted-service posture:
 - hosted service access stays separate from source/package license.
 
 Public Brandcode MCP release still requires explicit Jason approval plus final
-retention/deletion/export language, abuse handling, rate-limit operations,
-package/source posture, and QC/CI gates. Brandcode MCP directory metadata,
-public listing copy, npm publish, production release, and launch claims remain
-deferred.
+deletion/export request handling, support/legal launch language,
+package/source posture, directory metadata, and QC/CI gates. Brandcode MCP
+directory metadata, public listing copy, npm publish, production release, and
+launch claims remain deferred.
 
 ### Auth And Scopes
 
@@ -82,10 +83,14 @@ deferred.
 - `brand_history` is read-only and returns compact run/receipt summaries scoped
   by brand and key permissions. It redacts URL-like strings and avoids
   returning large nested support or verification blobs.
-- Retention posture is approved as limited and review-oriented, but final
-  public retention/deletion/export language is not approved for launch yet.
-  Public launch requires that language or a named Jason-approved blocker owner
-  before directory submission.
+- Retention posture is approved as limited and review-oriented and is now
+  captured in the hosted data-policy draft. The MCP does not expose public
+  self-serve deletion or export tools for hosted feedback/history. During
+  pre-release, deletion/export requests route to Jason Lankow / Brandcode
+  Studio Ops for manual review. Public launch still requires Jason/legal/ops
+  approval of requester authorization, deletion/export scope, export package
+  format, response windows, support escalation, and any required legal or
+  subprocessor language.
 - General hosted AgentRun telemetry POST remains deferred; only explicit
   `brand_feedback` append is active.
 

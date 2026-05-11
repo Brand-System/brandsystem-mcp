@@ -1,6 +1,6 @@
 # Brandcode MCP Hosted Service Terms Decision Brief
 
-**Status:** Approved posture; release still blocked
+**Status:** Approved posture; M001-L21 data policy drafted; release still blocked
 **Date:** 2026-05-10
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no npm publish, public release, production release,
@@ -38,6 +38,12 @@ The approved posture is:
 - installing or publishing package code must not imply public entitlement to
   hosted Brandcode MCP.
 
+M001-L21 records the current pre-release data-policy draft in
+`specs/brandcode-mcp-hosted-data-policy.md`. That draft clarifies the approved
+limited/review-oriented retention posture and names the remaining
+Jason/legal/ops deletion/export decisions. It does not authorize public
+release.
+
 ## Current Truth
 
 The hosted implementation has strong pre-release proof:
@@ -49,21 +55,18 @@ The hosted implementation has strong pre-release proof:
 - MCP Inspector and Claude Code both exercised the hosted endpoint;
 - read-only insufficient-scope behavior is proven for `brand_check` and
   `brand_feedback`;
-- `brand_status.rate_limits.status` remains `not_reported_by_staging` and
-  `release_gate: "blocked"`.
+- after M001-L20 hosted proof, `brand_status.rate_limits.status` reports
+  `active_durable_shared` on the staging route when Redis/KV env is configured,
+  and `release_gate: "blocked"` remains true.
 
 ## Remaining Launch Blockers
 
-The terms posture is approved, but release-candidate readiness remains blocked
-by:
+The terms posture is approved, and later M001 lanes resolved the full-suite,
+CI, abuse-owner, and durable rate-limit proof gaps. Release-candidate readiness
+remains blocked by:
 
-- full-suite local test failures in `test/tools/smoke.test.ts` for
-  `brand_extract_visual` and `brand_extract_site` without `.brand/`;
-- no GitHub CI run on the local M001 stack;
-- no active rate-limit enforcement evidence yet;
-- no named operational runbook for abuse handling/key revocation/support
-  escalation;
-- no final public retention/deletion/export language for feedback/history;
+- final deletion/export request handling and public launch language for
+  feedback/history;
 - unresolved final `@brandcode/mcp` package/source posture for npm;
 - deferred Brandcode Use directory metadata;
 - explicit Jason approval still required before any release/publish/listing
@@ -78,5 +81,5 @@ the remaining security/QC gates are closed.
 
 ## Next Recommended Repair
 
-Repair the known full-suite failures first. Full-suite green is the cleanest
-next QC gate before push/CI proof or public package/directory metadata work.
+The next decision lane should settle the `@brandcode/mcp` package/source
+posture before any package, directory, or public listing work.

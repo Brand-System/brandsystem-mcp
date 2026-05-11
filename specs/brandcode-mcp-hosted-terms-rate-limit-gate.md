@@ -1,6 +1,6 @@
 # Brandcode MCP Hosted Terms And Rate-Limit Gate
 
-**Status:** M001-L15 approved posture - release gate still blocked
+**Status:** M001-L21 data policy drafted - release gate still blocked
 **Date:** 2026-05-09
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no public release, npm publish, package listing, MCP
@@ -14,16 +14,21 @@ they do not settle terms, privacy/retention, rate limits, abuse handling, or
 the package/source posture for `@brandcode/mcp`.
 
 The hosted-service posture is approved in
-`specs/brandcode-mcp-hosted-service-terms-decision-brief.md`, but this gate is
-still **not release-satisfied**. M001-L20 added an optional durable shared
-Redis REST rate-limit store at the hosted HTTP router. The router now reports
+`specs/brandcode-mcp-hosted-service-terms-decision-brief.md`, and the
+pre-release hosted data-policy draft now lives in
+`specs/brandcode-mcp-hosted-data-policy.md`, but this gate is still **not
+release-satisfied**. M001-L20 added an optional durable shared Redis REST
+rate-limit store at the hosted HTTP router. The router now reports
 durable/shared enforcement when the Redis env contract is configured, and falls
 back to the prior in-process limiter only for local tests and pre-release
-development when no shared store env is present. Treat rate-limit/abuse posture
-as an explicit release blocker until both:
+development when no shared store env is present. Treat release as blocked until
+all remaining public-launch gates are satisfied, including:
 
 - `brand_status` reports active per-brand rate-limit enforcement with
   command-backed durable/shared enforcement evidence; and
+- final deletion/export request handling and public launch language are
+  approved by Jason/legal/ops; and
+- `@brandcode/mcp` package/source posture is decided; and
 - Jason explicitly approves the final public release path.
 
 ## Gate Matrix
@@ -32,8 +37,8 @@ as an explicit release blocker until both:
 | --- | --- | --- |
 | Bearer-key access terms | Blocked | Jason-approved hosted service terms covering API-key access, account/brand authorization, key handling, availability, and acceptable use. |
 | Client-owned brand data | Blocked | Public terms/privacy language stating client-owned runtime data, brand assets, feedback, and history boundaries. |
-| `brand_feedback` retention | Blocked | Retention/visibility policy for explicit append-only feedback written to UCS history. |
-| `brand_history` visibility | Blocked | Retention/visibility policy for compact scoped run/receipt summaries, including who can view history through each key posture. |
+| `brand_feedback` retention | Drafted for pre-release / launch blocked | `brand_feedback` is explicit append-only review input in UCS history. Public launch still needs final deletion/export language, support SLA, and legal/ops wording. |
+| `brand_history` visibility | Drafted for pre-release / launch blocked | `brand_history` returns compact scoped redacted summaries. Public launch still needs final deletion/export language, support SLA, and legal/ops wording. |
 | Private custody | Pass for current implementation, gated for launch language | Keep package-safe delivery only. Do not expose raw private provider URLs, private blob URLs, service-token data, or raw custody paths. |
 | Abuse handling | Pre-release owner approved; public launch language blocked | Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>` owns pre-release abuse response and may revoke, rotate, suspend, or throttle keys. Public release still needs final support/security language. |
 | Rate limits | Staging proof complete / release blocked | M001-L20 added optional durable shared Redis REST enforcement and `brand_status` reporting. Hosted staging proof now reports `active_durable_shared`; Jason release approval is still required before broad public release. |
@@ -84,8 +89,8 @@ public listing changes.
   headers when exceeded.
 - If the durable shared store is configured but unavailable, the hosted router
   fails closed with `503 rate_limit_unavailable` before MCP tool dispatch.
-- Because hosted Redis env/proof has not been completed in this repo session,
-  this is an implementation step, not a public release claim.
+- M001-L20 completed hosted Redis/KV proof on the staging route. This is
+  command-backed pre-release proof, not public release approval.
 - Pre-release abuse response owner: Jason Lankow / Brandcode Studio Ops
   `<jlankow@columnfive.com>`.
 - Pre-release authority: the owner may revoke, rotate, suspend, or throttle
@@ -103,9 +108,9 @@ public listing changes.
 
 Jason approved the recommended terms posture. Remaining release blockers are:
 
-- final feedback/history retention/deletion/export language;
-- durable/shared hosted rate-limit enforcement evidence;
+- final deletion/export request handling and public launch language;
 - final `@brandcode/mcp` npm package/source posture;
+- deferred Brandcode Use directory metadata;
 - explicit Jason approval for any release/publish/listing action.
 
 ## Release Rule

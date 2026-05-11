@@ -985,3 +985,42 @@ Remaining release blockers:
 Next Ready lane:
 
 - M001-L21 - Hosted Retention Export Deletion Policy.
+
+## 2026-05-11 - M001-L21 Hosted Retention Export Deletion Policy Closed
+
+M001-L21 closed as a docs-only hosted trust lane.
+
+Changed:
+
+- Added `specs/brandcode-mcp-hosted-data-policy.md`.
+- Documented authorized pre-release bearer-key access, client-owned or
+  client-controlled brand data, append-only `brand_feedback`, scoped/redacted
+  `brand_history`, package-safe asset custody, and hosted service/package
+  separation.
+- Named the current deletion/export posture truthfully: hosted MCP has no
+  public self-serve deletion or export tools for hosted feedback/history.
+- During pre-release, deletion/export requests route to Jason Lankow /
+  Brandcode Studio Ops for manual Brandcode/UCS operations review.
+- Public launch remains blocked until Jason/legal/ops approve requester
+  authorization, deletion/export scope, export package format, response
+  windows, support escalation, and any required legal/subprocessor language.
+- Updated `SECURITY.md`, `README.md`, `llms.txt`,
+  `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`, and
+  `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`.
+- Updated the L21 packet, sprint board, and `HANDOFF.md`.
+- Added exactly one next Ready lane:
+  `.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
+
+Verification:
+
+- `git diff --check` passed.
+- No code or package metadata changed, so lint/build/tests were not required.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, UCS
+change, or custody relaxation happened. `brand_status.rate_limits.release_gate`
+remains blocked.
+
+Next Ready lane:
+
+- M001-L22 - Package Source Posture Decision Brief.

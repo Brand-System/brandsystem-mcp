@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, and M001-L20 added and proved durable shared Redis REST rate limiting on staging. Jason does not want to release yet. The sprint is no longer blocked on durable rate-limit proof; the next Ready lane is hosted data-policy hardening, and release remains blocked on Jason explicit approval.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, and M001-L21 drafted hosted data-policy truth. Jason does not want to release yet. The sprint is no longer blocked on durable rate-limit proof; the next Ready lane is package/source posture decision prep, and release remains blocked on Jason explicit approval.
 
 ## Latest Build Work
 
@@ -192,9 +192,29 @@ M001-L20 completed durable shared rate-limit implementation locally:
   through the Vercel API for all Preview branches before proof.
 - Release remains blocked until Jason explicitly approves release.
 
+M001-L21 completed hosted retention/export/deletion policy hardening:
+
+- Durable policy: `specs/brandcode-mcp-hosted-data-policy.md`.
+- The hosted data-policy draft documents authorized pre-release bearer-key
+  access, client-owned/client-controlled brand data, append-only
+  `brand_feedback`, scoped/redacted `brand_history`, package-safe custody, and
+  source/package separation from hosted service access.
+- The policy states that hosted MCP does not expose public self-serve deletion
+  or export tools for hosted feedback/history.
+- During pre-release, deletion/export requests route to Jason Lankow /
+  Brandcode Studio Ops for manual review through Brandcode/UCS operations.
+- Public launch remains blocked until Jason/legal/ops approve deletion/export
+  requester authorization, scope, export format, response windows, support
+  escalation, and any required legal/subprocessor language.
+- Updated `SECURITY.md`, `README.md`, `llms.txt`, the hosted terms gate, and
+  the service-terms decision brief to point to the same truth.
+- No code, hosted tool, custody, package/listing metadata, release, publish,
+  directory submission, or `brand_status.rate_limits.release_gate` change
+  happened.
+
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through the M001-L20
+Seeded repo-native sprint coordination and carried M001 through the M001-L21
 Ready lane:
 
 - `.claudex/sprints/current.md`
@@ -222,6 +242,7 @@ Ready lane:
 - `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md`
 - `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md`
 - `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`
+- `.claudex/packets/M001-L22-package-source-posture-decision-brief.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -233,6 +254,7 @@ Ready lane:
 - `.claudex/prompts/M001-L19-hosted-rate-limit-abuse-posture.md`
 - `.claudex/prompts/M001-L20-durable-shared-rate-limit-enforcement.md`
 - `.claudex/prompts/M001-L21-hosted-retention-export-deletion-policy.md`
+- `.claudex/prompts/M001-L22-package-source-posture-decision-brief.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -310,12 +332,11 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L21 is Ready:
-`.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`.
+M001-L22 is Ready:
+`.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
 
-Goal: clarify hosted Brandcode MCP retention, deletion, export,
-feedback/history, custody, and service/package posture before any release
-claim.
+Goal: prepare the Jason decision brief for `@brandcode/mcp` package/source
+posture before any npm, directory, listing, package metadata, or release work.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, or relax custody.
@@ -329,16 +350,16 @@ listing metadata, or relax custody.
   and GitHub CI run `25684546273` passed.
 - L20 push/CI proof is complete: `origin/main` includes pushed tip `cc94bee`
   and GitHub CI run `25687209671` passed.
-- Jason approved the recommended hosted-service posture, but final public
-  retention/deletion/export language and `@brandcode/mcp` package/source
-  posture remain launch blockers.
+- Jason approved the recommended hosted-service posture, and M001-L21 drafted
+  hosted data-policy language. Final deletion/export launch approval and
+  `@brandcode/mcp` package/source posture remain launch blockers.
 - Rate limits have command-backed hosted durable shared Redis REST proof on the staging MCP route; local/test traffic can still use the in-process fallback when no shared store env exists.
 - Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke, rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security risk, or service-stability risk.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
 - CI hardening is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague: `brand_status` reports
   `active_durable_shared` on the staging MCP route. Release remains blocked by
-  final hosted data-policy language, final `@brandcode/mcp` package/source
+  final deletion/export launch approval, final `@brandcode/mcp` package/source
   posture, deferred directory metadata, and Jason explicit release approval.
 - Local proof-key note: Vercel Preview has a sensitive
   `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive

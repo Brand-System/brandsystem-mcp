@@ -12,7 +12,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 ## Current Truth
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
-  CI closeout docs through pushed tip `48f6fec`.
+  CI closeout docs through pushed tip `48f6fec`; local `main` also includes
+  unpushed hosted durable proof docs at `d0b1082`.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -122,6 +123,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   passed on pushed tip `cc94bee` across Node 20, Node 22, and Node 24. All
   three jobs passed `npm ci`, `npm run build`, `npm run lint`, `npm test`, and
   `npm audit --audit-level=high`.
+- M001-L21 added `specs/brandcode-mcp-hosted-data-policy.md` and aligned
+  SECURITY, README, llms, and hosted terms docs around the same data-policy
+  truth: authorized bearer-key pre-release access, client-owned or
+  client-controlled brand data, append-only feedback, scoped/redacted history,
+  package-safe custody, and Jason/legal/ops deletion/export blockers.
+- M001-L21 was docs-only. It did not change hosted tools, custody code,
+  package/listing metadata, release/publish posture, or
+  `brand_status.rate_limits.release_gate`.
 
 ## Lanes
 
@@ -147,7 +156,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L18 | Done | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
 | M001-L19 | Done | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Add active pre-release hosted rate-limit enforcement and preserve the durable production release blocker truthfully. |
 | M001-L20 | Done | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and prove hosted durable rate-limit posture. |
-| M001-L21 | Ready | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
+| M001-L21 | Done | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
+| M001-L22 | Ready | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
 
 ## Blockers And Decisions
 
@@ -174,14 +184,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - CI hardening deferral is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague: command-backed hosted
   proof shows `brand_status.rate_limits.status: "active_durable_shared"`.
-  Release remains blocked by final hosted data-policy language,
-  `@brandcode/mcp` package/source posture, directory metadata, and Jason
-  explicit release approval.
+  M001-L21 drafted hosted data-policy language, but release remains blocked by
+  final deletion/export launch approval, `@brandcode/mcp` package/source
+  posture, directory metadata, and Jason explicit release approval.
 
 ## Ready Lane Rule
 
-M001-L21 is Ready for automation:
-`.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`.
+M001-L22 is Ready for automation:
+`.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, or relax private custody. Jason approval remains a hard blocker for

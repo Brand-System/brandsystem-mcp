@@ -1,6 +1,6 @@
 # M001-L21 - Hosted Retention Export Deletion Policy
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted trust / policy hardening
@@ -62,14 +62,15 @@ Implement narrowly:
 
 ## Acceptance
 
-- The hosted data policy is documented without implying release approval.
-- Any unsettled retention/deletion/export decision is named explicitly.
-- Security/README/llms/sprint/HANDOFF language is aligned.
-- `git diff --check` passes.
-- If code changes are made, focused tests plus `npm run lint` and
-  `npm run build` pass.
-- Exactly one next Ready lane remains, or a named Jason decision blocker is
-  recorded.
+- Done: the hosted data policy is documented without implying release approval.
+- Done: unsettled deletion/export decisions are named as Jason/legal/ops
+  blockers before public launch.
+- Done: Security/README/llms/sprint/HANDOFF language is aligned.
+- Done: `git diff --check` passes.
+- Done: no code changes were made, so focused tests/lint/build were not
+  required for this docs-only lane.
+- Done: exactly one next Ready lane remains:
+  `.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
 
 ## Starting Evidence
 
@@ -80,3 +81,15 @@ Implement narrowly:
   package-safe asset id `brandcode:logo:c5-logomark-red.svg`.
 - Release/publish/directory submission remain blocked on explicit Jason
   approval.
+
+## Closeout
+
+- Added `specs/brandcode-mcp-hosted-data-policy.md`.
+- Clarified that feedback/history retention is limited and review-oriented for
+  pre-release, while final deletion/export launch language remains a
+  Jason/legal/ops blocker.
+- Kept source/package license posture separate from hosted service access.
+- Kept `brand_status.rate_limits.release_gate` blocked; no hosted tools,
+  custody code, listing metadata, release, publish, or directory submission
+  changed.
+- Next Ready lane: M001-L22 Package Source Posture Decision Brief.
