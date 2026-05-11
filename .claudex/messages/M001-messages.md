@@ -1261,3 +1261,48 @@ production endpoint proof happened.
 Next Ready lane:
 
 - M001-L26 - Limited Client Key Ops Runbook.
+
+## 2026-05-11 - M001-L26 Limited Client Key Ops Runbook
+
+M001-L26 closed as a docs-only limited-client operations hardening lane.
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-key-ops-runbook.md`.
+
+Updated:
+
+- `SECURITY.md`
+- `README.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
+- `HANDOFF.md`
+
+Runbook coverage:
+
+- staging-only `bck_test_` key generation;
+- Vercel Preview env installation posture for `BRANDCODE_MCP_TEST_KEYS`;
+- deploy/alias proof;
+- production `bck_live_` key issuance as an explicit Jason-approved gate;
+- `read`, `check`, and `feedback` scopes;
+- brand slug binding, key owner, support intake, rotation, revocation, and
+  suspected leak response;
+- hosted smoke proof and real-client config proof;
+- redacted evidence templates that avoid raw bearer keys, private/provider
+  URLs, service tokens, and raw custody paths.
+
+Verification:
+
+- `git diff --check` passed.
+- `git diff --cached --check` passed after staging.
+- No code changes were made, so lint/build/tests were skipped as docs-only.
+
+No production client keys were generated. No production endpoint proof,
+release, npm publish, public MCP directory submission, public listing metadata
+change, hosted tool addition, selected-kit default behavior, package/source
+posture change, or custody relaxation happened.
+
+Next Ready lane:
+
+- M001-L27 - Limited Client Support Intake Ledger.

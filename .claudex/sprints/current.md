@@ -13,7 +13,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
   CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed coordination/proof docs through M001-L25.
+  unpushed coordination/proof docs through M001-L26.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -191,6 +191,16 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   not change code, hosted tools, custody, package/listing metadata,
   release/publish posture, directory submission, public source/license posture,
   production client keys, or production endpoint access.
+- M001-L26 added
+  `specs/brandcode-mcp-limited-client-key-ops-runbook.md`, documenting
+  limited-client staging key generation, Preview env installation posture,
+  deploy/alias proof, production-key approval gating, smoke proof, real-client
+  config proof, key ownership, rotation, revocation, suspected leak response,
+  and redacted evidence capture.
+- M001-L26 was docs-only. It did not change code, hosted tools, custody,
+  package/listing metadata, release/publish posture, directory submission,
+  public source/license posture, production client keys, or production endpoint
+  access.
 
 ## Lanes
 
@@ -221,7 +231,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L23 | Done | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
 | M001-L24 | Done | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist and test it against the internal Brandcode staging instance. |
 | M001-L25 | Done | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Prove the Column Five Brandcode staging endpoint through a real MCP client config without exposing keys. |
-| M001-L26 | Ready | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
+| M001-L26 | Done | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
+| M001-L27 | Ready | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
 
 ## Blockers And Decisions
 
@@ -257,15 +268,18 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   `brandcode` staging instance.
 - M001-L25 proved the same endpoint through a real Claude Code MCP client
   configuration after Jason authorized a staging-only generate-and-run key flow.
-- The next useful hardening step is M001-L26: turn the key-generation,
-  handoff, rotation, revocation, leak-response, and redacted proof process into
-  a limited-client key operations runbook.
+- M001-L26 turned the key-generation, handoff, rotation, revocation,
+  leak-response, and redacted proof process into a limited-client key
+  operations runbook.
+- The next useful hardening step is M001-L27: add a limited-client support
+  intake ledger for setup, auth/scope, custody, feedback/history,
+  deletion/export, abuse/security, incident, and offboarding requests.
 
 ## Ready Lane Rule
 
 Exactly one lane is Ready for automation:
 
-- `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
+- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

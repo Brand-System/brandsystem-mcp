@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, M001-L22 prepared the package/source posture decision brief, M001-L23 added the limited-client readiness plan, M001-L24 added the onboarding template plus a real Column Five Brandcode staging proof, and M001-L25 proved the Column Five client-config dry run through Claude Code using a Jason-approved staging-only generate-and-run key flow. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, M001-L22 prepared the package/source posture decision brief, M001-L23 added the limited-client readiness plan, M001-L24 added the onboarding template plus a real Column Five Brandcode staging proof, M001-L25 proved the Column Five client-config dry run through Claude Code using a Jason-approved staging-only generate-and-run key flow, and M001-L26 added the limited-client key operations runbook. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
 
 ## Latest Build Work
 
@@ -300,10 +300,25 @@ M001-L25 completed the client-configuration dry run:
   relaxation, package/source posture change, production client key generation,
   or production endpoint proof happened.
 
+M001-L26 completed the limited-client key operations runbook:
+
+- Durable runbook:
+  `specs/brandcode-mcp-limited-client-key-ops-runbook.md`
+- The runbook covers staging-only `bck_test_` key generation, Vercel Preview
+  env installation posture, deploy/alias proof, production `bck_live_` key
+  approval gating, hosted smoke proof, real-client config proof, key owner,
+  scopes, brand slug binding, rotation, revocation, suspected leak response,
+  and redacted evidence capture.
+- No production client keys were generated.
+- No production endpoint proof, release, npm publish, public MCP directory
+  submission, public listing metadata change, hosted tool addition,
+  selected-kit default behavior, package/source posture change, or custody
+  relaxation happened.
+
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through the M001-L25
-limited-client client-config proof closeout:
+Seeded repo-native sprint coordination and carried M001 through the M001-L26
+limited-client key operations runbook closeout:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -335,7 +350,9 @@ limited-client client-config proof closeout:
 - `.claudex/packets/M001-L24-limited-client-onboarding-template.md`
 - `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`
 - `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
+- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
 - `specs/brandcode-mcp-column-five-client-config-dry-run.md`
+- `specs/brandcode-mcp-limited-client-key-ops-runbook.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -440,7 +457,7 @@ Latest hosted proof:
 
 Exactly one lane is Ready:
 
-- `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
+- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, issue production client keys, name a real client without
@@ -458,7 +475,7 @@ approval, or relax custody.
 - Jason approved the recommended hosted-service posture, M001-L21 drafted
   hosted data-policy language, and Jason chose Option 4 from M001-L22 for v0.1
   limited-client posture. M001-L23 added the limited-client readiness plan.
-  Final deletion/export launch approval, limited-client onboarding/runbook
+  Final deletion/export launch approval, limited-client support intake
   readiness, future public package/source approval, and explicit release
   approval remain launch blockers.
 - Rate limits have command-backed hosted durable shared Redis REST proof on the staging MCP route; local/test traffic can still use the in-process fallback when no shared store env exists.
@@ -471,9 +488,11 @@ approval, or relax custody.
   public `@brandcode/mcp` package/source posture, deferred directory metadata,
   and Jason explicit release approval.
 - Limited-client readiness now has a template, one real internal staging smoke
-  proof, and one real Claude Code client-config proof. The next gap is a
-  compact key operations runbook for staging handoff, production-key approval,
-  rotation, revocation, suspected leak response, and redacted proof capture.
+  proof, one real Claude Code client-config proof, and a compact key
+  operations runbook. The next gap is a support/intake ledger for setup,
+  auth/scope, custody, quality, feedback/history, deletion/export,
+  abuse/security, incident, and offboarding requests without promising public
+  SLA or self-serve deletion/export.
 - Local proof-key note: Vercel Preview has a sensitive
   `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive
   values locally. Future proof sessions need an intentional local secret

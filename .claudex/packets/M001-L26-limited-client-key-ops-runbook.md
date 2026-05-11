@@ -1,6 +1,6 @@
 # M001-L26 - Limited Client Key Ops Runbook
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client operations / security hardening
@@ -57,17 +57,45 @@ Implement narrowly:
 
 ## Acceptance
 
-- Ready lane documents a usable operator runbook for limited-client Brandcode
-  MCP key ops.
-- Runbook has separate staging and production paths.
-- Runbook names Jason Lankow / Brandcode Studio Ops
+- Done: added a usable operator runbook for limited-client Brandcode MCP key
+  ops.
+- Done: runbook has separate staging and production paths.
+- Done: runbook names Jason Lankow / Brandcode Studio Ops
   `<jlankow@columnfive.com>` as the pre-release abuse/key owner.
-- Runbook includes redacted proof templates for smoke and real-client config
-  runs.
-- Runbook preserves Option 4 posture and does not imply public package/source
-  distribution.
-- `git diff --check` passes.
-- No code changes are expected; lint/build/tests may be skipped with a clear
+- Done: runbook includes redacted proof templates for smoke and real-client
+  config runs.
+- Done: runbook preserves Option 4 posture and does not imply public
+  package/source distribution.
+- Done: `git diff --check` passes.
+- Done: no code changes were made, so lint/build/tests were skipped with a
   docs-only note.
-- Exactly one next Ready lane remains, unless a named Jason decision blocker is
-  surfaced.
+- Done: exactly one next Ready lane remains.
+
+## Closeout
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-key-ops-runbook.md`
+
+Updated pointers and coordination:
+
+- `SECURITY.md`
+- `README.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `.claudex/messages/M001-messages.md`
+- `HANDOFF.md`
+
+The runbook covers staging-only `bck_test_` key generation, Vercel Preview env
+installation posture, deploy/alias proof, production `bck_live_` key approval
+gating, smoke proof, real-client config proof, scopes, slug binding, key owner,
+rotation, revocation, suspected leak response, and redacted evidence capture.
+
+No production client keys were generated. No production endpoint proof,
+release, npm publish, public MCP directory submission, public listing metadata
+change, hosted tool addition, selected-kit default behavior, package/source
+posture change, or custody relaxation happened.
+
+Next Ready lane:
+
+- `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md`
