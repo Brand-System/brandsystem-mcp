@@ -11,8 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- `main` includes M001 coordination through M001-L17. The accumulated M001
-  stack was pushed to `origin/main` on 2026-05-10.
+- `main` includes M001 coordination through M001-L18. The accumulated M001
+  stack and Node 24 workflow hardening were pushed to `origin/main`.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -65,6 +65,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - The CI run emitted a Node.js 20 Actions deprecation annotation for
   `actions/checkout@v4` and `actions/setup-node@v4`; this is the next release
   trust hygiene lane.
+- M001-L18 updated CI to test Node 20, 22, and 24; updated first-party actions
+  to `actions/checkout@v6` and `actions/setup-node@v6`; and pushed commit
+  `60aa66f`.
+- GitHub CI run `25678340682` passed on pushed tip `60aa66f` across Node 20,
+  Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- The prior Node.js 20 Actions deprecation annotation did not recur in the
+  watched L18 run output or `gh run view` job summary.
 
 ## Lanes
 
@@ -87,7 +95,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L15 | Done | `.claudex/packets/M001-L15-hosted-service-terms-decision-brief.md` | Prepare the compact Jason decision brief for hosted-service terms, retention, rate-limit/abuse ownership, pricing copy, and package/source posture. |
 | M001-L16 | Done | `.claudex/packets/M001-L16-full-suite-visual-extraction-smoke-repair.md` | Repair the two failing visual extraction smoke tests so full local suite proof can precede push/CI or any release-candidate claim. |
 | M001-L17 | Done | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
-| M001-L18 | Ready | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
+| M001-L18 | Done | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
+| M001-L19 | Ready | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Move hosted rate-limit and abuse posture from vague launch blocker to either active enforcement evidence or a precise named blocker. |
 
 ## Blockers And Decisions
 
@@ -101,9 +110,11 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
-- CI hardening deferral: M001-L17 passed, but GitHub annotated Node.js 20
-  Actions deprecation for `actions/checkout@v4` and `actions/setup-node@v4`.
+- CI hardening deferral is resolved by M001-L18.
+- Hosted rate-limit/abuse posture remains blocked:
+  `brand_status.rate_limits.status` is `not_reported_by_staging` and
+  `release_gate` is `blocked`.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L18**. Do not publish, release, submit to directories, add tools, alter public listing metadata, or relax private custody. Repair the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run.
+Automation should pick up exactly one Ready lane: **M001-L19**. Do not publish, release, submit to directories, add tools, alter public listing metadata, or relax private custody. Harden hosted rate-limit and abuse posture without faking active enforcement.

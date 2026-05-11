@@ -1,6 +1,6 @@
 # M001-L18 - GitHub Actions Node 24 Compatibility
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** CI hardening / release-trust hygiene
@@ -61,3 +61,27 @@ M001-L17 CI run:
 - Result: success
 - Annotation: Node.js 20 actions deprecation for `actions/checkout@v4` and
   `actions/setup-node@v4`.
+
+## Closeout - 2026-05-11
+
+L18 updated workflow runtime posture and Jason authorized push.
+
+GitHub CI proof:
+
+- Commit: `60aa66f Add Node 24 GitHub Actions compatibility`
+- Run: `25678340682`
+- URL: `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25678340682`
+- Result: success
+- Matrix jobs: Node 20, Node 22, and Node 24 all passed.
+- Steps passed in all three jobs: `npm ci`, `npm run build`, `npm run lint`,
+  `npm test`, and `npm audit --audit-level=high`.
+- First-party actions used in CI: `actions/checkout@v6` and
+  `actions/setup-node@v6`.
+- The prior Node.js 20 Actions deprecation annotation did not recur in the
+  watched run output or `gh run view` job summary.
+
+No release, npm publish, public MCP directory submission, public listing
+change, hosted tool addition, selected-kit default behavior, or custody
+relaxation happened.
+
+Next Ready lane: M001-L19 Hosted Rate Limit And Abuse Posture.
