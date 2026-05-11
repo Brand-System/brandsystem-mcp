@@ -11,8 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- `main` includes M001 coordination through M001-L18. The accumulated M001
-  stack and Node 24 workflow hardening were pushed to `origin/main`.
+- `main` includes M001 coordination through the M001-L20 Ready lane. The
+  accumulated M001 stack through L19 was pushed to `origin/main`.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -50,7 +50,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - After L19, `brand_status.rate_limits` reports
   `status: "active_pre_release_in_process"` on the hosted HTTP route and still
   reports `release_gate: "blocked"` with blocker owner
-  `Jason decision / Brandcode operations owner`.
+  `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
 - The hosted terms/rate-limit gate is still not release-satisfied. L15 approved
   the recommended service-terms posture, while final public
   retention/deletion/export language, abuse/rate-limit operations, public
@@ -82,13 +82,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   reports `brand_status.rate_limits.status` as
   `active_pre_release_in_process` when called through the hosted HTTP router.
 - L19 did not satisfy the public release gate: the limiter is process-local
-  pre-release enforcement, not durable shared production enforcement. Public
-  release still needs Jason to choose durable shared rate-limit infrastructure
-  or approve a named Brandcode operations owner plus abuse-handling runbook.
+  pre-release enforcement, not durable shared production enforcement.
 - M001-L19 was pushed after Jason authorized push. GitHub CI run `25684546273`
   passed on pushed tip `74d72f5` across Node 20, Node 22, and Node 24. All
   three jobs passed `npm ci`, `npm run build`, `npm run lint`, `npm test`, and
   `npm audit --audit-level=high`.
+- Jason named the pre-release abuse response owner as Jason Lankow /
+  Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke,
+  rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked
+  keys, excessive traffic, security risk, or service-stability risk.
+- Jason chose durable shared hosted rate limiting as the next lane before broad
+  public release.
 
 ## Lanes
 
@@ -113,6 +117,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L17 | Done | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
 | M001-L18 | Done | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
 | M001-L19 | Done | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Add active pre-release hosted rate-limit enforcement and preserve the durable production release blocker truthfully. |
+| M001-L20 | Ready | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Replace process-local hosted rate limiting with durable shared enforcement or produce a precise substrate blocker. |
 
 ## Blockers And Decisions
 
@@ -122,8 +127,11 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L12 resolved the hosted client credential blocker for Preview through Vercel env provisioning and did not commit secrets to the repo.
 - Rate-limit/abuse posture now has active in-process pre-release enforcement
   with `release_gate: "blocked"`; production release still needs durable
-  shared enforcement or an explicit Jason-approved Brandcode operations owner
-  and abuse-handling policy.
+  shared enforcement.
+- Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops
+  `<jlankow@columnfive.com>`, with key revoke/rotate/suspend/throttle
+  authority for abuse, leaked keys, excessive traffic, security risk, or
+  service-stability risk.
 - Push/CI proof for the M001 stack is complete: GitHub CI run `25641439073`
   passed on pushed tip `2cf291c`.
 - Push/CI proof for L19 is complete: GitHub CI run `25684546273` passed on
@@ -135,13 +143,13 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Hosted rate-limit/abuse posture is no longer vague, but release remains
   blocked: `brand_status.rate_limits.status` is
   `active_pre_release_in_process` on the hosted HTTP route, and
-  `release_gate` is still `blocked` until Jason chooses durable shared
-  enforcement or approves a named operations owner and abuse runbook.
+  `release_gate` is still `blocked` until durable shared enforcement exists
+  and Jason approves release.
 
 ## Ready Lane Rule
 
-No next Ready lane is open. Automation should pause on the named Jason decision:
-choose durable shared hosted rate-limit enforcement, or approve a named
-Brandcode operations owner plus abuse-handling runbook for any public launch
-claim. Do not publish, release, submit to directories, add tools, alter public
-listing metadata, or relax private custody.
+Automation should pick up exactly one Ready lane: **M001-L20**. Do not publish,
+release, submit to directories, add tools, alter public listing metadata, or
+relax private custody. Build durable shared hosted rate-limit enforcement next,
+or record the exact missing substrate decision if this repo cannot implement it
+truthfully.

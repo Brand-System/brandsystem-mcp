@@ -10,6 +10,8 @@ const DEFAULT_WINDOW_MS = 60_000;
 const MAX_REQUESTS_ENV = "BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW";
 const WINDOW_SECONDS_ENV = "BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS";
 const DISABLED_ENV = "BRANDCODE_MCP_RATE_LIMIT_DISABLED";
+const PRE_RELEASE_OPS_OWNER =
+  "Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>";
 
 const defaultStore: HostedRateLimitStore = {
   buckets: new Map(),
@@ -92,9 +94,9 @@ function disabledSnapshot(source: string): HostedRateLimitSnapshot {
     reset_at: null,
     retry_after_seconds: null,
     release_gate: "blocked",
-    blocker_owner: "Jason decision / Brandcode operations owner",
+    blocker_owner: PRE_RELEASE_OPS_OWNER,
     required_before_public_release:
-      "Enable command-backed per-brand enforcement or name the approved operational owner and abuse-handling policy",
+      "Implement durable shared hosted rate-limit enforcement before broad public release; pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>",
     source,
   };
 }
@@ -118,9 +120,9 @@ function activeSnapshot(input: {
     reset_at: new Date(input.resetAt).toISOString(),
     retry_after_seconds: input.retryAfterSeconds,
     release_gate: "blocked",
-    blocker_owner: "Jason decision / Brandcode operations owner",
+    blocker_owner: PRE_RELEASE_OPS_OWNER,
     required_before_public_release:
-      "Replace in-process staging enforcement with durable shared enforcement or approve a Brandcode operations owner and abuse-handling policy before public release",
+      "Replace in-process pre-release enforcement with durable shared hosted rate-limit enforcement before broad public release",
     source: input.source,
   };
 }

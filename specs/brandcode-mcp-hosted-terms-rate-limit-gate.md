@@ -21,9 +21,8 @@ multi-instance production enforcement. Treat rate-limit/abuse posture as an
 explicit release blocker until either:
 
 - `brand_status` reports active per-brand rate-limit enforcement with
-  command-backed durable/shared enforcement evidence; or
-- Jason approves a named Brandcode operations owner and abuse-handling policy
-  for launch.
+  command-backed durable/shared enforcement evidence; and
+- Jason explicitly approves the final public release path.
 
 ## Gate Matrix
 
@@ -34,8 +33,8 @@ explicit release blocker until either:
 | `brand_feedback` retention | Blocked | Retention/visibility policy for explicit append-only feedback written to UCS history. |
 | `brand_history` visibility | Blocked | Retention/visibility policy for compact scoped run/receipt summaries, including who can view history through each key posture. |
 | Private custody | Pass for current implementation, gated for launch language | Keep package-safe delivery only. Do not expose raw private provider URLs, private blob URLs, service-token data, or raw custody paths. |
-| Abuse handling | Blocked | Named Brandcode operations owner and public policy for key revocation, traffic abuse, and support/security escalation. |
-| Rate limits | Blocked | M001-L19 added process-local pre-release enforcement and `brand_status` reporting; public release still needs durable shared enforcement or Jason-approved operational owner/blocker language before any launch claim. |
+| Abuse handling | Pre-release owner approved; public launch language blocked | Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>` owns pre-release abuse response and may revoke, rotate, suspend, or throttle keys. Public release still needs final support/security language. |
+| Rate limits | Blocked | M001-L19 added process-local pre-release enforcement and `brand_status` reporting; Jason chose durable shared rate limiting as the next lane before broad public release. |
 | "Free in v1" copy | Jason decision | Decide whether this is public pricing copy, private beta posture, or launch-deferred language. |
 | `@brandcode/mcp` package/source | Jason decision | Decide MIT, proprietary, dual-positioned, or service-only posture before npm/package/listing work. |
 | Directory metadata | Deferred | Author separate Brandcode Use metadata only after this gate is satisfied or explicitly approved with blocker language. |
@@ -63,7 +62,7 @@ public listing changes.
   when called through the hosted HTTP router.
 - `brand_status.rate_limits.release_gate` is `blocked`.
 - `brand_status.rate_limits.blocker_owner` is
-  `Jason decision / Brandcode operations owner`.
+  `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
 - The current limiter is a fixed-window in-memory guard keyed by environment,
   brand slug, and key id. Defaults are 60 authenticated requests per 60
   seconds and can be adjusted with `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW`
@@ -72,6 +71,11 @@ public listing changes.
   `x-ratelimit-*` headers when exceeded.
 - Because the limiter is process-local, it is acceptable pre-release hardening
   but not a durable production claim across hosted instances.
+- Pre-release abuse response owner: Jason Lankow / Brandcode Studio Ops
+  `<jlankow@columnfive.com>`.
+- Pre-release authority: the owner may revoke, rotate, suspend, or throttle
+  hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic,
+  security risk, or service-stability risk.
 - General hosted AgentRun telemetry remains deferred.
 - `brand_feedback` is the only active write path and is append-only review
   input, not canonical governance mutation.
@@ -85,10 +89,8 @@ public listing changes.
 Jason approved the recommended terms posture. Remaining release blockers are:
 
 - final feedback/history retention/deletion/export language;
-- durable shared rate-limit enforcement evidence, or a named Brandcode
-  operations owner and abuse-handling runbook for a limited launch;
+- durable shared rate-limit enforcement evidence;
 - final `@brandcode/mcp` npm package/source posture;
-- full-suite green and CI proof for the local M001 stack;
 - explicit Jason approval for any release/publish/listing action.
 
 ## Release Rule
@@ -98,6 +100,6 @@ public listing metadata, or change package posture until this gate is settled
 and Jason explicitly approves the release path.
 
 After M001-L19, no public release, publish, directory submission, or public
-listing change is authorized. The next blocker is a Jason decision: choose a
-durable shared rate-limit substrate or approve a named Brandcode operations
-owner plus abuse-handling runbook for any launch claim.
+listing change is authorized. Jason approved the pre-release operations owner
+and chose durable shared rate limiting as the next lane before broad public
+release.

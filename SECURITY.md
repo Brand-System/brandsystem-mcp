@@ -105,6 +105,10 @@ deferred.
   release-gate fields. HTTP responses include `x-ratelimit-*` headers and
   return JSON `429 rate_limited` with `retry-after` when exceeded.
 - This is active pre-release enforcement, not a production launch claim.
-  Because it is process-local, public release remains blocked until Brandcode
-  uses durable shared enforcement across hosted instances or Jason approves a
-  named operations owner and abuse-handling policy.
+  Because it is process-local, broad public release remains blocked until
+  Brandcode uses durable shared enforcement across hosted instances.
+- Pre-release abuse response owner: Jason Lankow / Brandcode Studio Ops
+  `<jlankow@columnfive.com>`.
+- Pre-release authority: the owner may revoke, rotate, suspend, or throttle
+  hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic,
+  security risk, or service-stability risk.

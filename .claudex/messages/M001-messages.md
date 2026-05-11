@@ -622,7 +622,8 @@ Gate decision:
 - The hosted terms/rate-limit gate is blocked, not satisfied.
 - `brand_status.rate_limits.status` remains `not_reported_by_staging`.
 - `brand_status.rate_limits.release_gate` is now `blocked`.
-- The named blocker owner is `Jason decision / Brandcode operations owner`.
+- At L14 time, the named blocker owner was still
+  `Jason decision / Brandcode operations owner`.
 - Public release requires command-backed rate-limit enforcement or a
   Jason-approved operations owner and abuse-handling policy.
 
@@ -833,8 +834,8 @@ Truthful blocker:
 - The limiter is process-local pre-release enforcement, not durable shared
   production enforcement.
 - `brand_status.rate_limits.release_gate` remains `blocked`.
-- Public release still needs Jason to choose durable shared enforcement or
-  approve a named Brandcode operations owner plus abuse-handling runbook.
+- Jason later named the pre-release operations owner and chose durable shared
+  enforcement as the next lane before broad public release.
 
 Verification:
 
@@ -863,7 +864,14 @@ custody relaxation happened.
 
 Next state:
 
-- No next Ready lane is open.
-- Named Jason decision blocker: choose durable shared hosted rate-limit
-  enforcement, or approve a named Brandcode operations owner plus
-  abuse-handling runbook before any public launch claim.
+- Jason named the pre-release abuse response owner as Jason Lankow /
+  Brandcode Studio Ops `<jlankow@columnfive.com>`.
+- Owner authority covers revoking, rotating, suspending, or throttling hosted
+  Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security
+  risk, or service-stability risk.
+- Jason chose durable shared hosted rate limiting as the next lane before broad
+  public release.
+
+Next Ready lane:
+
+- M001-L20 - Durable Shared Rate Limit Enforcement.

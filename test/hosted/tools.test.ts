@@ -21,9 +21,10 @@ const TEST_RATE_LIMIT: HostedRateLimitSnapshot = {
   reset_at: "2026-05-11T12:01:00.000Z",
   retry_after_seconds: null,
   release_gate: "blocked",
-  blocker_owner: "Jason decision / Brandcode operations owner",
+  blocker_owner:
+    "Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>",
   required_before_public_release:
-    "Replace in-process staging enforcement with durable shared enforcement or approve a Brandcode operations owner and abuse-handling policy before public release",
+    "Replace in-process pre-release enforcement with durable shared hosted rate-limit enforcement before broad public release",
   source: "hosted tool test",
 };
 

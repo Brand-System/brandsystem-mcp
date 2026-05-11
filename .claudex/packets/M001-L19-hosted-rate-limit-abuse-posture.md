@@ -106,9 +106,9 @@ Truthful release posture:
 - This is active pre-release enforcement, not durable multi-instance
   production enforcement.
 - `brand_status.rate_limits.release_gate` remains `blocked`.
-- Public release still needs a Jason decision: choose durable shared
-  rate-limit enforcement or approve a named Brandcode operations owner plus
-  abuse-handling runbook.
+- Jason later named the pre-release abuse response owner and chose durable
+  shared hosted rate-limit enforcement as the next lane before broad public
+  release.
 
 Verification:
 

@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, and M001-L19 added active hosted in-process pre-release rate limiting. Jason does not want to release yet. No next Ready lane is open; the sprint is paused on the named Jason decision for durable shared rate-limit enforcement or a named operations owner plus abuse-handling runbook before any public launch claim.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, and M001-L19 added active hosted in-process pre-release rate limiting. Jason does not want to release yet. The sprint is ready for durable shared hosted rate-limit enforcement, not release.
 
 ## Latest Build Work
 
@@ -46,10 +46,11 @@ M001-L14 completed the hosted terms and rate-limit gate:
 
 - Durable gate: `specs/brandcode-mcp-hosted-terms-rate-limit-gate.md`.
 - The gate is blocked, not satisfied.
-- `brand_status.rate_limits` preserves `status: "not_reported_by_staging"`
-  and now reports `release_gate: "blocked"`, blocker owner
-  `Jason decision / Brandcode operations owner`, and the required public
-  release condition.
+- At L14 time, `brand_status.rate_limits` preserved
+  `status: "not_reported_by_staging"` and reported `release_gate: "blocked"`.
+  After L19 and the named-owner decision, hosted-route status reports
+  `active_pre_release_in_process` with blocker owner
+  `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
 - `SECURITY.md` now names the hosted-service release gate, feedback/history
   retention gap, custody limits, and rate-limit/abuse owner requirement.
 - README and `llms.txt` now qualify hosted Use MCP access as authorized and
@@ -143,10 +144,17 @@ M001-L19 completed hosted rate-limit and abuse posture hardening:
 - No release, npm publish, public MCP directory submission, public listing
   change, hosted tool addition, selected-kit default behavior, UCS change, or
   custody relaxation happened.
+- Jason named the pre-release abuse response owner as Jason Lankow /
+  Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke,
+  rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked
+  keys, excessive traffic, security risk, or service-stability risk.
+- Jason chose durable shared hosted rate limiting as the next lane before broad
+  public release.
 
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through M001-L19:
+Seeded repo-native sprint coordination and carried M001 through the M001-L20
+Ready lane:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -171,6 +179,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L19:
 - `.claudex/packets/M001-L17-push-ci-proof-authorization.md`
 - `.claudex/packets/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md`
+- `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -180,6 +189,7 @@ Seeded repo-native sprint coordination and carried M001 through M001-L19:
 - `.claudex/prompts/M001-L17-push-ci-proof-authorization.md`
 - `.claudex/prompts/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/prompts/M001-L19-hosted-rate-limit-abuse-posture.md`
+- `.claudex/prompts/M001-L20-durable-shared-rate-limit-enforcement.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -252,14 +262,13 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-No next Ready lane is open.
-
-Automation should pause on the named Jason decision: choose durable shared
-hosted rate-limit enforcement, or approve a named Brandcode operations owner
-plus abuse-handling runbook for any public launch claim.
+M001-L20 is Ready: Durable Shared Rate Limit Enforcement.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
-listing metadata, or relax custody.
+listing metadata, or relax custody. Replace process-local hosted rate limiting
+with durable shared enforcement, or record the exact missing substrate blocker
+if this repo cannot implement it truthfully.
+
 
 ## Known Blockers
 
@@ -270,14 +279,15 @@ listing metadata, or relax custody.
 - Jason approved the recommended hosted-service posture, but final public
   retention/deletion/export language and `@brandcode/mcp` package/source
   posture remain launch blockers.
-- Rate limits are actively enforced in-process for pre-release hosted traffic, and `brand_status.rate_limits.status` reports `active_pre_release_in_process` on the hosted HTTP route. Production release still needs durable shared enforcement or an explicit Jason-approved Brandcode operations owner and abuse-handling policy.
+- Rate limits are actively enforced in-process for pre-release hosted traffic, and `brand_status.rate_limits.status` reports `active_pre_release_in_process` on the hosted HTTP route. Production release still needs durable shared enforcement.
+- Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke, rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security risk, or service-stability risk.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
 - CI hardening is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague, but release remains
   blocked: `brand_status.rate_limits.status` is
   `active_pre_release_in_process` on the hosted HTTP route, and `release_gate`
-  is `blocked` until Jason chooses durable shared enforcement or approves a
-  named operations owner and abuse-handling runbook.
+  is `blocked` until durable shared enforcement exists and Jason approves
+  release.
 - Local proof-key note: Vercel Preview now has a sensitive `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive values locally. Future proof sessions need an intentional local secret handoff or a generate-and-run shell flow.
 
 ## Local Hygiene
