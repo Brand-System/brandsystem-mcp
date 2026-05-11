@@ -1,6 +1,7 @@
 # Brandcode MCP Hosted Service Terms Decision Brief
 
-**Status:** Approved posture; M001-L21 data policy drafted; release still blocked
+**Status:** Approved posture; data and package/source decision briefs drafted;
+release still blocked
 **Date:** 2026-05-10
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no npm publish, public release, production release,
@@ -41,8 +42,12 @@ The approved posture is:
 M001-L21 records the current pre-release data-policy draft in
 `specs/brandcode-mcp-hosted-data-policy.md`. That draft clarifies the approved
 limited/review-oriented retention posture and names the remaining
-Jason/legal/ops deletion/export decisions. It does not authorize public
-release.
+Jason/legal/ops deletion/export decisions.
+
+M001-L22 records the package/source posture decision brief in
+`specs/brandcode-mcp-package-source-posture-decision-brief.md`. That brief
+frames the `@brandcode/mcp` package/source options for Jason without choosing a
+posture. Neither brief authorizes public release.
 
 ## Current Truth
 
@@ -79,7 +84,8 @@ directories, alter public listing metadata, change package posture, or claim
 release-candidate readiness until Jason explicitly approves that action after
 the remaining security/QC gates are closed.
 
-## Next Recommended Repair
+## Current Decision Blocker
 
-The next decision lane should settle the `@brandcode/mcp` package/source
-posture before any package, directory, or public listing work.
+Jason must choose the `@brandcode/mcp` package/source posture before any npm,
+package metadata, directory submission, public listing, public source/license
+posture change, or release-candidate claim.

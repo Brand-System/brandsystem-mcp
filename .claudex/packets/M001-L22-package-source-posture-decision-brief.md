@@ -1,6 +1,6 @@
 # M001-L22 - Package Source Posture Decision Brief
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted trust / package posture decision
@@ -55,11 +55,33 @@ Implement narrowly:
 
 ## Acceptance
 
-- The package/source options and tradeoffs are documented without picking a
+- Done: the package/source options and tradeoffs are documented without picking a
   posture Jason has not approved.
-- Hosted service access remains separate from source/package license.
-- Any downstream package/listing/directory work is blocked or deferred until
+- Done: hosted service access remains separate from source/package license.
+- Done: any downstream package/listing/directory work is blocked or deferred until
   Jason decides the posture.
-- `git diff --check` passes.
-- If code or package metadata changes are made, focused checks plus
-  `npm run lint` and `npm run build` pass.
+- Done: `git diff --check` passes.
+- Done: no code or package metadata changed, so focused checks, lint, and build
+  were not required for this docs-only lane.
+- Done: no next Ready lane remains because the exact Jason decision blocker is
+  now named.
+
+## Starting Evidence
+
+- M001-L21 drafted hosted data-policy truth and left package/source posture as
+  the next release blocker.
+- `@brandsystem/mcp` remains the existing public MIT Build package.
+- Hosted `@brandcode/mcp` remains authorized pre-release bearer-key service
+  access only.
+
+## Closeout
+
+- Added
+  `specs/brandcode-mcp-package-source-posture-decision-brief.md`.
+- Framed four Jason decision options: open MIT package/source with separate
+  hosted service terms, proprietary/service-only, dual posture, or deferral.
+- Preserved the boundary that package/source license does not grant hosted
+  service access.
+- Blocked npm, package metadata, directory submission, public listing, source
+  posture changes, and release-candidate claims until Jason chooses the
+  posture.

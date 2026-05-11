@@ -1024,3 +1024,38 @@ remains blocked.
 Next Ready lane:
 
 - M001-L22 - Package Source Posture Decision Brief.
+
+## 2026-05-11 - M001-L22 Package Source Posture Decision Brief Closed
+
+M001-L22 closed as a docs-only package/source posture decision lane.
+
+Changed:
+
+- Added
+  `specs/brandcode-mcp-package-source-posture-decision-brief.md`.
+- Separated the current `@brandsystem/mcp` Build package MIT posture from
+  hosted Brandcode MCP service access and future `@brandcode/mcp`
+  source/package distribution.
+- Framed four Jason decision options for `@brandcode/mcp`: open MIT
+  package/source with separate hosted service terms, proprietary/service-only,
+  dual public connector plus service-controlled hosted implementation, or
+  deferral/no public package-source distribution for v0.1.
+- Preserved the non-negotiable boundary that installing source/package code
+  must not grant access to `mcp.brandcode.studio`, bearer keys, hosted runtime
+  data, feedback/history, or package-safe assets.
+- Updated the L22 packet, sprint board, and `HANDOFF.md`.
+
+Verification:
+
+- `git diff --check` passed.
+- No code or package metadata changed, so lint/build/tests were not required.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, or package/source posture change happened.
+
+Named Jason decision blocker:
+
+- Choose the `@brandcode/mcp` package/source posture before any npm, package
+  metadata, directory submission, public listing, public source/license posture
+  change, or release-candidate claim.

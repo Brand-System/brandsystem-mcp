@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, and M001-L21 drafted hosted data-policy truth. Jason does not want to release yet. The sprint is no longer blocked on durable rate-limit proof; the next Ready lane is package/source posture decision prep, and release remains blocked on Jason explicit approval.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, and M001-L22 prepared the package/source posture decision brief. Jason does not want to release yet. The sprint is no longer blocked on durable rate-limit proof; release remains blocked on Jason explicit approval and the named `@brandcode/mcp` package/source posture decision.
 
 ## Latest Build Work
 
@@ -212,10 +212,26 @@ M001-L21 completed hosted retention/export/deletion policy hardening:
   directory submission, or `brand_status.rate_limits.release_gate` change
   happened.
 
+M001-L22 completed package/source posture decision prep:
+
+- Durable decision brief:
+  `specs/brandcode-mcp-package-source-posture-decision-brief.md`.
+- The brief separates the existing `@brandsystem/mcp` Build package MIT posture
+  from hosted Brandcode MCP service access and any future `@brandcode/mcp`
+  source/package distribution.
+- It frames four Jason decision options: open MIT package/source with separate
+  hosted service terms, proprietary/service-only, dual posture, or deferral/no
+  public package-source distribution for v0.1.
+- It preserves the boundary that source/package license does not grant hosted
+  service access, bearer keys, hosted runtime data, feedback/history, or
+  package-safe assets.
+- No code, hosted tool, custody, package/listing metadata, release, publish,
+  directory submission, or public source/license posture changed.
+
 ## Latest PO Work
 
-Seeded repo-native sprint coordination and carried M001 through the M001-L21
-Ready lane:
+Seeded repo-native sprint coordination and carried M001 through the M001-L22
+decision-blocker closeout:
 
 - `.claudex/sprints/current.md`
 - `.claudex/sprints/m001-brandcode-mcp-stabilization.md`
@@ -332,11 +348,11 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L22 is Ready:
-`.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
+No next Ready lane is open.
 
-Goal: prepare the Jason decision brief for `@brandcode/mcp` package/source
-posture before any npm, directory, listing, package metadata, or release work.
+Named Jason decision blocker: choose the `@brandcode/mcp` package/source
+posture before any npm, directory, listing, package metadata, public
+source/license posture change, or release work.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, or relax custody.
@@ -351,16 +367,19 @@ listing metadata, or relax custody.
 - L20 push/CI proof is complete: `origin/main` includes pushed tip `cc94bee`
   and GitHub CI run `25687209671` passed.
 - Jason approved the recommended hosted-service posture, and M001-L21 drafted
-  hosted data-policy language. Final deletion/export launch approval and
-  `@brandcode/mcp` package/source posture remain launch blockers.
+  hosted data-policy language. M001-L22 framed `@brandcode/mcp`
+  package/source posture options, but Jason has not chosen a posture. Final
+  deletion/export launch approval and the package/source decision remain launch
+  blockers.
 - Rate limits have command-backed hosted durable shared Redis REST proof on the staging MCP route; local/test traffic can still use the in-process fallback when no shared store env exists.
 - Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke, rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security risk, or service-stability risk.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
 - CI hardening is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague: `brand_status` reports
   `active_durable_shared` on the staging MCP route. Release remains blocked by
-  final deletion/export launch approval, final `@brandcode/mcp` package/source
-  posture, deferred directory metadata, and Jason explicit release approval.
+  final deletion/export launch approval, Jason choice of final
+  `@brandcode/mcp` package/source posture, deferred directory metadata, and
+  Jason explicit release approval.
 - Local proof-key note: Vercel Preview has a sensitive
   `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive
   values locally. Future proof sessions need an intentional local secret

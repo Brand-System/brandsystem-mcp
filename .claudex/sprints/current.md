@@ -13,7 +13,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
   CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed hosted durable proof docs at `d0b1082`.
+  unpushed hosted durable proof docs and M001-L21 data-policy docs.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -128,9 +128,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   truth: authorized bearer-key pre-release access, client-owned or
   client-controlled brand data, append-only feedback, scoped/redacted history,
   package-safe custody, and Jason/legal/ops deletion/export blockers.
+- M001-L22 added
+  `specs/brandcode-mcp-package-source-posture-decision-brief.md` and framed the
+  unresolved `@brandcode/mcp` package/source posture as a named Jason decision
+  blocker before npm, package metadata, directory submission, public listing, or
+  release work.
 - M001-L21 was docs-only. It did not change hosted tools, custody code,
   package/listing metadata, release/publish posture, or
   `brand_status.rate_limits.release_gate`.
+- M001-L22 was docs-only. It did not change code, hosted tools, custody,
+  package/listing metadata, release/publish posture, directory submission, or
+  public source/license posture.
 
 ## Lanes
 
@@ -157,7 +165,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L19 | Done | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Add active pre-release hosted rate-limit enforcement and preserve the durable production release blocker truthfully. |
 | M001-L20 | Done | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and prove hosted durable rate-limit posture. |
 | M001-L21 | Done | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
-| M001-L22 | Ready | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
+| M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
 
 ## Blockers And Decisions
 
@@ -184,14 +192,19 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - CI hardening deferral is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague: command-backed hosted
   proof shows `brand_status.rate_limits.status: "active_durable_shared"`.
-  M001-L21 drafted hosted data-policy language, but release remains blocked by
-  final deletion/export launch approval, `@brandcode/mcp` package/source
-  posture, directory metadata, and Jason explicit release approval.
+  M001-L21 drafted hosted data-policy language, and M001-L22 framed
+  package/source posture options. Release remains blocked by final
+  deletion/export launch approval, Jason choice of `@brandcode/mcp`
+  package/source posture, directory metadata, and Jason explicit release
+  approval.
 
 ## Ready Lane Rule
 
-M001-L22 is Ready for automation:
-`.claudex/packets/M001-L22-package-source-posture-decision-brief.md`.
+No next Ready lane is open.
+
+Named Jason decision blocker: choose the `@brandcode/mcp` package/source
+posture before any npm, package metadata, directory submission, public listing,
+public source/license posture change, or release-candidate claim.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, or relax private custody. Jason approval remains a hard blocker for
