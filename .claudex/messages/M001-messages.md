@@ -1419,3 +1419,45 @@ decision blocker: approve or revise requester authorization, verification
 method, deletion/export scope, excluded systems, export format and delivery
 channel, response windows, escalation owner, and required legal/subprocessor
 language.
+
+## 2026-05-11 - M001-L23 Through L28 Pushed And CI-Proven
+
+Jason asked to move straight from the L28 decision needs into push/CI proof.
+
+Pushed:
+
+- `main` from `48f6fec` to `9619b37`.
+
+GitHub CI:
+
+- Run: `25701556152`
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25701556152`
+- Result: success.
+- Node 20, Node 22, and Node 24 jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, or production endpoint proof
+happened.
+
+## 2026-05-11 - M001-L29 Limited Client Go No-Go Checklist Prepared
+
+Prepared the next non-release hardening lane:
+
+- `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md`
+- `.claudex/prompts/M001-L29-limited-client-go-no-go-checklist.md`
+
+Purpose:
+
+- consolidate limited-client evidence into one staging/production/public
+  go/no-go checklist;
+- keep public release and deletion/export launch language blocked until
+  Jason/legal/ops decisions are recorded;
+- preserve Option 4 posture and avoid npm, directory, public listing, or
+  release claims.
+
+Current Ready lane:
+
+- M001-L29 - Limited Client Go No-Go Checklist.

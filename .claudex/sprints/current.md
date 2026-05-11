@@ -11,9 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- `origin/main` includes M001-L20 durable shared rate-limit implementation and
-  CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed coordination/proof docs through M001-L27.
+- `origin/main` includes M001 coordination/proof docs through pushed tip
+  `9619b37`; local `main` also includes unpushed M001-L29 lane prep.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -221,6 +220,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   deletion/export tools, public SLA language, legal terms, hosted tools,
   custody changes, production keys, release/publish posture, package metadata,
   directory submission, or public source posture.
+- M001-L23 through M001-L28 were pushed to `origin/main` at tip `9619b37`.
+- GitHub CI run `25701556152` passed on pushed tip `9619b37` across Node 20,
+  Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
 
 ## Lanes
 
@@ -254,6 +257,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L26 | Done | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
 | M001-L27 | Done | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
 | M001-L28 | Done | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
+| M001-L29 | Ready | `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md` | Consolidate limited-client evidence into a staging/production/public go-no-go checklist without making release claims. |
 
 ## Blockers And Decisions
 
@@ -274,6 +278,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   pushed tip `74d72f5`.
 - Push/CI proof for L20 is complete: GitHub CI run `25687209671` passed on
   pushed tip `cc94bee`.
+- Push/CI proof for the M001-L23 through M001-L28 stack is complete: GitHub CI
+  run `25701556152` passed on pushed tip `9619b37`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
@@ -298,16 +304,21 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L28 turned the remaining deletion/export launch language risk into a
   compact Jason/legal/ops decision brief. The remaining blocker is now a named
   decision, not missing repo preparation.
+- The next non-release hardening step is M001-L29: consolidate limited-client
+  evidence into a go/no-go checklist that separates staging, production proof,
+  and public release readiness while keeping deletion/export launch language
+  blocked until Jason/legal/ops decide L28.
 
 ## Ready Lane Rule
 
-No lane is Ready for automation right now because the next step is a named
-Jason/legal/ops decision blocker:
+Exactly one lane is Ready for automation:
 
-- approve or revise the deletion/export launch posture for requester
-  authorization, verification method, deletion/export scope, excluded systems,
-  export format and delivery channel, response windows, escalation owner, and
-  required legal/subprocessor language.
+- `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md`
+
+The deletion/export launch posture is still blocked on Jason/legal/ops
+decisions for requester authorization, verification method, deletion/export
+scope, excluded systems, export format and delivery channel, response windows,
+escalation owner, and required legal/subprocessor language.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or
