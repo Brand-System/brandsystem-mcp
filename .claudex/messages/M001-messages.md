@@ -1170,3 +1170,51 @@ happened.
 Next Ready lane:
 
 - M001-L25 - Column Five Brandcode Client Config Dry Run.
+
+## 2026-05-11 - M001-L25 Column Five Client Config Dry Run Blocked
+
+M001-L25 closed as a docs-only blocked client-config dry run.
+
+Recorded:
+
+- Added `specs/brandcode-mcp-column-five-client-config-dry-run.md`.
+- Updated the L25 packet, sprint board, and `HANDOFF.md`.
+
+What was checked:
+
+- Claude Code, Codex CLI, and `npx` are available local client paths.
+- Target endpoint remains `https://mcp.staging.brandcode.studio/brandcode`.
+- Local shell did not have `BRANDCODE_MCP_SMOKE_URL`,
+  `BRANDCODE_MCP_SMOKE_FULL_KEY`, `BRANDCODE_MCP_SMOKE_READ_KEY`,
+  `BRANDCODE_MCP_SMOKE_ASSET_ID`, or `BRANDCODE_MCP_BEARER_KEY`.
+- `.env.local` contains only `VERCEL_OIDC_TOKEN`.
+- Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but a safe
+  temporary `vercel env pull --environment=preview --yes` check returned
+  zero-length local values for encrypted sensitive variables.
+
+Result:
+
+- Useful hosted calls through a real MCP client were not run. Without a bearer
+  key, Claude Code, Codex CLI, or MCP Inspector would only prove
+  `missing_bearer` / `invalid_token`, not `brand_status` or
+  `get_brand_asset`.
+- No bearer keys were printed, committed, or written to docs.
+- No hosted env, deployment, alias, code, package metadata, listing metadata,
+  public release posture, custody behavior, production key, or production
+  endpoint changed.
+
+Option 3 signal:
+
+- The generic client config shape is straightforward; repeatable secret
+  handoff is the real friction. Encrypted Vercel Preview env is good custody,
+  but it is not a reusable local proof input for later client dry runs.
+
+Named Jason decision blocker:
+
+- Provide a staging `bck_test_` bearer key through secure local secret handoff,
+  or explicitly authorize a staging-only generate-and-run flow that creates or
+  rotates a temporary Preview test key, deploys/aliases staging if needed, runs
+  the client proof, and records only redacted results.
+
+No next Ready lane is left because the next proof step is blocked on that
+Jason decision.

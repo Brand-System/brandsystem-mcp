@@ -172,6 +172,20 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   package/listing metadata, release/publish posture, directory submission,
   public source/license posture, production client keys, or production endpoint
   access.
+- M001-L25 attempted the Column Five Brandcode client-config dry run and
+  recorded a precise blocker in
+  `specs/brandcode-mcp-column-five-client-config-dry-run.md`.
+- L25 found Claude Code, Codex CLI, and `npx`/MCP Inspector client paths
+  locally available, but no usable staging bearer key was present in the local
+  environment. Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but
+  `vercel env pull` returned zero-length local values for encrypted sensitive
+  variables.
+- M001-L25 was docs-only and did not run useful hosted client calls, because
+  doing so without a bearer key would only prove auth failure. It did not
+  change code, hosted env, deployment aliases, hosted tools, custody,
+  package/listing metadata, release/publish posture, directory submission,
+  public source/license posture, production client keys, or production endpoint
+  access.
 
 ## Lanes
 
@@ -201,7 +215,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
 | M001-L23 | Done | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
 | M001-L24 | Done | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist and test it against the internal Brandcode staging instance. |
-| M001-L25 | Ready | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Run a real MCP client configuration dry run against the Column Five Brandcode staging endpoint without exposing keys. |
+| M001-L25 | Done - blocked | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Record the real MCP client configuration dry run blocker for the Column Five Brandcode staging endpoint without exposing keys. |
 
 ## Blockers And Decisions
 
@@ -236,11 +250,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L24 proved the limited-client onboarding template against the internal
   `brandcode` staging instance. The next useful proof is a real MCP client
   configuration dry run using that same staging endpoint.
+- M001-L25 client-config proof is blocked on a named Jason decision: provide a
+  staging `bck_test_` bearer key through secure local secret handoff, or
+  explicitly authorize a staging-only generate-and-run flow that creates or
+  rotates a temporary Preview test key, deploys/aliases staging if needed, runs
+  the client proof, and records only redacted results.
 
 ## Ready Lane Rule
 
-M001-L25 is Ready for automation:
-`.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`.
+No lane is Ready for automation.
+
+The next useful proof step is blocked on the M001-L25 Jason decision above.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, M001-L22 prepared the package/source posture decision brief, M001-L23 added the limited-client readiness plan, and M001-L24 added the onboarding template plus a real Column Five Brandcode staging proof. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, M001-L20 added and proved durable shared Redis REST rate limiting on staging, M001-L21 drafted hosted data-policy truth, M001-L22 prepared the package/source posture decision brief, M001-L23 added the limited-client readiness plan, M001-L24 added the onboarding template plus a real Column Five Brandcode staging proof, and M001-L25 recorded the Column Five client-config dry-run blocker. Jason chose Option 4 for v0.1 limited-client posture: defer public `@brandcode/mcp` package/source distribution while improving the hosted Brandcode product for approved clients. Option 3 remains the likely future public direction. Jason does not want to release yet; release remains blocked on explicit approval and remaining limited-client launch gates.
 
 ## Latest Build Work
 
@@ -274,8 +274,32 @@ M001-L24 completed the limited-client onboarding template and internal proof:
 - Locked 8-tool order, package-safe asset delivery, feedback append, history
   shape, runtime/search/check, and read-only insufficient-scope checks passed.
 - No secrets were recorded. No production endpoint/key proof happened.
-- M001-L25 is the next Ready lane for a real MCP client configuration dry run
-  against the same staging endpoint.
+
+M001-L25 recorded the client-configuration dry-run blocker:
+
+- Durable blocker record:
+  `specs/brandcode-mcp-column-five-client-config-dry-run.md`.
+- Local client paths are available: Claude Code, Codex CLI, and `npx` for MCP
+  Inspector-style runs.
+- No usable staging bearer key was present in the local environment:
+  `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`,
+  `BRANDCODE_MCP_SMOKE_READ_KEY`, `BRANDCODE_MCP_SMOKE_ASSET_ID`, and
+  `BRANDCODE_MCP_BEARER_KEY` were unset.
+- `.env.local` contains only `VERCEL_OIDC_TOKEN`.
+- Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but `vercel env
+  pull` into a temporary file returned zero-length local values for encrypted
+  sensitive variables.
+- Useful `brand_status` and `get_brand_asset` calls were not run because doing
+  so without a bearer key would only prove auth failure.
+- No bearer keys were printed, committed, or written to docs.
+- No hosted env, deployment alias, code, package metadata, listing metadata,
+  release posture, custody behavior, production key, or production endpoint
+  changed.
+- Named Jason decision blocker: provide a staging `bck_test_` bearer key
+  through secure local secret handoff, or explicitly authorize a staging-only
+  generate-and-run flow that creates or rotates a temporary Preview test key,
+  deploys/aliases staging if needed, runs the client proof, and records only
+  redacted results.
 
 ## Latest PO Work
 
@@ -311,6 +335,7 @@ limited-client onboarding proof closeout:
 - `.claudex/packets/M001-L23-limited-client-readiness-plan.md`
 - `.claudex/packets/M001-L24-limited-client-onboarding-template.md`
 - `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`
+- `specs/brandcode-mcp-column-five-client-config-dry-run.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -403,11 +428,13 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-M001-L25 is Ready:
-`.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`.
+No lane is Ready.
 
-Goal: run a real MCP client configuration dry run against the Column Five
-Brandcode `brandcode` staging endpoint without exposing bearer keys.
+The next useful proof step is blocked on Jason choosing one L25 path: provide a
+staging `bck_test_` bearer key through secure local secret handoff, or
+explicitly authorize a staging-only generate-and-run flow that creates or
+rotates a temporary Preview test key, deploys/aliases staging if needed, runs
+the client proof, and records only redacted results.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, issue production client keys, name a real client without
@@ -439,7 +466,9 @@ approval, or relax custody.
   and Jason explicit release approval.
 - Limited-client readiness has a template and one real internal staging proof.
   The next gap is MCP-client configuration proof using the same `brandcode`
-  staging endpoint.
+  staging endpoint, but L25 found that the proof is blocked without an
+  intentionally handed-off staging bearer key or explicit approval to create a
+  temporary staging-only proof key flow.
 - Local proof-key note: Vercel Preview has a sensitive
   `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive
   values locally. Future proof sessions need an intentional local secret

@@ -1,6 +1,6 @@
 # M001-L25 - Column Five Brandcode Client Config Dry Run
 
-**Status:** Ready
+**Status:** Done - blocked on staging bearer-key handoff
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client proof / MCP client configuration
@@ -50,13 +50,49 @@ Implement narrowly:
 
 ## Acceptance
 
-- A real MCP client config dry run is recorded for the `brandcode` staging
+- Done: a client-config dry run blocker is recorded for the `brandcode` staging
   endpoint, or a precise blocker is recorded.
-- The dry run proves useful hosted calls without exposing bearer keys.
-- Any client setup friction is captured for future Option 3 connector/client
+- Blocked: useful `brand_status` and `get_brand_asset` calls were not run
+  because no staging bearer key was available in the local environment and
+  Vercel Preview encrypted env values pull as zero-length locally.
+- Done: no bearer keys were printed, committed, or written to docs.
+- Done: client setup friction is captured for future Option 3 connector/client
   design.
-- `git diff --check` passes.
-- If no code changes are made, lint/build/tests may be skipped with a clear
+- Done: `git diff --check` passes.
+- Done: no code changes were made, so lint/build/tests may be skipped with a clear
   docs-only note.
-- Exactly one next Ready lane remains, or a named Jason decision blocker is
+- Done: a named Jason decision blocker is
   recorded.
+
+## Closeout
+
+M001-L25 did not prove useful hosted calls through a real MCP client because
+the current local process has no usable staging bearer key:
+
+- `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`,
+  `BRANDCODE_MCP_SMOKE_READ_KEY`, `BRANDCODE_MCP_SMOKE_ASSET_ID`, and
+  `BRANDCODE_MCP_BEARER_KEY` were unset.
+- `.env.local` contains only `VERCEL_OIDC_TOKEN`, not Brandcode MCP bearer
+  keys.
+- Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but `vercel env
+  pull` into a temporary file returned zero-length local values for encrypted
+  sensitive variables.
+- Claude Code, Codex CLI, and `npx`/MCP Inspector paths are available locally,
+  but running them without a bearer key would only prove auth failure rather
+  than `brand_status` or `get_brand_asset`.
+
+Durable blocker record:
+
+- `specs/brandcode-mcp-column-five-client-config-dry-run.md`
+
+Named Jason decision blocker:
+
+- Provide a staging `bck_test_` bearer key through secure local secret handoff,
+  or explicitly authorize a staging-only generate-and-run flow that creates or
+  rotates a temporary Preview test key, deploys/aliases staging if needed, runs
+  the client proof, and records only redacted results.
+
+No production endpoint proof, production key issuance, hosted env mutation,
+release, npm publish, public MCP directory submission, public listing metadata
+change, hosted tool addition, selected-kit default behavior, package/source
+posture change, or custody relaxation happened.
