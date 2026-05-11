@@ -168,10 +168,33 @@ Acceptance:
     release approval.
 
 11. **M001-L16 Full Suite Visual Extraction Smoke Repair**
-    Repair the two failing visual extraction smoke tests so full local test
-    proof can precede push/CI or any release-candidate claim.
+    Complete. Repaired invalid MCP image content from Uint8Array-backed
+    Puppeteer screenshots and restored full local suite proof.
+
+12. **M001-L17 Push CI Proof Authorization**
+    Complete. Jason authorized push and GitHub CI passed on the pushed M001
+    stack.
+
+13. **M001-L18 GitHub Actions Node 24 Compatibility**
+    Complete. CI now tests Node 20, 22, and 24 with current first-party
+    Actions runtime majors.
+
+14. **M001-L19 Hosted Rate Limit Abuse Posture**
+    Complete. Added active in-process pre-release hosted rate limiting and
+    named Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>` as
+    the pre-release abuse response owner.
+
+15. **M001-L20 Durable Shared Rate Limit Enforcement**
+    Complete. Added optional durable shared Redis REST enforcement, pushed
+    green CI, provisioned Vercel/Upstash Preview env, and proved hosted
+    `brand_status.rate_limits.status: "active_durable_shared"` on
+    `https://mcp.staging.brandcode.studio/brandcode`.
+
+16. **M001-L21 Hosted Retention Export Deletion Policy**
+    Ready. Clarify hosted Brandcode MCP data-policy language before any release
+    claim.
 
 ## Current Next Ready Lane
 
-M001-L16 should be the next Ready lane: **Full Suite Visual Extraction Smoke
-Repair**.
+M001-L21 should be the next Ready lane: **Hosted Retention Export Deletion
+Policy**.

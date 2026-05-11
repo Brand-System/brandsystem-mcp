@@ -36,7 +36,7 @@ as an explicit release blocker until both:
 | `brand_history` visibility | Blocked | Retention/visibility policy for compact scoped run/receipt summaries, including who can view history through each key posture. |
 | Private custody | Pass for current implementation, gated for launch language | Keep package-safe delivery only. Do not expose raw private provider URLs, private blob URLs, service-token data, or raw custody paths. |
 | Abuse handling | Pre-release owner approved; public launch language blocked | Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>` owns pre-release abuse response and may revoke, rotate, suspend, or throttle keys. Public release still needs final support/security language. |
-| Rate limits | Blocked | M001-L20 added optional durable shared Redis REST enforcement and `brand_status` reporting. Hosted Redis env/proof and Jason release approval are still required before broad public release. |
+| Rate limits | Staging proof complete / release blocked | M001-L20 added optional durable shared Redis REST enforcement and `brand_status` reporting. Hosted staging proof now reports `active_durable_shared`; Jason release approval is still required before broad public release. |
 | "Free in v1" copy | Jason decision | Decide whether this is public pricing copy, private beta posture, or launch-deferred language. |
 | `@brandcode/mcp` package/source | Jason decision | Decide MIT, proprietary, dual-positioned, or service-only posture before npm/package/listing work. |
 | Directory metadata | Deferred | Author separate Brandcode Use metadata only after this gate is satisfied or explicitly approved with blocker language. |
@@ -65,6 +65,11 @@ public listing changes.
   `active_pre_release_in_process` when the in-process local/test fallback is
   used.
 - `brand_status.rate_limits.release_gate` is `blocked`.
+- 2026-05-11 hosted proof against
+  `https://mcp.staging.brandcode.studio/brandcode` reported
+  `status: "active_durable_shared"` and
+  `enforcement: "durable_shared_redis_fixed_window"` using
+  `KV_REST_API_URL/KV_REST_API_TOKEN`.
 - `brand_status.rate_limits.blocker_owner` is
   `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
 - The durable limiter is a Redis REST fixed-window guard keyed by environment,

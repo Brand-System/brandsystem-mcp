@@ -12,7 +12,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 ## Current Truth
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
-  closeout docs through pushed tip `cc94bee`.
+  CI closeout docs through pushed tip `48f6fec`.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -102,11 +102,20 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   `active_durable_shared` from the `active_pre_release_in_process` local/test
   fallback, and the router fails closed with `503 rate_limit_unavailable` if a
   configured durable shared store is unavailable.
-- M001-L20 did not include hosted durable-store proof because this local session
-  has no configured Redis/Upstash/KV store or sensitive hosted rate-limit env.
-  Public release remains blocked until Jason approves/provisions the shared
-  store env, hosted proof shows `active_durable_shared`, and Jason explicitly
-  approves release.
+- M001-L20 hosted durable-store proof passed after Jason provisioned
+  Vercel/Upstash KV/Redis Preview env. Staging now aliases
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`, and `brand_status`
+  through the MCP Streamable HTTP client reports
+  `rate_limits.status: "active_durable_shared"` with
+  `enforcement: "durable_shared_redis_fixed_window"`.
+- M001-L20 hosted smoke also passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with full/read key postures
+  and package-safe asset id `brandcode:logo:c5-logomark-red.svg`: `fail: 0`,
+  `blocked: 0`, `skipped: 0`.
+- During proof, generated Preview test keys were accidentally echoed by an
+  unsafe pseudo-terminal attempt; they were treated as burned, rotated, and
+  replaced through the Vercel API for all Preview branches before proof.
+- Public release remains blocked until Jason explicitly approves release.
 - M001-L20 verification passed for `git diff --check`, focused hosted
   router/status tests, lint, build, and full `npm test` (39 files, 530 tests).
 - M001-L20 was pushed after Jason authorized push. GitHub CI run `25687209671`
@@ -137,7 +146,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L17 | Done | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
 | M001-L18 | Done | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
 | M001-L19 | Done | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Add active pre-release hosted rate-limit enforcement and preserve the durable production release blocker truthfully. |
-| M001-L20 | Done - hosted proof blocked | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and record the missing hosted store/proof blocker. |
+| M001-L20 | Done | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and prove hosted durable rate-limit posture. |
+| M001-L21 | Ready | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
 
 ## Blockers And Decisions
 
@@ -145,9 +155,9 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Jason approved the recommended hosted-service posture for pre-release authorized access, client-owned data, feedback/history posture, custody, launch-copy restraint, and source/service separation.
 - L11 resolved the hosted package asset proof blocker for `brandcode:logo:c5-logomark-red.svg`.
 - L12 resolved the hosted client credential blocker for Preview through Vercel env provisioning and did not commit secrets to the repo.
-- Rate-limit/abuse posture now has active in-process pre-release enforcement
-  with `release_gate: "blocked"`; production release still needs durable
-  shared enforcement.
+- Rate-limit/abuse posture now has command-backed hosted durable shared Redis
+  REST proof on the staging MCP route. `release_gate` remains `blocked`
+  because Jason has not approved release.
 - Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops
   `<jlankow@columnfive.com>`, with key revoke/rotate/suspend/throttle
   authority for abuse, leaked keys, excessive traffic, security risk, or
@@ -162,18 +172,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
 - CI hardening deferral is resolved by M001-L18.
-- Hosted rate-limit/abuse posture is no longer vague, but release remains
-  blocked: `brand_status.rate_limits.status` can report
-  `active_durable_shared` only when hosted Redis REST env is configured, and
-  `release_gate` is still `blocked` until command-backed hosted proof exists
-  and Jason approves release.
-- Jason decision/provisioning blocker: approve and provision the hosted
-  Redis/Upstash/KV REST rate-limit store env, then allow hosted proof of
-  `active_durable_shared`.
+- Hosted rate-limit/abuse posture is no longer vague: command-backed hosted
+  proof shows `brand_status.rate_limits.status: "active_durable_shared"`.
+  Release remains blocked by final hosted data-policy language,
+  `@brandcode/mcp` package/source posture, directory metadata, and Jason
+  explicit release approval.
 
 ## Ready Lane Rule
 
-No lane is Ready for automation. Pause on the named Jason
-decision/provisioning blocker: approve/provision hosted Redis REST rate-limit
-env and authorize hosted proof. Do not publish, release, submit to directories,
-add tools, alter public listing metadata, or relax private custody.
+M001-L21 is Ready for automation:
+`.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`.
+
+Do not publish, release, submit to directories, add tools, alter public listing
+metadata, or relax private custody. Jason approval remains a hard blocker for
+any release or publish action.

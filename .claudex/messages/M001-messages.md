@@ -901,7 +901,7 @@ Changed:
 - Existing over-limit behavior remains structured JSON `429 rate_limited` with
   `retry-after` and `x-ratelimit-*` headers.
 
-Truthful blocker:
+Original closeout blocker:
 
 - No hosted Redis/Upstash/KV store or sensitive hosted rate-limit env was
   available in this local session, so hosted durable proof was not completed.
@@ -933,6 +933,55 @@ Remote CI proof:
 
 Next state:
 
-- No lane is Ready for automation.
-- Named Jason decision/provisioning blocker: approve/provision hosted
-  Redis/Upstash/KV REST rate-limit env and authorize hosted proof.
+- Superseded later the same day by hosted durable proof after Jason provisioned
+  Vercel/Upstash KV/Redis Preview env.
+
+## 2026-05-11 - M001-L20 Hosted Durable Rate-Limit Proof Completed
+
+M001-L20 is now closed with hosted proof, not just implementation/CI proof.
+
+Proof actions:
+
+- Restored `BRANDCODE_MCP_TEST_KEYS` for Vercel Preview/all branches after
+  rotating the generated test keys.
+- Deployed fresh Preview:
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`.
+- Re-aliased staging:
+  `https://mcp.staging.brandcode.studio`.
+- Called `brand_status` through the MCP Streamable HTTP client against
+  `https://mcp.staging.brandcode.studio/brandcode`.
+
+Proof result:
+
+- `rate_limits.status: "active_durable_shared"`
+- `rate_limits.enforced: true`
+- `rate_limits.enforcement: "durable_shared_redis_fixed_window"`
+- `rate_limits.scope: "per_key_per_brand"`
+- `rate_limits.limit: 60`
+- `rate_limits.source:
+  "BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW/BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS; durable shared Redis REST (KV_REST_API_URL/KV_REST_API_TOKEN)"`
+
+Hosted smoke:
+
+- `npm run smoke:hosted-mcp -- --json` passed against
+  `https://mcp.staging.brandcode.studio/brandcode`.
+- Package-safe asset id:
+  `brandcode:logo:c5-logomark-red.svg`.
+- Result: `fail: 0`, `blocked: 0`, `skipped: 0`.
+
+Security note:
+
+- One unsafe pseudo-terminal attempt echoed generated test keys during the env
+  repair. Those values were treated as burned, rotated immediately, and the
+  rotated keys were installed through the Vercel API before hosted proof.
+
+Remaining release blockers:
+
+- Jason explicit release/publish approval.
+- Final hosted retention/deletion/export policy language.
+- Final `@brandcode/mcp` package/source posture.
+- Brandcode Use directory metadata.
+
+Next Ready lane:
+
+- M001-L21 - Hosted Retention Export Deletion Policy.

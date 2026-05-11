@@ -1,6 +1,6 @@
 # M001-L20 - Durable Shared Rate Limit Enforcement
 
-**Status:** Done - implementation complete / hosted proof blocked on Redis env
+**Status:** Done - implementation and hosted proof complete
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted security / durable enforcement
@@ -46,14 +46,25 @@ Implemented:
   `active_durable_shared`, `active_pre_release_in_process`, `unavailable`, and
   `disabled`.
 
-Hosted proof blocker:
+Hosted proof:
 
-- This local session did not have a configured hosted Redis/Upstash/KV store or
-  sensitive hosted rate-limit env values. Public release remains blocked until
-  Jason approves/provisions the shared store env, the committed code is deployed
-  with that env, `brand_status.rate_limits.status` is proved as
-  `active_durable_shared` on the hosted route, and Jason explicitly approves
-  release.
+- Jason provisioned Vercel/Upstash KV/Redis Preview env for `brandsystem-mcp`.
+- Rotated `BRANDCODE_MCP_TEST_KEYS` after an unsafe terminal echo and restored
+  it through the Vercel API for all Preview branches (`gitBranch: null`).
+- Deployed fresh Preview:
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`.
+- Re-aliased staging:
+  `https://mcp.staging.brandcode.studio`.
+- `brand_status` through the MCP Streamable HTTP client reported
+  `rate_limits.status: "active_durable_shared"`,
+  `enforcement: "durable_shared_redis_fixed_window"`,
+  `scope: "per_key_per_brand"`, `limit: 60`, and Redis source
+  `KV_REST_API_URL/KV_REST_API_TOKEN`.
+- Hosted smoke passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with the package-safe asset
+  id `brandcode:logo:c5-logomark-red.svg`: `fail: 0`, `blocked: 0`,
+  `skipped: 0`.
+- Public release remains blocked until Jason explicitly approves release.
 
 Verification:
 
@@ -75,6 +86,20 @@ Remote CI proof:
 - Matrix jobs: Node 20, Node 22, and Node 24 all passed.
 - Steps passed in all three jobs: `npm ci`, `npm run build`, `npm run lint`,
   `npm test`, and `npm audit --audit-level=high`.
+
+Hosted proof verification:
+
+- `vercel env ls preview` showed `BRANDCODE_MCP_TEST_KEYS`,
+  `KV_REST_API_URL`, and `KV_REST_API_TOKEN` configured for Preview.
+- `vercel deploy --yes` produced deployment
+  `dpl_JBkvaUum93YAzP52jAUmkw7kgu2C`, ready at
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`.
+- `vercel alias set https://brandsystem-kqrdhx4pe-column-five.vercel.app
+  mcp.staging.brandcode.studio` succeeded.
+- Streamable HTTP MCP `brand_status` proof passed with
+  `rate_limits.status: "active_durable_shared"`.
+- `npm run smoke:hosted-mcp -- --json` passed against the staging alias with
+  full/read key postures and package-safe asset proof.
 
 ## Scope
 

@@ -4,7 +4,7 @@
 
 Active sprint: M001 - Brandcode MCP stabilization and pre-release hardening.
 
-The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, and M001-L20 added optional durable shared Redis REST rate limiting. Jason does not want to release yet. The sprint is blocked on Jason approving/provisioning hosted Redis REST rate-limit env and authorizing hosted durable proof, not release.
+The hosted Brandcode Use MCP implementation has all 8 locked v0.1 tools wired in code. M001-L01 added a repeatable smoke harness at `npm run smoke:hosted-mcp`; M001-L02 refreshed the Use MCP roadmap so it no longer describes implemented tools as stubs. M001-L03/L04 staging route and feedback append proof now pass. M001-L06 completed the license/package/directory/security trust audit. M001-L07 expanded hosted auth/scope/security proof and documented rate-limit posture. M001-L08 proved hosted asset custody blocking and surfaced the package-safe asset fixture blocker. M001-L09 traced that blocker upstream to UCS/Brandcode Studio package data. M001-L10 repaired the UCS package delivery ref, M001-L11 proved the package-safe asset through hosted MCP smoke, M001-L12 completed multi-client proof with MCP Inspector and Claude Code, M001-L13 completed release-candidate trust review, M001-L14 completed the hosted terms/rate-limit gate, M001-L15 captured Jason's approval of the recommended hosted-service posture, M001-L16 restored full local test-suite proof, M001-L17 pushed the M001 stack with green GitHub CI, M001-L18 restored GitHub Actions Node runtime trust, M001-L19 added active hosted in-process pre-release rate limiting, and M001-L20 added and proved durable shared Redis REST rate limiting on staging. Jason does not want to release yet. The sprint is no longer blocked on durable rate-limit proof; the next Ready lane is hosted data-policy hardening, and release remains blocked on Jason explicit approval.
 
 ## Latest Build Work
 
@@ -174,11 +174,23 @@ M001-L20 completed durable shared rate-limit implementation locally:
 - Node 20, Node 22, and Node 24 matrix jobs all passed `npm ci`,
   `npm run build`, `npm run lint`, `npm test`, and
   `npm audit --audit-level=high`.
-- Hosted durable-store proof was not completed because this local session has
-  no configured Redis/Upstash/KV store or sensitive hosted rate-limit env.
-- Release remains blocked until Jason approves/provisions the hosted shared
-  store env, hosted proof shows `active_durable_shared`, and Jason explicitly
-  approves release.
+- Hosted durable-store proof is now complete. Jason provisioned Vercel/Upstash
+  KV/Redis Preview env, fresh Preview was deployed at
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`, and staging was
+  re-aliased to `https://mcp.staging.brandcode.studio`.
+- `brand_status` through the MCP Streamable HTTP client reported
+  `rate_limits.status: "active_durable_shared"` with
+  `enforcement: "durable_shared_redis_fixed_window"`, scoped
+  `per_key_per_brand`, source `KV_REST_API_URL/KV_REST_API_TOKEN`, and default
+  limit 60 requests per 60 seconds.
+- Hosted smoke passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with full/read key postures
+  and package-safe asset id `brandcode:logo:c5-logomark-red.svg`: `fail: 0`,
+  `blocked: 0`, `skipped: 0`.
+- During env repair, one unsafe pseudo-terminal attempt echoed generated test
+  keys. Those values were treated as burned, rotated immediately, and replaced
+  through the Vercel API for all Preview branches before proof.
+- Release remains blocked until Jason explicitly approves release.
 
 ## Latest PO Work
 
@@ -209,6 +221,7 @@ Ready lane:
 - `.claudex/packets/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md`
 - `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md`
+- `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`
 - `.claudex/prompts/M001-L09-package-safe-asset-fixture.md`
 - `.claudex/prompts/M001-L10-ucs-package-asset-delivery-ref.md`
 - `.claudex/prompts/M001-L12-multi-client-battle-test.md`
@@ -219,6 +232,7 @@ Ready lane:
 - `.claudex/prompts/M001-L18-github-actions-node24-compatibility.md`
 - `.claudex/prompts/M001-L19-hosted-rate-limit-abuse-posture.md`
 - `.claudex/prompts/M001-L20-durable-shared-rate-limit-enforcement.md`
+- `.claudex/prompts/M001-L21-hosted-retention-export-deletion-policy.md`
 - `.claudex/messages/M001-messages.md`
 
 ## Previous Build Work
@@ -282,6 +296,11 @@ Latest hosted proof:
 
 - Endpoint: `https://mcp.staging.brandcode.studio/brandcode`
 - Package-safe asset id: `brandcode:logo:c5-logomark-red.svg`
+- Latest durable rate-limit proof deployment:
+  `https://brandsystem-kqrdhx4pe-column-five.vercel.app`
+- Latest durable rate-limit proof:
+  `brand_status.rate_limits.status: "active_durable_shared"` with
+  `enforcement: "durable_shared_redis_fixed_window"`.
 - Latest multi-client proof deployment: `https://brandsystem-eipxqt3go-column-five.vercel.app`
 - Earlier asset-custody deployment: `https://brandsystem-qhfz5p7o6-column-five.vercel.app`
 - Earlier feedback-proof deployment: `https://brandsystem-oj1iwfm13-column-five.vercel.app`
@@ -291,11 +310,12 @@ Latest hosted proof:
 
 ## Next Ready Lane
 
-No lane is Ready for automation.
+M001-L21 is Ready:
+`.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md`.
 
-Named Jason decision/provisioning blocker: approve and provision hosted
-Redis/Upstash/KV REST rate-limit env, then authorize hosted proof of
-`brand_status.rate_limits.status: "active_durable_shared"`.
+Goal: clarify hosted Brandcode MCP retention, deletion, export,
+feedback/history, custody, and service/package posture before any release
+claim.
 
 Do not publish, release, submit to MCP directories, add tools, alter public
 listing metadata, or relax custody.
@@ -312,18 +332,18 @@ listing metadata, or relax custody.
 - Jason approved the recommended hosted-service posture, but final public
   retention/deletion/export language and `@brandcode/mcp` package/source
   posture remain launch blockers.
-- Rate limits support durable shared Redis REST enforcement when hosted store env is configured; otherwise local/pre-release traffic uses the in-process fallback. Production release still needs command-backed hosted durable proof.
+- Rate limits have command-backed hosted durable shared Redis REST proof on the staging MCP route; local/test traffic can still use the in-process fallback when no shared store env exists.
 - Pre-release abuse response owner is Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>`, with authority to revoke, rotate, suspend, or throttle hosted Brandcode MCP API keys for abuse, leaked keys, excessive traffic, security risk, or service-stability risk.
 - Directory metadata for Brandcode Use is deferred until hosted terms/rate-limit posture is settled.
 - CI hardening is resolved by M001-L18.
-- Hosted rate-limit/abuse posture is no longer vague, but release remains
-  blocked: `brand_status.rate_limits.status` can report
-  `active_durable_shared` only when the hosted Redis REST store is configured,
-  and `release_gate` is `blocked` until hosted proof exists and Jason approves
-  release.
-- Jason decision/provisioning blocker: approve/provision hosted
-  Redis/Upstash/KV REST rate-limit env and authorize hosted proof.
-- Local proof-key note: Vercel Preview now has a sensitive `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive values locally. Future proof sessions need an intentional local secret handoff or a generate-and-run shell flow.
+- Hosted rate-limit/abuse posture is no longer vague: `brand_status` reports
+  `active_durable_shared` on the staging MCP route. Release remains blocked by
+  final hosted data-policy language, final `@brandcode/mcp` package/source
+  posture, deferred directory metadata, and Jason explicit release approval.
+- Local proof-key note: Vercel Preview has a sensitive
+  `BRANDCODE_MCP_TEST_KEYS` value, but `vercel env pull` redacts sensitive
+  values locally. Future proof sessions need an intentional local secret
+  handoff or a generate-and-run/API flow.
 
 ## Local Hygiene
 
