@@ -4,6 +4,7 @@ import {
   handleHostedRequest,
 } from "../../src/hosted/router.js";
 import { createMemoryRateLimitStore } from "../../src/hosted/rate-limit.js";
+import type { HostedRateLimitStore } from "../../src/hosted/types.js";
 
 const TEST_SERVICE_TOKEN = "service-token-abc";
 
@@ -249,6 +250,100 @@ describe("handleHostedRequest — MCP protocol dispatch", () => {
       reset_at: "2027-01-15T08:01:00.000Z",
       retry_after_seconds: 60,
       release_gate: "blocked",
+    });
+  });
+
+  it("reports durable shared enforcement when a shared store is active", async () => {
+    const seenKeys: string[] = [];
+    const sharedStore: HostedRateLimitStore = {
+      mode: "durable_shared",
+      enforcement: "durable_shared_redis_fixed_window",
+      source: "durable shared test store",
+      check: async (input) => {
+        seenKeys.push(input.key);
+        return {
+          count: 1,
+          resetAt: input.now + input.windowMs,
+        };
+      },
+    };
+    const durableOptions = {
+      ...baseOptions,
+      rateLimit: {
+        maxRequests: 10,
+        windowMs: 30_000,
+        now: () => 1_800_000_000_000,
+        store: sharedStore,
+        source: "router durable test",
+      },
+    };
+
+    const res = await handleHostedRequest(
+      buildRequest("https://mcp.example/acme", {
+        method: "POST",
+        headers: {
+          authorization: "Bearer bck_test_acme_read",
+          "content-type": "application/json",
+          accept: "application/json, text/event-stream",
+        },
+        body: initializeBody(),
+      }),
+      durableOptions,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("x-ratelimit-limit")).toBe("10");
+    expect(res.headers.get("x-ratelimit-remaining")).toBe("9");
+    expect(res.headers.get("x-ratelimit-reset")).toBe("1800000030");
+    expect(seenKeys).toEqual([
+      "brandcode:mcp:rate-limit:staging:acme:bck_test_acme_re",
+    ]);
+  });
+
+  it("fails closed when the durable shared rate-limit store is unavailable", async () => {
+    const unavailableStore: HostedRateLimitStore = {
+      mode: "durable_shared",
+      enforcement: "durable_shared_redis_fixed_window",
+      source: "durable shared test store",
+      check: async () => {
+        throw new Error("redis unavailable");
+      },
+    };
+    const durableOptions = {
+      ...baseOptions,
+      rateLimit: {
+        maxRequests: 10,
+        windowMs: 30_000,
+        now: () => 1_800_000_000_000,
+        store: unavailableStore,
+        source: "router durable test",
+      },
+    };
+
+    const res = await handleHostedRequest(
+      buildRequest("https://mcp.example/acme", {
+        method: "POST",
+        headers: {
+          authorization: "Bearer bck_test_acme_read",
+          "content-type": "application/json",
+          accept: "application/json, text/event-stream",
+        },
+        body: initializeBody(),
+      }),
+      durableOptions,
+    );
+
+    expect(res.status).toBe(503);
+    const body = await readJson(res);
+    expect(body).toMatchObject({
+      error: "rate_limit_unavailable",
+      slug: "acme",
+      rate_limits: {
+        status: "unavailable",
+        enforced: false,
+        enforcement: "durable_shared_unavailable",
+        release_gate: "blocked",
+      },
     });
   });
 });

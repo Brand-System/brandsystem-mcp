@@ -1,6 +1,6 @@
 # M001-L20 - Durable Shared Rate Limit Enforcement
 
-**Status:** Ready
+**Status:** Done - implementation complete / hosted proof blocked on Redis env
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted security / durable enforcement
@@ -20,11 +20,49 @@ Pre-release owner:
   for abuse, leaked keys, excessive traffic, security risk, or
   service-stability risk.
 
-Remaining blocker:
+Starting blocker:
 
 - Process-local fixed-window limiting is not durable across Vercel instances.
 - Public release still requires durable shared enforcement evidence and
   explicit Jason release approval.
+
+## Closeout
+
+Implemented:
+
+- Added optional durable shared Redis REST rate-limit enforcement using
+  `@upstash/redis`.
+- Durable env contract:
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_URL` and
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_TOKEN`, with support for standard
+  `UPSTASH_REDIS_REST_*` and `KV_REST_API_*` names.
+- Preserved in-process memory enforcement as the local/test and pre-release
+  fallback when no shared store env is configured.
+- Kept limiter keys scoped to environment, brand slug, and API key id.
+- Preserved `429 rate_limited`, `retry-after`, and `x-ratelimit-*` headers.
+- Added fail-closed `503 rate_limit_unavailable` before MCP dispatch when a
+  configured durable shared store is unavailable.
+- Updated `brand_status.rate_limits` to distinguish
+  `active_durable_shared`, `active_pre_release_in_process`, `unavailable`, and
+  `disabled`.
+
+Hosted proof blocker:
+
+- This local session did not have a configured hosted Redis/Upstash/KV store or
+  sensitive hosted rate-limit env values. Public release remains blocked until
+  Jason approves/provisions the shared store env, the committed code is deployed
+  with that env, `brand_status.rate_limits.status` is proved as
+  `active_durable_shared` on the hosted route, and Jason explicitly approves
+  release.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/router.test.ts test/hosted/tools.test.ts`
+  passed: 60 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 530 tests.
 
 ## Scope
 

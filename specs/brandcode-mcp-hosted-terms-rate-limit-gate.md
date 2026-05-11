@@ -15,10 +15,12 @@ the package/source posture for `@brandcode/mcp`.
 
 The hosted-service posture is approved in
 `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`, but this gate is
-still **not release-satisfied**. M001-L19 added active in-process pre-release
-rate-limit enforcement at the hosted HTTP router, but this is not durable
-multi-instance production enforcement. Treat rate-limit/abuse posture as an
-explicit release blocker until either:
+still **not release-satisfied**. M001-L20 added an optional durable shared
+Redis REST rate-limit store at the hosted HTTP router. The router now reports
+durable/shared enforcement when the Redis env contract is configured, and falls
+back to the prior in-process limiter only for local tests and pre-release
+development when no shared store env is present. Treat rate-limit/abuse posture
+as an explicit release blocker until both:
 
 - `brand_status` reports active per-brand rate-limit enforcement with
   command-backed durable/shared enforcement evidence; and
@@ -34,7 +36,7 @@ explicit release blocker until either:
 | `brand_history` visibility | Blocked | Retention/visibility policy for compact scoped run/receipt summaries, including who can view history through each key posture. |
 | Private custody | Pass for current implementation, gated for launch language | Keep package-safe delivery only. Do not expose raw private provider URLs, private blob URLs, service-token data, or raw custody paths. |
 | Abuse handling | Pre-release owner approved; public launch language blocked | Jason Lankow / Brandcode Studio Ops `<jlankow@columnfive.com>` owns pre-release abuse response and may revoke, rotate, suspend, or throttle keys. Public release still needs final support/security language. |
-| Rate limits | Blocked | M001-L19 added process-local pre-release enforcement and `brand_status` reporting; Jason chose durable shared rate limiting as the next lane before broad public release. |
+| Rate limits | Blocked | M001-L20 added optional durable shared Redis REST enforcement and `brand_status` reporting. Hosted Redis env/proof and Jason release approval are still required before broad public release. |
 | "Free in v1" copy | Jason decision | Decide whether this is public pricing copy, private beta posture, or launch-deferred language. |
 | `@brandcode/mcp` package/source | Jason decision | Decide MIT, proprietary, dual-positioned, or service-only posture before npm/package/listing work. |
 | Directory metadata | Deferred | Author separate Brandcode Use metadata only after this gate is satisfied or explicitly approved with blocker language. |
@@ -58,19 +60,27 @@ public listing changes.
 
 ## Current Implementation Truth
 
-- `brand_status.rate_limits.status` reports `active_pre_release_in_process`
-  when called through the hosted HTTP router.
+- `brand_status.rate_limits.status` reports `active_durable_shared` when the
+  hosted Redis REST store is configured, or
+  `active_pre_release_in_process` when the in-process local/test fallback is
+  used.
 - `brand_status.rate_limits.release_gate` is `blocked`.
 - `brand_status.rate_limits.blocker_owner` is
   `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
-- The current limiter is a fixed-window in-memory guard keyed by environment,
-  brand slug, and key id. Defaults are 60 authenticated requests per 60
-  seconds and can be adjusted with `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW`
-  and `BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS`.
-- The current limiter returns `429 rate_limited`, `retry-after`, and
-  `x-ratelimit-*` headers when exceeded.
-- Because the limiter is process-local, it is acceptable pre-release hardening
-  but not a durable production claim across hosted instances.
+- The durable limiter is a Redis REST fixed-window guard keyed by environment,
+  brand slug, and key id. It uses
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_URL` /
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_TOKEN`, with support for standard
+  `UPSTASH_REDIS_REST_*` and `KV_REST_API_*` env names.
+- Defaults are 60 authenticated requests per 60 seconds and can be adjusted
+  with `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW` and
+  `BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS`.
+- The limiter returns `429 rate_limited`, `retry-after`, and `x-ratelimit-*`
+  headers when exceeded.
+- If the durable shared store is configured but unavailable, the hosted router
+  fails closed with `503 rate_limit_unavailable` before MCP tool dispatch.
+- Because hosted Redis env/proof has not been completed in this repo session,
+  this is an implementation step, not a public release claim.
 - Pre-release abuse response owner: Jason Lankow / Brandcode Studio Ops
   `<jlankow@columnfive.com>`.
 - Pre-release authority: the owner may revoke, rotate, suspend, or throttle
@@ -89,7 +99,7 @@ public listing changes.
 Jason approved the recommended terms posture. Remaining release blockers are:
 
 - final feedback/history retention/deletion/export language;
-- durable shared rate-limit enforcement evidence;
+- durable/shared hosted rate-limit enforcement evidence;
 - final `@brandcode/mcp` npm package/source posture;
 - explicit Jason approval for any release/publish/listing action.
 

@@ -62,14 +62,18 @@ export interface HostedRateLimitOptions {
   windowMs?: number;
   /** Deterministic clock for tests. */
   now?: () => number;
-  /** Deterministic in-memory store for tests. */
+  /** Deterministic store override for tests or injected hosted runtime config. */
   store?: HostedRateLimitStore;
   /** Human-readable config source. */
   source?: string;
 }
 
 export interface HostedRateLimitStore {
-  buckets: Map<string, HostedRateLimitBucket>;
+  mode: "in_process" | "durable_shared";
+  enforcement: "in_process_fixed_window" | "durable_shared_redis_fixed_window";
+  source: string;
+  check: (input: HostedRateLimitStoreInput) => Promise<HostedRateLimitStoreResult>;
+  buckets?: Map<string, HostedRateLimitBucket>;
 }
 
 export interface HostedRateLimitBucket {
@@ -77,10 +81,30 @@ export interface HostedRateLimitBucket {
   count: number;
 }
 
+export interface HostedRateLimitStoreInput {
+  key: string;
+  maxRequests: number;
+  windowMs: number;
+  now: number;
+}
+
+export interface HostedRateLimitStoreResult {
+  count: number;
+  resetAt: number;
+}
+
 export interface HostedRateLimitSnapshot {
-  status: "active_pre_release_in_process" | "disabled";
+  status:
+    | "active_pre_release_in_process"
+    | "active_durable_shared"
+    | "unavailable"
+    | "disabled";
   enforced: boolean;
-  enforcement: "in_process_fixed_window" | "none";
+  enforcement:
+    | "in_process_fixed_window"
+    | "durable_shared_redis_fixed_window"
+    | "durable_shared_unavailable"
+    | "none";
   scope: "per_key_per_brand";
   limit: number | null;
   remaining: number | null;

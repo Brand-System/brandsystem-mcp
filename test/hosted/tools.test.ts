@@ -28,6 +28,24 @@ const TEST_RATE_LIMIT: HostedRateLimitSnapshot = {
   source: "hosted tool test",
 };
 
+const TEST_DURABLE_RATE_LIMIT: HostedRateLimitSnapshot = {
+  status: "active_durable_shared",
+  enforced: true,
+  enforcement: "durable_shared_redis_fixed_window",
+  scope: "per_key_per_brand",
+  limit: 60,
+  remaining: 58,
+  window_ms: 60_000,
+  reset_at: "2026-05-11T12:01:00.000Z",
+  retry_after_seconds: null,
+  release_gate: "blocked",
+  blocker_owner:
+    "Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>",
+  required_before_public_release:
+    "Capture command-backed hosted durable/shared rate-limit proof and Jason explicit release approval before broad public release",
+  source: "hosted durable tool test",
+};
+
 function buildAuth(
   overrides: Partial<BrandcodeMcpAuthInfo> = {},
 ): BrandcodeMcpAuthInfo {
@@ -1351,5 +1369,17 @@ describe("brand_status (hosted)", () => {
     >;
     expect(availability.search.available).toBe(false);
     expect(availability.assets.available).toBe(false);
+  });
+
+  it("distinguishes durable shared rate-limit enforcement in hosted status", async () => {
+    const { client } = await connectClient(
+      buildContext(
+        { runtime: { version: "1.0.0", client_name: "Acme" } },
+        { rateLimit: TEST_DURABLE_RATE_LIMIT },
+      ),
+    );
+    const json = await call(client, "brand_status", {});
+    expect(json.rate_limits).toEqual(TEST_DURABLE_RATE_LIMIT);
+    expect(json.status).toContain("Rate limits:  active_durable_shared");
   });
 });

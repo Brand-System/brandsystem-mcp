@@ -93,20 +93,28 @@ deferred.
 
 - Phase 0 expects hosted Brandcode MCP to be protected by per-brand limits and
   abuse controls before public release.
-- Current hosted router enforcement is an in-process fixed-window limiter,
-  keyed by environment, brand slug, and API key id. Defaults are 60
-  authenticated requests per 60 seconds. Operators may adjust staging with
-  `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW` and
+- Current hosted router enforcement supports a durable shared Redis REST
+  fixed-window limiter, keyed by environment, brand slug, and API key id. The
+  limiter becomes durable/shared when the hosted environment provides
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_URL` and
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_TOKEN`; standard
+  `UPSTASH_REDIS_REST_*` or `KV_REST_API_*` Vercel/Upstash env names are also
+  accepted. Without those env vars, the router falls back to in-process memory
+  enforcement for local tests and pre-release development only.
+- Defaults are 60 authenticated requests per 60 seconds. Operators may adjust
+  limits with `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW` and
   `BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS`, or temporarily disable with
   `BRANDCODE_MCP_RATE_LIMIT_DISABLED=1`.
 - `brand_status.rate_limits.status` reports
-  `active_pre_release_in_process` when called through the hosted HTTP route and
-  includes configured limit, remaining count, window, reset, enforcement, and
+  `active_durable_shared` when Redis REST enforcement is active, or
+  `active_pre_release_in_process` for the local/test fallback. It includes
+  configured limit, remaining count, window, reset, enforcement, and
   release-gate fields. HTTP responses include `x-ratelimit-*` headers and
   return JSON `429 rate_limited` with `retry-after` when exceeded.
-- This is active pre-release enforcement, not a production launch claim.
-  Because it is process-local, broad public release remains blocked until
-  Brandcode uses durable shared enforcement across hosted instances.
+- If the durable shared store is configured but unavailable, hosted requests
+  fail closed with JSON `503 rate_limit_unavailable` before MCP tool dispatch.
+- Broad public release remains blocked until durable/shared hosted proof is
+  command-backed and Jason explicitly approves release.
 - Pre-release abuse response owner: Jason Lankow / Brandcode Studio Ops
   `<jlankow@columnfive.com>`.
 - Pre-release authority: the owner may revoke, rotate, suspend, or throttle

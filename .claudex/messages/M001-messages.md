@@ -875,3 +875,52 @@ Next state:
 Next Ready lane:
 
 - M001-L20 - Durable Shared Rate Limit Enforcement.
+
+## 2026-05-11 - M001-L20 Durable Shared Rate Limit Enforcement Closed
+
+M001-L20 added durable shared rate-limit implementation without making a hosted
+proof or release claim.
+
+Changed:
+
+- Added optional durable shared Redis REST fixed-window enforcement using
+  `@upstash/redis`.
+- Hosted env contract:
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_URL` and
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_TOKEN`.
+- Standard `UPSTASH_REDIS_REST_*` and `KV_REST_API_*` env names are accepted
+  when a Vercel/Upstash store is attached.
+- Preserved in-process memory enforcement as the local/test and pre-release
+  fallback when no shared store env exists.
+- Kept rate-limit keys scoped to environment, brand slug, and API key id.
+- `brand_status.rate_limits.status` now distinguishes
+  `active_durable_shared`, `active_pre_release_in_process`, `unavailable`, and
+  `disabled`.
+- Configured durable store outages fail closed as JSON
+  `503 rate_limit_unavailable` before MCP dispatch.
+- Existing over-limit behavior remains structured JSON `429 rate_limited` with
+  `retry-after` and `x-ratelimit-*` headers.
+
+Truthful blocker:
+
+- No hosted Redis/Upstash/KV store or sensitive hosted rate-limit env was
+  available in this local session, so hosted durable proof was not completed.
+- Public release remains blocked until Jason approves/provisions the hosted
+  shared store env, hosted proof shows
+  `brand_status.rate_limits.status: "active_durable_shared"`, and Jason
+  explicitly approves release.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/router.test.ts test/hosted/tools.test.ts`
+  passed: 60 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 530 tests.
+
+Next state:
+
+- No lane is Ready for automation.
+- Named Jason decision/provisioning blocker: approve/provision hosted
+  Redis/Upstash/KV REST rate-limit env and authorize hosted proof.

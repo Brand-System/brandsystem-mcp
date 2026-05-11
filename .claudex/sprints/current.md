@@ -11,8 +11,9 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- `main` includes M001 coordination through the M001-L20 Ready lane. The
-  accumulated M001 stack through L19 was pushed to `origin/main`.
+- Local `main` includes M001-L20 durable shared rate-limit implementation and
+  closeout docs. The accumulated M001 stack through L19 was pushed to
+  `origin/main`; L20 is local pending commit and hosted proof/provisioning.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -93,6 +94,22 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   keys, excessive traffic, security risk, or service-stability risk.
 - Jason chose durable shared hosted rate limiting as the next lane before broad
   public release.
+- M001-L20 added optional durable shared Redis REST fixed-window rate limiting
+  using `@upstash/redis`. Hosted env may use
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_URL` /
+  `BRANDCODE_MCP_RATE_LIMIT_REDIS_REST_TOKEN`, or standard
+  `UPSTASH_REDIS_REST_*` / `KV_REST_API_*` names.
+- `brand_status.rate_limits.status` now distinguishes
+  `active_durable_shared` from the `active_pre_release_in_process` local/test
+  fallback, and the router fails closed with `503 rate_limit_unavailable` if a
+  configured durable shared store is unavailable.
+- M001-L20 did not include hosted durable-store proof because this local session
+  has no configured Redis/Upstash/KV store or sensitive hosted rate-limit env.
+  Public release remains blocked until Jason approves/provisions the shared
+  store env, hosted proof shows `active_durable_shared`, and Jason explicitly
+  approves release.
+- M001-L20 verification passed for `git diff --check`, focused hosted
+  router/status tests, lint, build, and full `npm test` (39 files, 530 tests).
 
 ## Lanes
 
@@ -117,7 +134,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L17 | Done | `.claudex/packets/M001-L17-push-ci-proof-authorization.md` | Resolve the push/CI proof gap after full-suite green, without pushing unless Jason explicitly authorizes it. |
 | M001-L18 | Done | `.claudex/packets/M001-L18-github-actions-node24-compatibility.md` | Repair or explicitly harden the GitHub Actions Node runtime posture surfaced by the passing M001-L17 CI run. |
 | M001-L19 | Done | `.claudex/packets/M001-L19-hosted-rate-limit-abuse-posture.md` | Add active pre-release hosted rate-limit enforcement and preserve the durable production release blocker truthfully. |
-| M001-L20 | Ready | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Replace process-local hosted rate limiting with durable shared enforcement or produce a precise substrate blocker. |
+| M001-L20 | Done - hosted proof blocked | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and record the missing hosted store/proof blocker. |
 
 ## Blockers And Decisions
 
@@ -141,15 +158,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - Full-suite local test deferral is resolved by M001-L16.
 - CI hardening deferral is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague, but release remains
-  blocked: `brand_status.rate_limits.status` is
-  `active_pre_release_in_process` on the hosted HTTP route, and
-  `release_gate` is still `blocked` until durable shared enforcement exists
+  blocked: `brand_status.rate_limits.status` can report
+  `active_durable_shared` only when hosted Redis REST env is configured, and
+  `release_gate` is still `blocked` until command-backed hosted proof exists
   and Jason approves release.
+- Jason decision/provisioning blocker: approve and provision the hosted
+  Redis/Upstash/KV REST rate-limit store env, then allow hosted proof of
+  `active_durable_shared`.
 
 ## Ready Lane Rule
 
-Automation should pick up exactly one Ready lane: **M001-L20**. Do not publish,
-release, submit to directories, add tools, alter public listing metadata, or
-relax private custody. Build durable shared hosted rate-limit enforcement next,
-or record the exact missing substrate decision if this repo cannot implement it
-truthfully.
+No lane is Ready for automation. Pause on the named Jason
+decision/provisioning blocker: approve/provision hosted Redis REST rate-limit
+env and authorize hosted proof. Do not publish, release, submit to directories,
+add tools, alter public listing metadata, or relax private custody.

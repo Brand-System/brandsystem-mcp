@@ -117,11 +117,20 @@ export async function handleHostedRequest(
     });
   }
 
-  const rateLimit = checkHostedRateLimit({
+  const rateLimit = await checkHostedRateLimit({
     slug,
     auth,
     options: options.rateLimit,
   });
+  if (rateLimit.error === "rate_limit_store_unavailable") {
+    return jsonError(503, {
+      error: "rate_limit_unavailable",
+      message:
+        "Brandcode MCP durable shared rate-limit store is unavailable",
+      slug,
+      rate_limits: rateLimit.snapshot,
+    });
+  }
   if (!rateLimit.allowed) {
     return jsonError(
       429,
