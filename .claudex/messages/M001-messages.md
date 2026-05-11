@@ -1127,3 +1127,46 @@ relaxation, production client key generation, or real client naming happened.
 Next Ready lane:
 
 - M001-L24 - Limited Client Onboarding Template.
+
+## 2026-05-11 - M001-L24 Limited Client Onboarding Template Closed
+
+M001-L24 closed as a docs/proof limited-client onboarding lane.
+
+Changed:
+
+- Added `specs/brandcode-mcp-limited-client-onboarding-template.md`.
+- Added an internal, redacted staging proof:
+  `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`.
+- Updated the L24 packet, sprint board, `README.md`, `SECURITY.md`,
+  `llms.txt`, and `HANDOFF.md`.
+
+Real instance proof:
+
+- Brand / slug: Column Five Brandcode internal instance, `brandcode`.
+- Endpoint: `https://mcp.staging.brandcode.studio/brandcode`.
+- Command: `npm run smoke:hosted-mcp -- --json` with local redacted staging
+  full/read keys and asset id `brandcode:logo:c5-logomark-red.svg`.
+- Result: `ok: true`, `status: "pass"`, `fail: 0`, `blocked: 0`,
+  `skipped: 0`.
+- Locked 8-tool order passed.
+- `brand_runtime`, `brand_search`, `brand_check`, `brand_status`,
+  `list_brand_assets`, `get_brand_asset`, `brand_feedback`, and
+  `brand_history` were exercised by the smoke harness.
+- Package-safe asset proof passed for
+  `brandcode:logo:c5-logomark-red.svg`.
+- Read-only insufficient-scope checks passed for `brand_check` and
+  `brand_feedback`.
+
+Verification:
+
+- `git diff --check` passed.
+- No code or package metadata changed, so lint/build/tests were not required.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, or production endpoint proof
+happened.
+
+Next Ready lane:
+
+- M001-L25 - Column Five Brandcode Client Config Dry Run.

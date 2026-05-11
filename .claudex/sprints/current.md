@@ -13,7 +13,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
   CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed hosted durable proof docs and M001-L21 data-policy docs.
+  unpushed coordination/proof docs through M001-L24.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -159,6 +159,19 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L23 was docs-only. It did not change code, hosted tools, custody,
   package/listing metadata, release/publish posture, directory submission,
   public source/license posture, or production client keys.
+- M001-L24 added
+  `specs/brandcode-mcp-limited-client-onboarding-template.md` and a concrete
+  internal staging proof at
+  `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`.
+- M001-L24 tested the template against the Column Five Brandcode `brandcode`
+  staging instance at `https://mcp.staging.brandcode.studio/brandcode`.
+  Hosted smoke passed with `ok: true`, `status: "pass"`, `fail: 0`,
+  `blocked: 0`, and `skipped: 0`; package-safe asset proof passed for
+  `brandcode:logo:c5-logomark-red.svg`.
+- M001-L24 was docs/proof-only. It did not change code, hosted tools, custody,
+  package/listing metadata, release/publish posture, directory submission,
+  public source/license posture, production client keys, or production endpoint
+  access.
 
 ## Lanes
 
@@ -187,7 +200,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L21 | Done | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
 | M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
 | M001-L23 | Done | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
-| M001-L24 | Ready | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist without issuing production keys. |
+| M001-L24 | Done | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist and test it against the internal Brandcode staging instance. |
+| M001-L25 | Ready | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Run a real MCP client configuration dry run against the Column Five Brandcode staging endpoint without exposing keys. |
 
 ## Blockers And Decisions
 
@@ -219,11 +233,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   M001-L23 added the limited-client readiness plan. Release remains blocked by
   final deletion/export launch approval, future public package/source approval,
   directory metadata, and Jason explicit release approval.
+- M001-L24 proved the limited-client onboarding template against the internal
+  `brandcode` staging instance. The next useful proof is a real MCP client
+  configuration dry run using that same staging endpoint.
 
 ## Ready Lane Rule
 
-M001-L24 is Ready for automation:
-`.claudex/packets/M001-L24-limited-client-onboarding-template.md`.
+M001-L25 is Ready for automation:
+`.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

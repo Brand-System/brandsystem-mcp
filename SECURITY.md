@@ -24,6 +24,10 @@ release after hardening. The current hosted data-policy draft is
 [`specs/brandcode-mcp-hosted-data-policy.md`](specs/brandcode-mcp-hosted-data-policy.md),
 and the limited-client rollout guardrails live in
 [`specs/brandcode-mcp-limited-client-readiness-plan.md`](specs/brandcode-mcp-limited-client-readiness-plan.md).
+The limited-client onboarding template is
+[`specs/brandcode-mcp-limited-client-onboarding-template.md`](specs/brandcode-mcp-limited-client-onboarding-template.md),
+and the internal Column Five Brandcode staging proof is
+[`specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`](specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md).
 
 ### Hosted Service Release Gate
 

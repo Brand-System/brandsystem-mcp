@@ -1,6 +1,6 @@
 # M001-L24 - Limited Client Onboarding Template
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client launch readiness / operations
@@ -53,12 +53,30 @@ Implement narrowly:
 
 ## Acceptance
 
-- The repo has a reusable limited-client onboarding checklist/template.
-- The template is concrete enough to run one approved client through staging
+- Done: the repo has a reusable limited-client onboarding checklist/template.
+- Done: the template is concrete enough to run one approved client through staging
   proof and, if approved later, production proof.
-- It records no secrets and makes production key issuance explicitly gated.
-- `git diff --check` passes.
-- If no code changes are made, lint/build/tests may be skipped with a clear
+- Done: it records no secrets and makes production key issuance explicitly gated.
+- Done: `git diff --check` passes.
+- Done: no code changes were made, so lint/build/tests were skipped with a clear
   docs-only note.
-- Exactly one next Ready lane remains, or a named Jason decision blocker is
-  recorded.
+- Done: exactly one next Ready lane remains.
+
+## Closeout
+
+- Added `specs/brandcode-mcp-limited-client-onboarding-template.md`.
+- Added a concrete internal staging proof:
+  `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`.
+- Ran the template proof against the Column Five Brandcode `brandcode` staging
+  instance at `https://mcp.staging.brandcode.studio/brandcode`.
+- Hosted smoke passed with `ok: true`, `status: "pass"`, `fail: 0`,
+  `blocked: 0`, and `skipped: 0`.
+- Package-safe asset proof passed for
+  `brandcode:logo:c5-logomark-red.svg`.
+- Read-only insufficient-scope checks passed for `brand_check` and
+  `brand_feedback`.
+- No secrets were recorded.
+- No release, package, directory, listing, production key, hosted tool, or
+  custody change happened.
+- Next Ready lane:
+  `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md`.
