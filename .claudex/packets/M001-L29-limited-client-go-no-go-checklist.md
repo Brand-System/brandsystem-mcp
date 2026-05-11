@@ -17,7 +17,7 @@ The next useful non-release hardening step is to consolidate that work into a
 single go/no-go checklist for approved limited-client pilots. This should help
 operators decide whether a specific brand/client is ready for staging or
 production proof without implying public release, npm publication, MCP
-directory submission, or deletion/export launch approval.
+directory submission, public deletion/export launch language, or legal terms.
 
 ## Scope
 
@@ -41,8 +41,9 @@ Implement narrowly:
 - Add a durable limited-client go/no-go checklist under `specs/`.
 - Separate staging readiness, production proof readiness, and public release
   readiness.
-- Mark deletion/export launch posture as blocked until Jason/legal/ops decide
-  the L28 brief.
+- Mark the L28 pre-release deletion/export operating posture as recorded, while
+  keeping public deletion/export launch language blocked on final
+  legal/subprocessor review.
 - Include required evidence links for smoke proof, client-config proof,
   package-safe asset proof, durable rate-limit proof, support intake, key ops,
   custody posture, and CI freshness.
@@ -74,8 +75,8 @@ Implement narrowly:
 - Ready lane creates a go/no-go checklist usable for an approved limited-client
   pilot.
 - Checklist distinguishes staging, production proof, and public release gates.
-- Checklist makes deletion/export launch approval a blocker, not an assumed
-  pass.
+- Checklist makes public deletion/export launch language a blocker, not an
+  assumed pass.
 - Checklist includes evidence fields and fail-closed criteria.
 - `git diff --check` passes.
 - No code changes are expected; lint/build/tests may be skipped with a clear

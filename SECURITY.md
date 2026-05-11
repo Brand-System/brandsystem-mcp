@@ -57,7 +57,7 @@ with brand-scoped bearer keys only after client/brand approval, scoped key
 issuance, per-client hosted smoke proof, support/abuse/deletion/export intake,
 package-safe custody checks, the key operations runbook, and the support intake
 ledger. Public Brandcode MCP release still requires explicit Jason approval
-plus final deletion/export request handling, support/legal launch language, any
+plus final legal/subprocessor launch language, any
 future public package/source posture, directory metadata, and QC/CI gates.
 Brandcode MCP directory metadata, public listing copy, npm publish, production
 release, and launch claims remain deferred.
@@ -104,10 +104,12 @@ release, and launch claims remain deferred.
   captured in the hosted data-policy draft. The MCP does not expose public
   self-serve deletion or export tools for hosted feedback/history. During
   pre-release, deletion/export requests route to Jason Lankow / Brandcode
-  Studio Ops for manual review. Public launch still requires Jason/legal/ops
-  approval of requester authorization, deletion/export scope, export package
-  format, response windows, support escalation, and any required legal or
-  subprocessor language. Those launch decisions are framed in
+  Studio Ops for manual review. Authorized pre-release requesters are brand
+  owners/admins for the brand instance or Jason as Brandcode Studio Ops;
+  authority is verified through brand instance admin status or, for the
+  internal Column Five Brandcode instance, verified
+  `columnfivemedia.com` / `columnfive.com` email. Public launch still requires
+  final legal/subprocessor language. That posture is recorded in
   [`specs/brandcode-mcp-deletion-export-launch-decision-brief.md`](specs/brandcode-mcp-deletion-export-launch-decision-brief.md);
   the brief does not approve launch copy, public timelines, or self-serve
   deletion/export operations.

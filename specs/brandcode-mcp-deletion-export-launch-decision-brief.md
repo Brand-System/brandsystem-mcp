@@ -1,6 +1,7 @@
 # Brandcode MCP Deletion Export Launch Decision Brief
 
-**Status:** Decision brief; launch language not approved
+**Status:** Pre-release decision posture recorded; launch language still
+requires legal review
 **Date:** 2026-05-11
 **Applies to:** hosted `@brandcode/mcp` Use MCP deletion/export posture
 **Package/source posture:** Option 4 - no public `@brandcode/mcp`
@@ -17,15 +18,15 @@ bearer-key access, client-owned or client-controlled brand data,
 append-only feedback, compact redacted history, package-safe asset custody, and
 manual deletion/export review through Brandcode Studio Ops.
 
-That is enough for limited-client pre-release operations. It is not enough for
-public launch copy. Before Brandcode MCP can claim public availability,
-directory readiness, customer-facing deletion/export support, or release
-candidate status, Jason/legal/ops must decide who can request deletion/export,
-how authorization is verified, what systems are in scope, what is excluded,
-what export package may be delivered, what response windows can be promised,
-where escalation lives, and what legal/subprocessor language is required.
+That is enough for limited-client pre-release operations. Jason has now
+approved the pre-release requester and verification posture: brand owners or
+admins for the brand instance, and Jason Lankow as Brandcode Studio Ops. The
+remaining launch-sensitive work is legal review of public language and any
+future self-serve or SLA-shaped commitment.
 
-This brief frames those decisions. It does not approve them.
+This brief records the pre-release operating posture. It does not approve
+public release, public directory copy, self-serve deletion/export, or legal
+terms.
 
 ## Current Pre-Release Posture
 
@@ -44,57 +45,104 @@ This brief frames those decisions. It does not approve them.
 - During pre-release, deletion/export requests route to Jason Lankow /
   Brandcode Studio Ops `<jlankow@columnfive.com>` for manual review through
   Brandcode/UCS operations.
+- Authorized pre-release requesters are brand owners/admins for the brand
+  instance and Jason Lankow as Brandcode Studio Ops.
+- Authority proof is brand instance admin access, or verified email matching
+  `columnfivemedia.com` or `columnfive.com` for the internal Column Five
+  Brandcode instance.
 
-## Launch Decisions Required
+## Recorded Pre-Release Decisions
 
-| Area | Current pre-release posture | Launch decision options | Decision needed before public copy |
-| --- | --- | --- | --- |
-| Requester authorization | Manual ops review; requester authority may be unknown at intake. | Account owner only; account admin plus authorized client contacts; client-authorized agency/vendor; case-by-case legal/ops review. | Who is allowed to request deletion, export, inspection, or correction for each data category. |
-| Authorization verification | Support/ops confirms manually before action. | Brandcode account role; signed client contact list; email-domain plus out-of-band confirmation; contract/legal contact; support ticket approval chain. | Which verification path is sufficient, and what evidence must be retained without storing secrets. |
-| Data scope | Runtime, feedback, history, package-safe assets, support evidence, and hosted/package systems may be implicated. | Feedback/history only; full hosted MCP data; runtime package plus feedback/history; support evidence included; brand assets included only when package-safe and client-owned. | Which systems and records are in scope for deletion/export and which owner executes each one. |
-| Exclusions | Security, audit, abuse, accounting, and legal records are not defined for public terms. | Exclude abuse/security logs; exclude rate-limit counters; exclude billing/accounting records; retain minimal legal/audit evidence; exclude private provider data not controlled by Brandcode. | What Brandcode may retain, why, and how to describe that retention without overpromising deletion. |
-| Export package format | No approved public export format. | Compact JSON summaries; JSON plus Markdown receipt index; zipped structured package; client-facing CSV for feedback rows; human-readable support summary only. | The allowed export format, delivery channel, redaction rules, and whether package-safe assets are included as refs or files. |
-| Response windows | No public SLA or timeline is promised. | No public timeline during limited-client beta; target acknowledgement only; business-day target; contract-specific response window. | Whether any customer-facing response window can be promised and who owns misses/escalations. |
-| Escalation path | Brandcode Studio Ops manual review. | Ops owner only; ops plus legal reviewer; support owner triage then Jason/legal/ops; incident/security path for abuse or leaked-key related requests. | The named escalation owner, backup owner, and decision authority for contested or ambiguous requests. |
-| Legal/subprocessor language | Hosted data-policy draft records current truth but is not launch terms. | Public privacy/terms addendum; limited-client service terms exhibit; support-process note; no public terms until legal approves. | Whether customer-facing terms, privacy, DPA, subprocessor, or retention language is required before launch. |
+| Area | Recorded pre-release posture | Public launch decision still needed |
+| --- | --- | --- |
+| Requester authorization | Brand owner/admin for the brand instance, or Jason Lankow as Brandcode Studio Ops. | Whether public terms need additional requester classes such as contract owner, legal contact, or authorized agency/vendor. |
+| Authorization verification | Brand instance admin access, or verified email matching `columnfivemedia.com` or `columnfive.com` for the internal Column Five Brandcode instance. | How non-internal brands prove authority, and what evidence may be retained without storing secrets. |
+| Data scope | Hosted MCP service data: `brand_feedback`, scoped `brand_history` summaries/receipts, limited-client support/intake records, non-secret key metadata, and MCP-visible package/runtime references. | Whether public deletion/export also covers canonical Brandcode Studio records, official Full Brand Runtime packages, client assets, or other UCS records. |
+| Exclusions | Security/abuse logs, rate-limit counters, audit receipts/tombstones, billing/legal records, legal holds, backups until normal expiry, secrets, raw private/provider URLs, private custody paths, and third-party/provider data outside Brandcode custody are excluded from ordinary deletion/export. | Exact legal wording for retained records, backup expiry, and data outside Brandcode custody. |
+| Export package format | Curated support packet: Markdown index plus JSON summaries/receipts and package-safe refs. No raw nested UCS blobs by default, no secrets, no private/provider URLs, no public delivery links. | Whether a public export format, delivery channel, archive format, or asset-file inclusion rule is approved. |
+| Response windows | No public SLA or customer-facing timeline. Manual pre-release review only. | Whether any acknowledgement or completion target can be promised publicly or contractually. |
+| Escalation path | Jason Lankow / Brandcode Studio Ops. Legal review required before public launch language. | Backup owner and legal/privacy reviewer for public operation. |
+| Legal/subprocessor language | Draft language below may be used for review only. | Final terms, privacy, DPA, and subprocessor language must be approved before public launch copy. |
 
-## Recommended Decision Shape
+## Recommended Operating Shape
 
-For v0.1 limited-client launch language, prefer a conservative approved-client
-posture:
+For v0.1 limited-client launch language, use the conservative approved-client
+posture above:
 
-1. Requesters must be the approved brand owner, approved account admin, or
-   explicitly authorized client contact recorded in the limited-client support
-   ledger.
-2. Authorization must be verified through a controlled support channel and
-   linked to a redacted evidence record. Raw bearer keys, service tokens,
-   private/provider URLs, or raw custody paths must never be stored as proof.
-3. Export should start with feedback/history summaries and relevant receipt
-   metadata, not raw nested UCS history blobs.
+1. Requesters must be a brand owner/admin for the brand instance, or Jason
+   Lankow as Brandcode Studio Ops.
+2. Authorization must be verified through brand instance admin status or, for
+   the internal Column Five Brandcode instance, verified email matching
+   `columnfivemedia.com` or `columnfive.com`.
+3. Export should start with curated feedback/history summaries, relevant
+   receipt metadata, support/intake records, and package-safe refs, not raw
+   nested UCS history blobs.
 4. Deletion should route through manual Brandcode/UCS operations review until
    system-specific deletion semantics and audit retention rules are approved.
-5. Package-safe assets may be referenced only through package-safe delivery
+5. Canonical Brandcode Studio records and official Full Brand Runtime packages
+   should be handled through Brandcode/UCS admin paths, not implicitly by hosted
+   MCP support intake.
+6. Package-safe assets may be referenced only through package-safe delivery
    posture. Private-provider-only assets remain excluded or blocked.
-6. Public response windows should remain unpromised unless legal/ops approves a
+7. Public response windows should remain unpromised unless legal/ops approves a
    support commitment.
-7. Legal/ops should define whether any security, abuse, audit, accounting, or
-   legal hold records are excluded from deletion and export.
+8. Security, abuse, audit, accounting, legal hold, backup, and out-of-custody
+   provider records should remain excluded or specially reviewed.
 
-This recommendation still requires approval. It is not launch copy.
+This recommendation records the pre-release posture. It is not public launch
+copy.
 
 ## Systems To Classify
 
-| System or record type | Likely launch treatment | Open decision |
+| System or record type | Pre-release treatment | Public launch decision |
 | --- | --- | --- |
-| Hosted brand runtime package | Client-owned/client-controlled runtime data served by hosted MCP. | Whether runtime package export is included or handled through existing Brandcode/UCS export paths. |
-| `brand_feedback` UCS history | Append-only review input with receipt metadata. | Whether deletion removes, redacts, tombstones, or annotates feedback rows. |
-| `brand_history` summaries | Read-only projection of UCS AgentRun history. | Whether export includes summaries only or underlying receipt-chain records. |
-| Package-safe assets | May be listed by id and package-safe delivery ref. | Whether export includes asset files, package paths, or metadata-only references. |
-| Private-provider-only assets | Blocked from MCP delivery. | Whether excluded entirely or routed to the upstream provider/client custody path. |
-| Support ledger/evidence | Redacted operational evidence. | Whether client-facing export includes support evidence and how internal notes are filtered. |
-| Rate-limit counters | Operational safety metadata. | Whether excluded as ephemeral security/operations data. |
-| Auth/key records | Security-sensitive credential metadata. | Whether only non-secret key id/label and scope posture may be exported. |
-| Abuse/security records | Safety and incident evidence. | What minimum records are retained for security, legal, or audit reasons. |
+| Hosted brand runtime package | Export as MCP-visible references and existing package-safe metadata only. | Whether runtime package export is included or handled through existing Brandcode/UCS export paths. |
+| `brand_feedback` UCS history | In scope for curated summary export; deletion requires manual review and may use deletion, redaction, tombstone, or annotation. | Final system-specific deletion semantics. |
+| `brand_history` summaries | In scope for curated summary export and receipt metadata. | Whether public export includes summaries only or underlying receipt-chain records. |
+| Package-safe assets | May be listed by id and package-safe delivery ref. | Whether public export includes asset files, package paths, or metadata-only references. |
+| Private-provider-only assets | Excluded from MCP export; route to upstream provider/client custody path if needed. | Whether any provider-specific export process is needed outside Brandcode MCP. |
+| Support ledger/evidence | In scope after redaction of secrets, private/provider URLs, sensitive env values, and internal-only notes. | How internal notes are filtered for public export. |
+| Rate-limit counters | Excluded as ephemeral security/operations data. | Retention wording and whether aggregate posture may be disclosed. |
+| Auth/key records | Only non-secret key id/label, scope posture, brand slug, and key owner may be exported. | Whether public export includes key metadata at all. |
+| Abuse/security records | Excluded from ordinary export/deletion and retained as needed for safety, investigation, legal, or audit reasons. | Legal wording for security and abuse retention. |
+| Billing/legal records | Excluded from hosted MCP export/deletion path. | Public terms for legal, accounting, billing, and contractual retention. |
+| Backups | Not separately searched or removed during pre-release; data ages out through normal backup retention. | Backup retention language for public terms. |
+
+## Draft Legal And Subprocessor Language
+
+The language below is draft operating language for legal review. It is not
+approved public terms.
+
+> Brandcode MCP is available during pre-release only to approved brand
+> instances and authorized users. Deletion or export requests may be submitted
+> by a brand owner or administrator for the applicable brand instance, or by
+> Brandcode Studio Ops. Brandcode may require verification of account role,
+> verified email domain, or other reasonable authority before processing a
+> request.
+
+> During pre-release, deletion and export requests are handled manually by
+> Brandcode Studio Ops. Brandcode does not currently provide self-serve
+> deletion or export tools for hosted MCP data, and no public response-time
+> commitment is made unless separately agreed in writing.
+
+> Hosted MCP export packages may include curated summaries of MCP feedback,
+> scoped MCP run history, relevant receipt metadata, support/intake records,
+> non-secret key metadata, and package-safe runtime or asset references.
+> Exports do not include bearer keys, service tokens, raw private/provider
+> URLs, raw private custody paths, or data outside Brandcode custody.
+
+> Deletion requests may be fulfilled by deletion, redaction, tombstoning, or
+> other reasonable operational treatment depending on the system and record
+> type. Brandcode may retain records where necessary for security, abuse
+> prevention, audit integrity, legal compliance, billing/accounting, backup
+> retention, dispute resolution, or legal hold.
+
+> Some Brandcode services rely on subprocessors and infrastructure providers to
+> host, store, process, secure, or transmit service data. Brandcode will not use
+> hosted MCP deletion/export requests to expose or transfer raw provider
+> secrets, private provider URLs, or third-party data that Brandcode does not
+> control. Subprocessor, data processing, and retention commitments require
+> separate legal approval before public launch language is published.
 
 ## Not Approved By This Brief
 
@@ -113,29 +161,27 @@ This brief does not authorize:
 - custody relaxation or private/provider URL exposure;
 - selected Brand Kit or campaign/exploratory kit default behavior.
 
-## Approval Record To Capture
+## Approval Record
 
-When Jason/legal/ops decide the launch posture, record:
-
-| Field | Required value |
+| Field | Recorded value |
 | --- | --- |
-| Decision date | `[YYYY-MM-DD]` |
-| Decision owner | `[Jason / legal / ops names]` |
-| Approved requester classes | `[owner / admin / authorized contact / other]` |
-| Verification method | `[support channel / account role / legal contact / other]` |
-| Deletion scope | `[systems and exclusions]` |
-| Export scope and format | `[systems, format, redaction, delivery channel]` |
-| Response window | `[none / acknowledgement target / business-day target / contract-specific]` |
-| Escalation path | `[owner and backup]` |
-| Legal/subprocessor requirement | `[not required / terms update / privacy update / DPA / subprocessor notice]` |
-| Launch copy allowed | `[exact approved wording or link]` |
+| Decision date | `2026-05-11` |
+| Decision owner | `Jason Lankow / Brandcode Studio Ops` |
+| Approved requester classes | Brand owner/admin for the brand instance; Jason Lankow as Brandcode Studio Ops |
+| Verification method | Brand instance admin status; for internal Column Five Brandcode, verified email matching `columnfivemedia.com` or `columnfive.com` |
+| Deletion scope | Pre-release hosted MCP service data only: feedback/history, support/intake, non-secret key metadata, and MCP-visible package/runtime references; canonical Brandcode/UCS records handled through separate admin paths |
+| Export scope and format | Curated support packet: Markdown index, JSON summaries/receipts, support/intake records, non-secret key metadata, and package-safe refs |
+| Response window | No public SLA or customer-facing timeline during pre-release |
+| Escalation path | Jason Lankow / Brandcode Studio Ops; legal review required before public launch language |
+| Legal/subprocessor requirement | Draft language prepared for review; final terms/privacy/DPA/subprocessor language not approved |
+| Launch copy allowed | None yet |
 
-Until that record exists, deletion/export launch language remains a named
-Jason/legal/ops decision blocker.
+Until legal/subprocessor language is approved, deletion/export launch language
+remains a named Jason/legal/ops decision blocker.
 
 ## Closeout Rule
 
 Do not claim Brandcode MCP is publicly launched, directory-ready, or
 release-candidate ready from this brief. The current operational path remains
 manual pre-release deletion/export review through Brandcode Studio Ops until
-Jason/legal/ops approve the launch decisions above.
+Jason/legal/ops approve public launch language.

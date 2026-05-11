@@ -1461,3 +1461,43 @@ Purpose:
 Current Ready lane:
 
 - M001-L29 - Limited Client Go No-Go Checklist.
+
+## 2026-05-11 - L28 Deletion Export Decisions Recorded
+
+Jason approved the pre-release deletion/export operating posture.
+
+Recorded in:
+
+- `specs/brandcode-mcp-deletion-export-launch-decision-brief.md`
+
+Decision posture:
+
+- Authorized requesters are brand owner/admin for the brand instance, or Jason
+  Lankow as Brandcode Studio Ops.
+- Authority proof is brand instance admin status or, for the internal Column
+  Five Brandcode instance, verified `columnfivemedia.com` /
+  `columnfive.com` email.
+- Recommended scope is hosted MCP service data: `brand_feedback`, scoped
+  `brand_history` summaries/receipts, support/intake records, non-secret key
+  metadata, and MCP-visible package/runtime references.
+- Recommended exclusions are security/abuse logs, rate-limit counters, audit
+  receipts/tombstones, billing/legal records, legal holds, backups until normal
+  expiry, secrets, raw private/provider URLs, private custody paths, and
+  third-party/provider data outside Brandcode custody.
+- Recommended export format is a curated support packet: Markdown index, JSON
+  summaries/receipts, support/intake records, non-secret key metadata, and
+  package-safe refs.
+- Response posture remains manual pre-release review with no public SLA or
+  customer-facing timeline.
+- Escalation owner is Jason Lankow / Brandcode Studio Ops.
+- Draft legal/subprocessor language is included for review, but public launch
+  copy is not approved.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, self-serve deletion/export
+operation, public SLA, legal terms, or production endpoint proof happened.
+
+Current Ready lane remains:
+
+- M001-L29 - Limited Client Go No-Go Checklist.

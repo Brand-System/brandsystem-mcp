@@ -12,7 +12,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 ## Current Truth
 
 - `origin/main` includes M001 coordination/proof docs through pushed tip
-  `9619b37`; local `main` also includes unpushed M001-L29 lane prep.
+  `9619b37`; local `main` also includes unpushed M001-L29 lane prep and L28
+  pre-release deletion/export decision updates.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -220,6 +221,15 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   deletion/export tools, public SLA language, legal terms, hosted tools,
   custody changes, production keys, release/publish posture, package metadata,
   directory submission, or public source posture.
+- Jason then approved the L28 pre-release deletion/export operating posture:
+  authorized requesters are brand owners/admins for the brand instance or Jason
+  as Brandcode Studio Ops; authority proof is brand instance admin status or,
+  for the internal Column Five Brandcode instance, verified
+  `columnfivemedia.com` / `columnfive.com` email.
+- L28 now records the recommended scope/exclusion/export posture: hosted MCP
+  service data only, curated support-packet exports, security/abuse/audit/legal
+  exclusions, no public SLA, no self-serve deletion/export, and draft
+  legal/subprocessor language for review.
 - M001-L23 through M001-L28 were pushed to `origin/main` at tip `9619b37`.
 - GitHub CI run `25701556152` passed on pushed tip `9619b37` across Node 20,
   Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
@@ -302,12 +312,13 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   into a redacted limited-client ledger without promising public SLA or
   self-serve operations.
 - M001-L28 turned the remaining deletion/export launch language risk into a
-  compact Jason/legal/ops decision brief. The remaining blocker is now a named
-  decision, not missing repo preparation.
+  compact Jason/legal/ops decision brief. The pre-release operating posture is
+  now recorded; the remaining blocker is final legal/subprocessor launch
+  language, not missing repo preparation.
 - The next non-release hardening step is M001-L29: consolidate limited-client
   evidence into a go/no-go checklist that separates staging, production proof,
   and public release readiness while keeping deletion/export launch language
-  blocked until Jason/legal/ops decide L28.
+  blocked until final legal/subprocessor launch language is approved.
 
 ## Ready Lane Rule
 
@@ -315,10 +326,9 @@ Exactly one lane is Ready for automation:
 
 - `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md`
 
-The deletion/export launch posture is still blocked on Jason/legal/ops
-decisions for requester authorization, verification method, deletion/export
-scope, excluded systems, export format and delivery channel, response windows,
-escalation owner, and required legal/subprocessor language.
+The deletion/export pre-release operating posture is recorded, but public
+deletion/export launch language is still blocked on final legal/subprocessor
+review. No public SLA, self-serve deletion/export, or release claim is allowed.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

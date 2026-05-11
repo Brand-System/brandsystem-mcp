@@ -33,16 +33,17 @@ Starting truth:
 - L23-L28 now cover limited-client readiness, onboarding, staging proof,
   client-config proof, key ops, support intake, and deletion/export decision
   prep.
-- Deletion/export launch language remains blocked on Jason/legal/ops decisions
-  from L28.
+- L28 now records the pre-release deletion/export operating posture; public
+  deletion/export launch language remains blocked on final legal/subprocessor
+  review.
 
 Required work:
 
 1. Add a durable `specs/` checklist for approved limited-client go/no-go review.
 2. Separate staging readiness, production proof readiness, and public release
    readiness.
-3. Keep public release and deletion/export launch language blocked unless
-   Jason/legal/ops decisions are already recorded in repo docs.
+3. Keep public release and deletion/export launch language blocked unless final
+   legal/subprocessor launch language is already approved in repo docs.
 4. Include evidence fields for smoke proof, real-client config proof,
    package-safe asset proof, durable rate-limit proof, key ops, support intake,
    custody posture, CI freshness, and deletion/export decision status.
