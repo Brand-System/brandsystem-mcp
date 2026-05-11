@@ -1054,8 +1054,41 @@ No release, npm publish, public MCP directory submission, public listing
 metadata change, hosted tool addition, selected-kit default behavior, custody
 relaxation, or package/source posture change happened.
 
-Named Jason decision blocker:
+Superseded Jason decision blocker:
 
 - Choose the `@brandcode/mcp` package/source posture before any npm, package
   metadata, directory submission, public listing, public source/license posture
-  change, or release-candidate claim.
+  change, or release-candidate claim. Jason later chose Option 4 for v0.1
+  limited-client work.
+
+## 2026-05-11 - M001 Package Source Posture Decision Recorded
+
+Jason chose Option 4 for v0.1 limited-client work.
+
+Decision:
+
+- Brandcode MCP remains approved-brand hosted pre-release only for v0.1
+  limited-client work.
+- Public `@brandcode/mcp` package/source distribution is deferred.
+- No npm publish, package metadata, public source/license posture change,
+  public listing, or MCP directory submission should happen for v0.1
+  limited-client work.
+- Authorized clients use the hosted Streamable HTTP endpoint with brand-scoped
+  bearer keys.
+- Option 3 remains the likely future public direction: a narrow public
+  connector/client artifact plus service-controlled hosted implementation and
+  bearer-key-gated brand data access.
+
+Updated:
+
+- `specs/brandcode-mcp-package-source-posture-decision-brief.md`
+- `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`
+- `SECURITY.md`
+- `README.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `HANDOFF.md`
+
+Next Ready lane:
+
+- M001-L23 - Limited Client Readiness Plan.

@@ -1,7 +1,6 @@
 # Brandcode MCP Hosted Service Terms Decision Brief
 
-**Status:** Approved posture; data and package/source decision briefs drafted;
-release still blocked
+**Status:** Approved posture; v0.1 package/source posture chosen; release still blocked
 **Date:** 2026-05-10
 **Applies to:** hosted `@brandcode/mcp` Use MCP
 **Release posture:** no npm publish, public release, production release,
@@ -33,9 +32,9 @@ The approved posture is:
   enforcement is preferred, and any limited launch without command-backed
   enforcement requires a named Brandcode operations owner and abuse policy;
 - public "free in v1" copy is not approved as launch copy;
-- `@brandcode/mcp` package/source can likely inherit the repo MIT posture if
-  Jason approves that package posture, but hosted service access is separate
-  from source/license access;
+- `@brandcode/mcp` public package/source distribution is deferred for v0.1
+  limited-client work; hosted service access is separate from source/license
+  access;
 - installing or publishing package code must not imply public entitlement to
   hosted Brandcode MCP.
 
@@ -46,8 +45,9 @@ Jason/legal/ops deletion/export decisions.
 
 M001-L22 records the package/source posture decision brief in
 `specs/brandcode-mcp-package-source-posture-decision-brief.md`. That brief
-frames the `@brandcode/mcp` package/source options for Jason without choosing a
-posture. Neither brief authorizes public release.
+now records Jason's Option 4 v0.1 decision: defer public package/source
+distribution while improving the hosted Brandcode product for limited-client
+release. Neither brief authorizes public release.
 
 ## Current Truth
 
@@ -72,7 +72,8 @@ remains blocked by:
 
 - final deletion/export request handling and public launch language for
   feedback/history;
-- unresolved final `@brandcode/mcp` package/source posture for npm;
+- final future public `@brandcode/mcp` package/source posture if/when
+  Brandcode moves beyond the v0.1 limited-client posture;
 - deferred Brandcode Use directory metadata;
 - explicit Jason approval still required before any release/publish/listing
   action.
@@ -84,8 +85,10 @@ directories, alter public listing metadata, change package posture, or claim
 release-candidate readiness until Jason explicitly approves that action after
 the remaining security/QC gates are closed.
 
-## Current Decision Blocker
+## Current Decision
 
-Jason must choose the `@brandcode/mcp` package/source posture before any npm,
-package metadata, directory submission, public listing, public source/license
-posture change, or release-candidate claim.
+Jason chose Option 4 for v0.1 limited-client work: defer public
+`@brandcode/mcp` package/source distribution. Option 3 remains the likely
+future public direction, but it requires a separate approval and hardening lane
+before any npm, package metadata, directory submission, public listing, public
+source/license posture change, or release-candidate claim.

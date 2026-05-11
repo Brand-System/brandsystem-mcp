@@ -85,3 +85,17 @@ Implement narrowly:
 - Blocked npm, package metadata, directory submission, public listing, source
   posture changes, and release-candidate claims until Jason chooses the
   posture.
+
+## Follow-Up Decision
+
+Jason chose Option 4 for v0.1 limited-client work after reviewing this brief:
+
+- defer public `@brandcode/mcp` package/source distribution;
+- keep Brandcode MCP as approved-brand hosted pre-release only for v0.1;
+- do not publish npm, package metadata, public listing, or MCP directory
+  metadata for v0.1 limited-client work;
+- build toward Option 3 later as the likely public direction, with a narrow
+  connector/client artifact plus service-controlled hosted implementation.
+
+M001-L23 is the next Ready lane to turn that decision into a limited-client
+readiness plan.

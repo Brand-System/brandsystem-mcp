@@ -1,28 +1,49 @@
 # Brandcode MCP Package Source Posture Decision Brief
 
-**Status:** Jason decision required; release still blocked
+**Status:** Option 4 approved for v0.1 limited-client release; release still blocked
 **Date:** 2026-05-11
 **Applies to:** future `@brandcode/mcp` source/package distribution and public
 directory/listing metadata
 **Release posture:** no npm publish, public package metadata, public source
-posture change, public directory submission, or Brandcode MCP release until
-Jason explicitly approves the package/source posture and the release action.
+posture change, public directory submission, or Brandcode MCP release for v0.1
+limited-client work. Jason has approved deferring public package/source
+distribution; any later package/source or release action still requires
+explicit approval.
+
+## Jason Decision
+
+Jason approved **Option 4 - Defer public package/source distribution** for the
+v0.1 limited-client posture on 2026-05-11.
+
+Interpretation:
+
+- Brandcode MCP remains an approved-brand hosted pre-release service.
+- Do not publish `@brandcode/mcp` to npm for v0.1 limited-client work.
+- Do not submit Brandcode MCP directory metadata for v0.1 limited-client work.
+- Do not make a public `@brandcode/mcp` source/license posture claim yet.
+- Authorized clients connect to the hosted Streamable HTTP endpoint with
+  brand-scoped bearer keys.
+- Option 3 remains the likely future public direction: a narrow public
+  connector/client artifact plus service-controlled hosted implementation and
+  bearer-key-gated brand data access.
 
 ## Executive Readout
 
-Hosted Brandcode MCP has strong pre-release proof, but package/source posture is
-not settled. The Build MCP, `@brandsystem/mcp`, is already the public MIT
-authoring package. The hosted Use MCP, `@brandcode/mcp`, serves authorized
-brand-scoped access to the live Full Brand Runtime over HTTP.
+Hosted Brandcode MCP has strong pre-release proof, and v0.1 package/source
+posture is now settled as deferred public distribution. The Build MCP,
+`@brandsystem/mcp`, is already the public MIT authoring package. The hosted Use
+MCP serves authorized brand-scoped access to the live Full Brand Runtime over
+HTTP.
 
 Those are separate decisions:
 
 - `@brandsystem/mcp` Build package: current public MIT package and stdio MCP.
 - Hosted Brandcode MCP service access: authorized, bearer-key, pre-release
   access only.
-- Future `@brandcode/mcp` source/package distribution: undecided.
-- Public directory/listing metadata: deferred until package/source and service
-  launch posture are approved.
+- Future public `@brandcode/mcp` source/package distribution: deferred for
+  v0.1 limited-client work.
+- Public directory/listing metadata: deferred until Brandcode is ready to move
+  from limited-client pre-release toward public distribution.
 
 Installing source or package code must not imply entitlement to
 `mcp.brandcode.studio`, bearer keys, Brandcode Studio brands, hosted runtime
@@ -30,8 +51,7 @@ data, feedback/history records, or package-safe assets.
 
 ## Decision Jason Needs To Make
 
-Before any npm, package metadata, directory listing, public source posture, or
-release work, Jason must choose one package/source posture for `@brandcode/mcp`:
+Jason chose one package/source posture for v0.1 limited-client work:
 
 1. **Open package/source with separate hosted service terms.**
    `@brandcode/mcp` source/package code may inherit the repo's MIT posture, but
@@ -49,13 +69,14 @@ release work, Jason must choose one package/source posture for `@brandcode/mcp`:
    hosted service implementation, operational access, and Brandcode-managed
    runtime service remain proprietary/service-controlled.
 
-4. **Defer public package/source distribution.**
+4. **Defer public package/source distribution.** **Approved for v0.1
+   limited-client work.**
    Keep the hosted Use MCP in approved-brand pre-release only. Do not publish
    `@brandcode/mcp`, do not submit directory metadata, and do not make a public
    source/license claim yet.
 
-If Jason chooses another posture, record it explicitly before changing package
-metadata or public listing copy.
+If Jason later chooses another posture, record it explicitly before changing
+package metadata, source/license posture, or public listing copy.
 
 ## Current Evidence
 
@@ -75,8 +96,8 @@ metadata or public listing copy.
   data, scoped/redacted history, append-only feedback, package-safe custody, and
   no raw private/provider URL exposure.
 - Public release remains blocked by final deletion/export launch approval,
-  package/source posture, directory metadata, and explicit Jason release
-  approval.
+  directory metadata, any future public package/source decision, and explicit
+  Jason release approval.
 
 ## Option Tradeoffs
 
@@ -161,8 +182,8 @@ Required wording:
 
 ### Option 4 - Defer public package/source distribution
 
-Best when the right answer is to keep pre-release moving without freezing a
-public posture too early.
+Approved for v0.1 limited-client work. Best when the right answer is to keep
+pre-release moving without freezing a public posture too early.
 
 Benefits:
 
@@ -180,7 +201,7 @@ Risks:
 Required wording:
 
 - "Brandcode MCP remains approved-brand pre-release only."
-- "No public package/source posture has been approved."
+- "No public package/source distribution has been approved for v0.1."
 - "No directory or npm listing work should proceed."
 
 ## Non-Negotiable Boundaries
@@ -203,7 +224,8 @@ Any option must preserve these boundaries:
 
 ## Downstream Work Blocked Until Decision
 
-The following work must not start until Jason chooses a package/source posture:
+The following public-distribution work remains blocked under the approved
+Option 4 v0.1 posture:
 
 - publishing or preparing npm metadata for `@brandcode/mcp`;
 - changing package license/source claims;
@@ -215,30 +237,15 @@ The following work must not start until Jason chooses a package/source posture:
 - using package/source posture to weaken hosted custody, auth, scope,
   rate-limit, feedback/history, deletion/export, or support requirements.
 
-## Recommended Decision Prompt For Jason
-
-Choose the `@brandcode/mcp` package/source posture before release work:
-
-> Should Brandcode MCP ship as open MIT package/source with separate hosted
-> service terms, as proprietary/service-only, as a dual public connector plus
-> service-controlled hosted implementation, or remain unpublished/deferred for
-> v0.1?
-
-Also decide:
-
-- whether public package/source distribution is allowed before final hosted
-  deletion/export launch language is approved;
-- whether package/listing copy may say "free in v1" or must stay limited to
-  approved-brand pre-release wording;
-- which public artifact, if any, should be named `@brandcode/mcp`;
-- whether directory metadata should describe only remote hosted HTTP access or
-  also a package-installable component.
-
 ## Current Blocker
 
-Named Jason decision blocker:
+No public package/source posture blocker remains for v0.1 limited-client work:
+Jason chose Option 4.
 
-`@brandcode/mcp` package/source posture is undecided. No npm, package metadata,
-directory submission, public listing, public source/license posture change, or
-release-candidate claim should proceed until Jason chooses and approves the
-posture.
+Current blocker:
+
+Limited-client readiness now needs a separate operational lane for approved
+client onboarding, key issuance/revocation, endpoint posture, smoke proof per
+client brand, support/deletion/export intake, and no-public-listing guardrails.
+Public npm, package metadata, directory submission, public listing, public
+source/license posture change, and release-candidate claims remain blocked.

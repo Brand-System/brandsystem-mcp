@@ -52,11 +52,13 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   `status: "active_pre_release_in_process"` on the hosted HTTP route and still
   reports `release_gate: "blocked"` with blocker owner
   `Jason Lankow / Brandcode Studio Ops <jlankow@columnfive.com>`.
-- The hosted terms/rate-limit gate is still not release-satisfied. L15 approved
-  the recommended service-terms posture, while final public
-  retention/deletion/export language, abuse/rate-limit operations, public
-  "free in v1" copy, and `@brandcode/mcp` package/source posture remain launch
-  blockers.
+- The hosted terms/rate-limit gate was still not release-satisfied after L15.
+  At that point, final public retention/deletion/export language,
+  abuse/rate-limit operations, public "free in v1" copy, and
+  `@brandcode/mcp` package/source posture remained launch blockers. Later M001
+  lanes resolved abuse-owner, durable rate-limit proof, and v0.1
+  package/source posture, while release approval and deletion/export launch
+  language remain blocked.
 - M001-L15 captured Jason approval for the recommended hosted-service posture in `specs/brandcode-mcp-hosted-service-terms-decision-brief.md`.
 - L15 approval settles the pre-release service-terms direction, but does not authorize release, npm publish, directory submission, public listing changes, or release-candidate readiness claims.
 - M001-L16 repaired the invalid MCP image content returned by visual extraction tools by normalizing Puppeteer screenshot bytes through valid base64 encoding before emitting image content.
@@ -133,6 +135,14 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   unresolved `@brandcode/mcp` package/source posture as a named Jason decision
   blocker before npm, package metadata, directory submission, public listing, or
   release work.
+- Jason chose Option 4 for v0.1 limited-client posture: defer public
+  `@brandcode/mcp` package/source distribution, keep Brandcode MCP as an
+  approved-brand hosted pre-release service, and do not publish npm or submit
+  directory metadata for v0.1 limited-client work.
+- Option 3 remains the likely future public direction: a narrow public
+  connector/client artifact plus service-controlled hosted implementation and
+  bearer-key-gated brand data access. That future posture still needs separate
+  approval and hardening.
 - M001-L21 was docs-only. It did not change hosted tools, custody code,
   package/listing metadata, release/publish posture, or
   `brand_status.rate_limits.release_gate`.
@@ -166,6 +176,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L20 | Done | `.claudex/packets/M001-L20-durable-shared-rate-limit-enforcement.md` | Add durable shared Redis REST enforcement and prove hosted durable rate-limit posture. |
 | M001-L21 | Done | `.claudex/packets/M001-L21-hosted-retention-export-deletion-policy.md` | Clarify hosted Brandcode MCP retention, deletion, export, feedback/history, custody, and service/package posture before any release claim. |
 | M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
+| M001-L23 | Ready | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
 
 ## Blockers And Decisions
 
@@ -192,19 +203,16 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - CI hardening deferral is resolved by M001-L18.
 - Hosted rate-limit/abuse posture is no longer vague: command-backed hosted
   proof shows `brand_status.rate_limits.status: "active_durable_shared"`.
-  M001-L21 drafted hosted data-policy language, and M001-L22 framed
-  package/source posture options. Release remains blocked by final
-  deletion/export launch approval, Jason choice of `@brandcode/mcp`
-  package/source posture, directory metadata, and Jason explicit release
-  approval.
+  M001-L21 drafted hosted data-policy language. M001-L22 framed package/source
+  posture options, and Jason chose Option 4 for v0.1 limited-client work.
+  Release remains blocked by final deletion/export launch approval, future
+  public package/source approval, directory metadata, and Jason explicit
+  release approval.
 
 ## Ready Lane Rule
 
-No next Ready lane is open.
-
-Named Jason decision blocker: choose the `@brandcode/mcp` package/source
-posture before any npm, package metadata, directory submission, public listing,
-public source/license posture change, or release-candidate claim.
+M001-L23 is Ready for automation:
+`.claudex/packets/M001-L23-limited-client-readiness-plan.md`.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, or relax private custody. Jason approval remains a hard blocker for

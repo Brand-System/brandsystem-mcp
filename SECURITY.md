@@ -39,11 +39,12 @@ Jason approved this hosted-service posture:
 - no public "free in v1" launch copy until pricing/limits are settled;
 - hosted service access stays separate from source/package license.
 
-Public Brandcode MCP release still requires explicit Jason approval plus final
-deletion/export request handling, support/legal launch language,
-package/source posture, directory metadata, and QC/CI gates. Brandcode MCP
-directory metadata, public listing copy, npm publish, production release, and
-launch claims remain deferred.
+Jason chose to defer public `@brandcode/mcp` package/source distribution for
+v0.1 limited-client work. Public Brandcode MCP release still requires explicit
+Jason approval plus final deletion/export request handling, support/legal
+launch language, any future public package/source posture, directory metadata,
+and QC/CI gates. Brandcode MCP directory metadata, public listing copy, npm
+publish, production release, and launch claims remain deferred.
 
 ### Auth And Scopes
 
