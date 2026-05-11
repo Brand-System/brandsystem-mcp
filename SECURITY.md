@@ -30,6 +30,8 @@ the limited-client key operations runbook is
 [`specs/brandcode-mcp-limited-client-key-ops-runbook.md`](specs/brandcode-mcp-limited-client-key-ops-runbook.md),
 the limited-client support intake ledger is
 [`specs/brandcode-mcp-limited-client-support-intake-ledger.md`](specs/brandcode-mcp-limited-client-support-intake-ledger.md),
+the deletion/export launch decision brief is
+[`specs/brandcode-mcp-deletion-export-launch-decision-brief.md`](specs/brandcode-mcp-deletion-export-launch-decision-brief.md),
 and the internal Column Five Brandcode staging proof is
 [`specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`](specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md).
 
@@ -105,7 +107,10 @@ release, and launch claims remain deferred.
   Studio Ops for manual review. Public launch still requires Jason/legal/ops
   approval of requester authorization, deletion/export scope, export package
   format, response windows, support escalation, and any required legal or
-  subprocessor language.
+  subprocessor language. Those launch decisions are framed in
+  [`specs/brandcode-mcp-deletion-export-launch-decision-brief.md`](specs/brandcode-mcp-deletion-export-launch-decision-brief.md);
+  the brief does not approve launch copy, public timelines, or self-serve
+  deletion/export operations.
 - General hosted AgentRun telemetry POST remains deferred; only explicit
   `brand_feedback` append is active.
 

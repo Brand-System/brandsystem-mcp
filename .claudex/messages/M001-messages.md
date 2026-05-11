@@ -1373,3 +1373,49 @@ happened.
 Next Ready lane:
 
 - M001-L28 - Deletion Export Launch Decision Brief.
+
+## 2026-05-11 - M001-L28 Completed
+
+Closed M001-L28 as a docs-only deletion/export launch decision-prep lane.
+
+Added:
+
+- `specs/brandcode-mcp-deletion-export-launch-decision-brief.md`
+
+Updated pointers and coordination:
+
+- `README.md`
+- `SECURITY.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md`
+- `HANDOFF.md`
+
+Brief coverage:
+
+- current pre-release deletion/export remains manual Brandcode Studio Ops
+  review;
+- requester authorization and verification options;
+- deletion/export scope and excluded systems;
+- export package format and delivery channel options;
+- response window and escalation decisions;
+- legal, privacy, DPA, and subprocessor language decision points;
+- Option 4 package/source posture and hosted-service access boundaries.
+
+Verification:
+
+- `git diff --check` passed.
+- `git diff --cached --check` passed after staging.
+- No code changes were made, so lint/build/tests were skipped as docs-only.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, package/source posture change, production client key generation,
+self-serve deletion/export operation, public SLA, legal terms, or production
+endpoint proof happened.
+
+No next Ready lane is left because the next step is a named Jason/legal/ops
+decision blocker: approve or revise requester authorization, verification
+method, deletion/export scope, excluded systems, export format and delivery
+channel, response windows, escalation owner, and required legal/subprocessor
+language.

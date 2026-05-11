@@ -210,6 +210,17 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   review and did not add public SLA language, self-serve operations, hosted
   tools, custody changes, production keys, release/publish posture, package
   metadata, directory submission, or public source posture.
+- M001-L28 added
+  `specs/brandcode-mcp-deletion-export-launch-decision-brief.md`, framing the
+  remaining public deletion/export launch language as Jason/legal/ops
+  decisions for requester authorization, verification method, systems and
+  exclusions, export package format, response windows, escalation path, and
+  required legal/subprocessor language.
+- M001-L28 was docs-only. It preserved manual pre-release deletion/export
+  review through Brandcode Studio Ops and did not add self-serve
+  deletion/export tools, public SLA language, legal terms, hosted tools,
+  custody changes, production keys, release/publish posture, package metadata,
+  directory submission, or public source posture.
 
 ## Lanes
 
@@ -242,7 +253,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L25 | Done | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Prove the Column Five Brandcode staging endpoint through a real MCP client config without exposing keys. |
 | M001-L26 | Done | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
 | M001-L27 | Done | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
-| M001-L28 | Ready | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
+| M001-L28 | Done | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
 
 ## Blockers And Decisions
 
@@ -284,15 +295,19 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - M001-L27 turned support, incident, deletion/export, and offboarding intake
   into a redacted limited-client ledger without promising public SLA or
   self-serve operations.
-- The next useful hardening step is M001-L28: prepare the Jason/legal/ops
-  deletion/export launch decision brief so the remaining public launch blocker
-  is framed as explicit decisions instead of vague policy risk.
+- M001-L28 turned the remaining deletion/export launch language risk into a
+  compact Jason/legal/ops decision brief. The remaining blocker is now a named
+  decision, not missing repo preparation.
 
 ## Ready Lane Rule
 
-Exactly one lane is Ready for automation:
+No lane is Ready for automation right now because the next step is a named
+Jason/legal/ops decision blocker:
 
-- `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md`
+- approve or revise the deletion/export launch posture for requester
+  authorization, verification method, deletion/export scope, excluded systems,
+  export format and delivery channel, response windows, escalation owner, and
+  required legal/subprocessor language.
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or

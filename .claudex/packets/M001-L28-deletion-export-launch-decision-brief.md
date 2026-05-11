@@ -1,6 +1,6 @@
 # M001-L28 - Deletion Export Launch Decision Brief
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client policy / launch blocker decision prep
@@ -63,7 +63,7 @@ Implement narrowly:
 
 ## Acceptance
 
-- Ready lane prepares a decision brief, not an implied approval.
+- Done lane prepared a decision brief, not an implied approval.
 - Brief names the exact Jason/legal/ops decisions needed before public launch
   language.
 - Brief preserves manual pre-release deletion/export review posture until those
@@ -73,3 +73,28 @@ Implement narrowly:
   docs-only note.
 - Exactly one next Ready lane remains, unless a named Jason decision blocker is
   surfaced.
+
+## Closeout
+
+Added:
+
+- `specs/brandcode-mcp-deletion-export-launch-decision-brief.md`
+
+Updated:
+
+- `README.md`
+- `SECURITY.md`
+- `llms.txt`
+- `.claudex/sprints/current.md`
+- `.claudex/messages/M001-messages.md`
+- `HANDOFF.md`
+
+Result:
+
+- Current pre-release deletion/export remains manual Brandcode Studio Ops
+  review.
+- Public launch language remains blocked on Jason/legal/ops approval of
+  requester authorization, verification method, systems and exclusions, export
+  format, response windows, escalation path, and legal/subprocessor language.
+- No next Ready lane is left because the named Jason/legal/ops launch decision
+  is now the blocker.
