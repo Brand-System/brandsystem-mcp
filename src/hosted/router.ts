@@ -16,11 +16,16 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { authorizeRequest, AuthError } from "./auth.js";
 import { fetchHostedBrandPackage, UpstreamError } from "./brand-fetcher.js";
+import {
+  checkHostedRateLimit,
+  hostedRateLimitHeaders,
+} from "./rate-limit.js";
 import { createHostedServer } from "./server.js";
 import type { BrandPackagePayload } from "../connectors/brandcode/types.js";
 import type {
   BrandcodeMcpAuthInfo,
   HostedBrandContext,
+  HostedRateLimitSnapshot,
   HostedRuntimeOptions,
 } from "./types.js";
 
@@ -38,13 +43,36 @@ export function extractSlug(pathname: string): string | null {
   return first.toLowerCase();
 }
 
-function jsonError(status: number, body: Record<string, unknown>): Response {
+function jsonError(
+  status: number,
+  body: Record<string, unknown>,
+  headers: HeadersInit = {},
+): Response {
+  const responseHeaders = new Headers({
+    "content-type": "application/json",
+    "cache-control": "no-store",
+  });
+  new Headers(headers).forEach((value, key) => {
+    responseHeaders.set(key, value);
+  });
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      "content-type": "application/json",
-      "cache-control": "no-store",
-    },
+    headers: responseHeaders,
+  });
+}
+
+function withRateLimitHeaders(
+  response: Response,
+  snapshot: HostedRateLimitSnapshot,
+): Response {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(hostedRateLimitHeaders(snapshot))) {
+    headers.set(key, value);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
   });
 }
 
@@ -89,6 +117,24 @@ export async function handleHostedRequest(
     });
   }
 
+  const rateLimit = checkHostedRateLimit({
+    slug,
+    auth,
+    options: options.rateLimit,
+  });
+  if (!rateLimit.allowed) {
+    return jsonError(
+      429,
+      {
+        error: "rate_limited",
+        message: "Brandcode MCP request rate limit exceeded",
+        slug,
+        rate_limits: rateLimit.snapshot,
+      },
+      hostedRateLimitHeaders(rateLimit.snapshot),
+    );
+  }
+
   // Build context with memoized upstream fetch — a single MCP request that
   // calls multiple tools (or slicing variants) should only hit UCS once.
   const fetchImpl =
@@ -110,6 +156,7 @@ export async function handleHostedRequest(
     },
     ucsBaseUrl: options.ucsBaseUrl ?? "https://www.brandcode.studio",
     ucsServiceToken: options.ucsServiceToken,
+    rateLimit: rateLimit.snapshot,
   };
 
   // Spin up per-request server + transport (stateless)
@@ -121,20 +168,29 @@ export async function handleHostedRequest(
 
   try {
     await server.connect(transport);
-    return await transport.handleRequest(request);
+    const response = await transport.handleRequest(request);
+    return withRateLimitHeaders(response, rateLimit.snapshot);
   } catch (err) {
     if (err instanceof UpstreamError) {
-      return jsonError(err.status, {
-        error: err.code,
-        message: err.message,
-        slug,
-      });
+      return jsonError(
+        err.status,
+        {
+          error: err.code,
+          message: err.message,
+          slug,
+        },
+        hostedRateLimitHeaders(rateLimit.snapshot),
+      );
     }
-    return jsonError(500, {
-      error: "internal_error",
-      message: (err as Error).message,
-      slug,
-    });
+    return jsonError(
+      500,
+      {
+        error: "internal_error",
+        message: (err as Error).message,
+        slug,
+      },
+      hostedRateLimitHeaders(rateLimit.snapshot),
+    );
   } finally {
     await transport.close().catch(() => {});
     await server.close().catch(() => {});

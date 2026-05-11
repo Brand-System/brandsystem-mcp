@@ -3,6 +3,7 @@ import {
   extractSlug,
   handleHostedRequest,
 } from "../../src/hosted/router.js";
+import { createMemoryRateLimitStore } from "../../src/hosted/rate-limit.js";
 
 const TEST_SERVICE_TOKEN = "service-token-abc";
 
@@ -190,5 +191,64 @@ describe("handleHostedRequest — MCP protocol dispatch", () => {
     const body = await readJson(res);
     expect(body.jsonrpc).toBe("2.0");
     expect(body.result).toBeDefined();
+    expect(res.headers.get("x-ratelimit-limit")).toBe("60");
+    expect(res.headers.get("x-ratelimit-remaining")).toBe("59");
+  });
+
+  it("returns 429 when an authenticated key exceeds its per-brand window", async () => {
+    const store = createMemoryRateLimitStore();
+    const limitedOptions = {
+      ...baseOptions,
+      rateLimit: {
+        maxRequests: 1,
+        windowMs: 60_000,
+        now: () => 1_800_000_000_000,
+        store,
+        source: "router test",
+      },
+    };
+
+    const first = await handleHostedRequest(
+      buildRequest("https://mcp.example/acme", {
+        method: "POST",
+        headers: {
+          authorization: "Bearer bck_test_acme_read",
+          "content-type": "application/json",
+          accept: "application/json, text/event-stream",
+        },
+        body: initializeBody(1),
+      }),
+      limitedOptions,
+    );
+    expect(first.status).toBe(200);
+    expect(first.headers.get("x-ratelimit-limit")).toBe("1");
+    expect(first.headers.get("x-ratelimit-remaining")).toBe("0");
+
+    const second = await handleHostedRequest(
+      buildRequest("https://mcp.example/acme", {
+        method: "POST",
+        headers: {
+          authorization: "Bearer bck_test_acme_read",
+          "content-type": "application/json",
+          accept: "application/json, text/event-stream",
+        },
+        body: initializeBody(2),
+      }),
+      limitedOptions,
+    );
+    expect(second.status).toBe(429);
+    expect(second.headers.get("retry-after")).toBe("60");
+    const body = await readJson(second);
+    expect(body.error).toBe("rate_limited");
+    expect(body.rate_limits).toMatchObject({
+      status: "active_pre_release_in_process",
+      enforced: true,
+      limit: 1,
+      remaining: 0,
+      window_ms: 60_000,
+      reset_at: "2027-01-15T08:01:00.000Z",
+      retry_after_seconds: 60,
+      release_gate: "blocked",
+    });
   });
 });

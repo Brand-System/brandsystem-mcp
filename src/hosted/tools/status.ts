@@ -12,7 +12,11 @@ import {
   toolHasScope,
 } from "../auth.js";
 import { enforceToolScope } from "../scope.js";
-import type { BrandcodeMcpScope, HostedBrandContext } from "../types.js";
+import type {
+  BrandcodeMcpScope,
+  HostedBrandContext,
+  HostedRateLimitSnapshot,
+} from "../types.js";
 
 interface ToolImplementationEntry {
   tool: string;
@@ -264,6 +268,25 @@ function scopeMatrix(scopes: BrandcodeMcpScope[]) {
   });
 }
 
+function rateLimitPosture(snapshot?: HostedRateLimitSnapshot) {
+  return snapshot ?? {
+    status: "disabled",
+    enforced: false,
+    enforcement: "none",
+    scope: "per_key_per_brand",
+    limit: null,
+    remaining: null,
+    window_ms: null,
+    reset_at: null,
+    retry_after_seconds: null,
+    release_gate: "blocked",
+    blocker_owner: "Jason decision / Brandcode operations owner",
+    required_before_public_release:
+      "Route brand_status through the hosted HTTP boundary and enable command-backed per-brand enforcement before public release",
+    source: "not available outside hosted HTTP router",
+  };
+}
+
 export function registerStatus(server: McpServer, context: HostedBrandContext) {
   server.tool(
     "brand_status",
@@ -289,6 +312,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
       const stubTools = implementations.filter(
         (tool) => tool.implementation === "stub",
       );
+      const rateLimits = rateLimitPosture(context.rateLimit);
 
       const lines = [
         "── Brandcode MCP (hosted) ────────────",
@@ -303,7 +327,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
         `Assets:       ${assets.available ? `${assets.total_count} assets` : "no hosted assets"}`,
         `Full runtime: ${artifact.present ? "reported by package" : "not reported by package"}`,
         "Telemetry:    deferred",
-        "Rate limits:  not reported by staging",
+        `Rate limits:  ${rateLimits.status}`,
         summary.readiness_stage
           ? `Readiness:    ${summary.readiness_stage}`
           : `Readiness:    unknown`,
@@ -344,13 +368,7 @@ export function registerStatus(server: McpServer, context: HostedBrandContext) {
             detail:
               "General hosted AgentRun telemetry is not active; brand_feedback uses UCS history POST only for explicit append-only feedback",
           },
-          rate_limits: {
-            status: "not_reported_by_staging",
-            release_gate: "blocked",
-            blocker_owner: "Jason decision / Brandcode operations owner",
-            required_before_public_release:
-              "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
-          },
+          rate_limits: rateLimits,
           brand_summary: {
             readiness_stage: summary.readiness_stage,
             capabilities_enabled: summary.capabilities_enabled,

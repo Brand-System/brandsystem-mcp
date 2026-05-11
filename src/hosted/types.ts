@@ -29,6 +29,8 @@ export interface HostedBrandContext {
   ucsBaseUrl: string;
   /** Service token the hosted MCP uses to authenticate with UCS. */
   ucsServiceToken: string;
+  /** Rate-limit posture observed at the hosted HTTP boundary. */
+  rateLimit?: HostedRateLimitSnapshot;
 }
 
 export interface ToolDispatchMeta {
@@ -47,4 +49,46 @@ export interface HostedRuntimeOptions {
   environment?: "staging" | "production";
   /** Optional token validator override (tests inject a stub). */
   validateToken?: (token: string) => Promise<BrandcodeMcpAuthInfo | null>;
+  /** Optional hosted rate-limit override (tests inject a deterministic store). */
+  rateLimit?: HostedRateLimitOptions | false;
+}
+
+export interface HostedRateLimitOptions {
+  /** Enable or disable enforcement. Defaults to enabled. */
+  enabled?: boolean;
+  /** Maximum authenticated requests in each fixed window. */
+  maxRequests?: number;
+  /** Fixed-window duration in milliseconds. */
+  windowMs?: number;
+  /** Deterministic clock for tests. */
+  now?: () => number;
+  /** Deterministic in-memory store for tests. */
+  store?: HostedRateLimitStore;
+  /** Human-readable config source. */
+  source?: string;
+}
+
+export interface HostedRateLimitStore {
+  buckets: Map<string, HostedRateLimitBucket>;
+}
+
+export interface HostedRateLimitBucket {
+  windowStart: number;
+  count: number;
+}
+
+export interface HostedRateLimitSnapshot {
+  status: "active_pre_release_in_process" | "disabled";
+  enforced: boolean;
+  enforcement: "in_process_fixed_window" | "none";
+  scope: "per_key_per_brand";
+  limit: number | null;
+  remaining: number | null;
+  window_ms: number | null;
+  reset_at: string | null;
+  retry_after_seconds: number | null;
+  release_gate: "blocked";
+  blocker_owner: string;
+  required_before_public_release: string;
+  source: string;
 }

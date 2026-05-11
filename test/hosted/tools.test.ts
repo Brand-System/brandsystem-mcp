@@ -6,8 +6,26 @@ import { HOSTED_TOOL_ORDER } from "../../src/hosted/registrations.js";
 import type {
   HostedBrandContext,
   BrandcodeMcpAuthInfo,
+  HostedRateLimitSnapshot,
 } from "../../src/hosted/types.js";
 import type { BrandPackagePayload } from "../../src/connectors/brandcode/types.js";
+
+const TEST_RATE_LIMIT: HostedRateLimitSnapshot = {
+  status: "active_pre_release_in_process",
+  enforced: true,
+  enforcement: "in_process_fixed_window",
+  scope: "per_key_per_brand",
+  limit: 60,
+  remaining: 59,
+  window_ms: 60_000,
+  reset_at: "2026-05-11T12:01:00.000Z",
+  retry_after_seconds: null,
+  release_gate: "blocked",
+  blocker_owner: "Jason decision / Brandcode operations owner",
+  required_before_public_release:
+    "Replace in-process staging enforcement with durable shared enforcement or approve a Brandcode operations owner and abuse-handling policy before public release",
+  source: "hosted tool test",
+};
 
 function buildAuth(
   overrides: Partial<BrandcodeMcpAuthInfo> = {},
@@ -33,6 +51,7 @@ function buildContext(
     loadBrandPackage: async () => pkg,
     ucsBaseUrl: "https://www.brandcode.studio",
     ucsServiceToken: "test-token",
+    rateLimit: TEST_RATE_LIMIT,
     ...overrides,
   };
 }
@@ -1299,13 +1318,7 @@ describe("brand_status (hosted)", () => {
       active: false,
       status: "deferred",
     });
-    expect(json.rate_limits).toEqual({
-      status: "not_reported_by_staging",
-      release_gate: "blocked",
-      blocker_owner: "Jason decision / Brandcode operations owner",
-      required_before_public_release:
-        "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
-    });
+    expect(json.rate_limits).toEqual(TEST_RATE_LIMIT);
 
     const summary = json.brand_summary as Record<string, unknown>;
     expect(summary).toMatchObject({
@@ -1318,22 +1331,19 @@ describe("brand_status (hosted)", () => {
     expect(json.status).toContain("Real tools:");
     expect(json.status).toContain("Stubs:        ");
     expect(json.status).toContain("Telemetry:    deferred");
+    expect(json.status).toContain(
+      "Rate limits:  active_pre_release_in_process",
+    );
   });
 
-  it("does not claim artifact or rate-limit data when staging package omits it", async () => {
+  it("keeps rate-limit posture separate from package artifact metadata", async () => {
     const { client } = await connectClient(buildContext({ brandInstance: {} }));
     const json = await call(client, "brand_status", {});
     expect(json.full_brand_runtime_artifact).toMatchObject({
       status: "not_reported_by_package",
       present: false,
     });
-    expect(json.rate_limits).toEqual({
-      status: "not_reported_by_staging",
-      release_gate: "blocked",
-      blocker_owner: "Jason decision / Brandcode operations owner",
-      required_before_public_release:
-        "Report active per-brand enforcement or name the approved operational owner and abuse-handling policy",
-    });
+    expect(json.rate_limits).toEqual(TEST_RATE_LIMIT);
     const availability = json.capability_availability as Record<
       string,
       Record<string, unknown>

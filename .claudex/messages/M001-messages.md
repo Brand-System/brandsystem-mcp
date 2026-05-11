@@ -802,3 +802,56 @@ relaxation happened.
 Next Ready lane:
 
 - M001-L19 - Hosted Rate Limit And Abuse Posture.
+
+## 2026-05-11 - M001-L19 Hosted Rate Limit And Abuse Posture Closed
+
+M001-L19 added active hosted pre-release rate-limit enforcement without making a
+production durability claim.
+
+Changed:
+
+- Added `src/hosted/rate-limit.ts` with an in-process fixed-window limiter.
+- Wired the hosted HTTP router to check the limiter after bearer auth and
+  before MCP transport dispatch.
+- Limiter key: environment + brand slug + API key id.
+- Default policy: 60 authenticated requests per 60 seconds.
+- Operator knobs:
+  `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW`,
+  `BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS`, and emergency disable
+  `BRANDCODE_MCP_RATE_LIMIT_DISABLED=1`.
+- Over-limit requests return JSON `429 rate_limited` with structured
+  `rate_limits`, `retry-after`, and `x-ratelimit-*` headers.
+- Successful hosted responses include `x-ratelimit-limit`,
+  `x-ratelimit-remaining`, and `x-ratelimit-reset`.
+- `brand_status.rate_limits.status` now reports
+  `active_pre_release_in_process` when called through the hosted HTTP route,
+  including configured limit, remaining count, window/reset fields,
+  enforcement type, source, and release-gate posture.
+
+Truthful blocker:
+
+- The limiter is process-local pre-release enforcement, not durable shared
+  production enforcement.
+- `brand_status.rate_limits.release_gate` remains `blocked`.
+- Public release still needs Jason to choose durable shared enforcement or
+  approve a named Brandcode operations owner plus abuse-handling runbook.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/router.test.ts test/hosted/tools.test.ts`
+  passed: 57 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 527 tests.
+
+No release, npm publish, public MCP directory submission, public listing
+change, hosted tool addition, selected-kit default behavior, UCS change, or
+custody relaxation happened.
+
+Next state:
+
+- No next Ready lane is open.
+- Named Jason decision blocker: choose durable shared hosted rate-limit
+  enforcement, or approve a named Brandcode operations owner plus
+  abuse-handling runbook before any public launch claim.

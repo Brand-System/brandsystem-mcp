@@ -1,6 +1,6 @@
 # M001-L19 - Hosted Rate Limit And Abuse Posture
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Hosted security / release-trust hardening
@@ -11,7 +11,7 @@
 M001-L18 restored CI trust hygiene. The loudest remaining hosted release blocker
 is now the Brandcode Use MCP rate-limit and abuse posture.
 
-Current truth:
+Lane-start truth:
 
 - `brand_status.rate_limits.status` remains `not_reported_by_staging`.
 - `brand_status.rate_limits.release_gate` remains `blocked`.
@@ -75,3 +75,50 @@ If no acceptable substrate exists:
 - L15 approved hosted-service terms posture but left rate-limit/abuse
   operations as a launch blocker.
 - L18 CI is green on current `origin/main`.
+
+## Closeout - 2026-05-11
+
+M001-L19 added active pre-release rate-limit enforcement without making a
+production launch claim.
+
+Implemented:
+
+- Added `src/hosted/rate-limit.ts`, an in-process fixed-window limiter keyed by
+  environment, brand slug, and API key id.
+- Wired the limiter at the hosted HTTP router after bearer auth and before MCP
+  transport dispatch.
+- Default limit: 60 authenticated requests per 60 seconds.
+- Config knobs:
+  `BRANDCODE_MCP_RATE_LIMIT_REQUESTS_PER_WINDOW`,
+  `BRANDCODE_MCP_RATE_LIMIT_WINDOW_SECONDS`, and emergency disable
+  `BRANDCODE_MCP_RATE_LIMIT_DISABLED=1`.
+- `429 rate_limited` responses include structured `rate_limits`,
+  `retry-after`, and `x-ratelimit-*` headers.
+- Successful hosted responses include `x-ratelimit-limit`,
+  `x-ratelimit-remaining`, and `x-ratelimit-reset`.
+- `brand_status.rate_limits.status` now reports
+  `active_pre_release_in_process` when called through the hosted HTTP router,
+  with enforcement, limit, remaining, window, reset, source, and release-gate
+  fields.
+
+Truthful release posture:
+
+- This is active pre-release enforcement, not durable multi-instance
+  production enforcement.
+- `brand_status.rate_limits.release_gate` remains `blocked`.
+- Public release still needs a Jason decision: choose durable shared
+  rate-limit enforcement or approve a named Brandcode operations owner plus
+  abuse-handling runbook.
+
+Verification:
+
+- `git diff --check` passed.
+- `npm test -- --run test/hosted/router.test.ts test/hosted/tools.test.ts`
+  passed: 57 tests.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Full `npm test` passed: 39 files, 527 tests.
+
+No release, npm publish, public MCP directory submission, public listing
+change, hosted tool addition, selected-kit default behavior, UCS change, or
+custody relaxation happened.
