@@ -64,6 +64,18 @@ Verification:
 - `npm run build` passed.
 - Full `npm test` passed: 39 files, 530 tests.
 
+Remote CI proof:
+
+- Jason authorized push.
+- Pushed commit: `cc94bee Add durable hosted rate limit enforcement`.
+- GitHub CI run: `25687209671`.
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25687209671`.
+- Result: success.
+- Matrix jobs: Node 20, Node 22, and Node 24 all passed.
+- Steps passed in all three jobs: `npm ci`, `npm run build`, `npm run lint`,
+  `npm test`, and `npm audit --audit-level=high`.
+
 ## Scope
 
 Inspect first:

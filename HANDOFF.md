@@ -169,6 +169,11 @@ M001-L20 completed durable shared rate-limit implementation locally:
   `retry-after`, and `x-ratelimit-*` headers.
 - Verification passed for `git diff --check`, focused hosted router/status
   tests, lint, build, and full `npm test` (39 files, 530 tests).
+- Jason authorized push, and GitHub CI run `25687209671` passed on pushed tip
+  `cc94bee`: `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25687209671`.
+- Node 20, Node 22, and Node 24 matrix jobs all passed `npm ci`,
+  `npm run build`, `npm run lint`, `npm test`, and
+  `npm audit --audit-level=high`.
 - Hosted durable-store proof was not completed because this local session has
   no configured Redis/Upstash/KV store or sensitive hosted rate-limit env.
 - Release remains blocked until Jason approves/provisions the hosted shared
@@ -302,6 +307,8 @@ listing metadata, or relax custody.
   and GitHub CI run `25641439073` passed.
 - L19 push/CI proof is complete: `origin/main` includes pushed tip `74d72f5`
   and GitHub CI run `25684546273` passed.
+- L20 push/CI proof is complete: `origin/main` includes pushed tip `cc94bee`
+  and GitHub CI run `25687209671` passed.
 - Jason approved the recommended hosted-service posture, but final public
   retention/deletion/export language and `@brandcode/mcp` package/source
   posture remain launch blockers.

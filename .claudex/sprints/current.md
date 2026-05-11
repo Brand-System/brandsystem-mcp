@@ -11,9 +11,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 ## Current Truth
 
-- Local `main` includes M001-L20 durable shared rate-limit implementation and
-  closeout docs. The accumulated M001 stack through L19 was pushed to
-  `origin/main`; L20 is local pending commit and hosted proof/provisioning.
+- `origin/main` includes M001-L20 durable shared rate-limit implementation and
+  closeout docs through pushed tip `cc94bee`.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -110,6 +109,10 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   approves release.
 - M001-L20 verification passed for `git diff --check`, focused hosted
   router/status tests, lint, build, and full `npm test` (39 files, 530 tests).
+- M001-L20 was pushed after Jason authorized push. GitHub CI run `25687209671`
+  passed on pushed tip `cc94bee` across Node 20, Node 22, and Node 24. All
+  three jobs passed `npm ci`, `npm run build`, `npm run lint`, `npm test`, and
+  `npm audit --audit-level=high`.
 
 ## Lanes
 
@@ -153,6 +156,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   passed on pushed tip `2cf291c`.
 - Push/CI proof for L19 is complete: GitHub CI run `25684546273` passed on
   pushed tip `74d72f5`.
+- Push/CI proof for L20 is complete: GitHub CI run `25687209671` passed on
+  pushed tip `cc94bee`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
