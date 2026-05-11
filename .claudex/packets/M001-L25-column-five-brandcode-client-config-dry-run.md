@@ -1,6 +1,6 @@
 # M001-L25 - Column Five Brandcode Client Config Dry Run
 
-**Status:** Done - blocked on staging bearer-key handoff
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Limited-client proof / MCP client configuration
@@ -50,49 +50,63 @@ Implement narrowly:
 
 ## Acceptance
 
-- Done: a client-config dry run blocker is recorded for the `brandcode` staging
-  endpoint, or a precise blocker is recorded.
-- Blocked: useful `brand_status` and `get_brand_asset` calls were not run
-  because no staging bearer key was available in the local environment and
-  Vercel Preview encrypted env values pull as zero-length locally.
+- Done: Jason authorized the staging-only generate-and-run flow for this
+  internal `brandcode` staging proof.
+- Done: fresh staging-only full/read test keys were generated and installed in
+  Vercel Preview `BRANDCODE_MCP_TEST_KEYS` for all Preview branches without
+  printing or committing key values.
+- Done: fresh Preview deployment `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb` was
+  created and `https://mcp.staging.brandcode.studio` was re-aliased to
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- Done: `npm run smoke:hosted-mcp -- --json` passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with the package-safe
+  asset id `brandcode:logo:c5-logomark-red.svg`.
+- Done: Claude Code used a temporary HTTP MCP config to call `brand_status` and
+  `get_brand_asset`.
+- Done: Claude Code reported 8 implemented tools, durable shared rate limiting,
+  package-safe asset delivery, `safe_for_mcp: true`, and no raw private/provider
+  URL exposure.
+- Done: temporary MCP config was removed after the run.
 - Done: no bearer keys were printed, committed, or written to docs.
 - Done: client setup friction is captured for future Option 3 connector/client
   design.
 - Done: `git diff --check` passes.
-- Done: no code changes were made, so lint/build/tests may be skipped with a clear
-  docs-only note.
-- Done: a named Jason decision blocker is
-  recorded.
+- Done: no code changes were made, so lint/build/tests may be skipped with a
+  clear docs/proof-only note.
+- Done: exactly one next Ready lane remains.
 
 ## Closeout
 
-M001-L25 did not prove useful hosted calls through a real MCP client because
-the current local process has no usable staging bearer key:
+M001-L25 first found the local process had no usable staging bearer key.
+Jason then authorized option 2: a staging-only generate-and-run key flow.
 
-- `BRANDCODE_MCP_SMOKE_URL`, `BRANDCODE_MCP_SMOKE_FULL_KEY`,
-  `BRANDCODE_MCP_SMOKE_READ_KEY`, `BRANDCODE_MCP_SMOKE_ASSET_ID`, and
-  `BRANDCODE_MCP_BEARER_KEY` were unset.
-- `.env.local` contains only `VERCEL_OIDC_TOKEN`, not Brandcode MCP bearer
-  keys.
-- Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but `vercel env
-  pull` into a temporary file returned zero-length local values for encrypted
-  sensitive variables.
-- Claude Code, Codex CLI, and `npx`/MCP Inspector paths are available locally,
-  but running them without a bearer key would only prove auth failure rather
-  than `brand_status` or `get_brand_asset`.
+Executed:
 
-Durable blocker record:
+- Generated fresh `bck_test_` full/read keys for the `brandcode` staging slug.
+- Installed the generated key bundle into Vercel Preview
+  `BRANDCODE_MCP_TEST_KEYS` for all Preview branches.
+- Deployed fresh Preview `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb` at
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- Re-aliased `https://mcp.staging.brandcode.studio` to that deployment.
+- Ran hosted smoke against
+  `https://mcp.staging.brandcode.studio/brandcode` with asset id
+  `brandcode:logo:c5-logomark-red.svg`; result was `ok: true`,
+  `status: "pass"`, `fail: 0`, `blocked: 0`, `skipped: 0`.
+- Ran Claude Code with a temporary HTTP MCP config; Claude called
+  `brand_status` and `get_brand_asset`, reported 8 implemented tools,
+  `rate_limit_status: "active_durable_shared"`, package-safe asset delivery,
+  `safe_for_mcp: true`, and no raw private/provider URL exposure.
+
+Durable proof record:
 
 - `specs/brandcode-mcp-column-five-client-config-dry-run.md`
 
-Named Jason decision blocker:
+Next Ready lane:
 
-- Provide a staging `bck_test_` bearer key through secure local secret handoff,
-  or explicitly authorize a staging-only generate-and-run flow that creates or
-  rotates a temporary Preview test key, deploys/aliases staging if needed, runs
-  the client proof, and records only redacted results.
+- `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
 
-No production endpoint proof, production key issuance, hosted env mutation,
-release, npm publish, public MCP directory submission, public listing metadata
-change, hosted tool addition, selected-kit default behavior, package/source
-posture change, or custody relaxation happened.
+No production endpoint proof, production key issuance, release, npm publish,
+public MCP directory submission, public listing metadata change, hosted tool
+addition, selected-kit default behavior, package/source posture change, or
+custody relaxation happened. The only hosted mutation was the authorized
+Preview-only staging test-key rotation/deploy/alias needed for this proof.

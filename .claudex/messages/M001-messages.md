@@ -1218,3 +1218,46 @@ Named Jason decision blocker:
 
 No next Ready lane is left because the next proof step is blocked on that
 Jason decision.
+
+## 2026-05-11 - M001-L25 Column Five Client Config Dry Run Completed
+
+M001-L25 reopened after Jason chose option 2: staging-only generate-and-run
+keys for the internal `brandcode` staging proof.
+
+Executed:
+
+- Generated fresh staging-only `bck_test_` full/read keys for slug
+  `brandcode`.
+- Installed the generated key bundle into Vercel Preview
+  `BRANDCODE_MCP_TEST_KEYS` for all Preview branches without printing or
+  committing key values.
+- Deployed fresh Preview `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb` at
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- Re-aliased `https://mcp.staging.brandcode.studio` to that deployment.
+
+Proof:
+
+- Hosted smoke passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with asset id
+  `brandcode:logo:c5-logomark-red.svg`.
+- Smoke result: `ok: true`, `status: "pass"`, `fail: 0`, `blocked: 0`,
+  `skipped: 0`.
+- Claude Code used a temporary HTTP MCP config and called `brand_status` and
+  `get_brand_asset`.
+- Claude Code reported 8 implemented tools,
+  `rate_limit_status: "active_durable_shared"`,
+  `asset_delivery_posture: "package_safe"`, `safe_for_mcp: true`, and
+  `raw_private_provider_url_exposed: false`.
+
+Durable proof:
+
+- `specs/brandcode-mcp-column-five-client-config-dry-run.md`
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, package/source posture change, production client key generation, or
+production endpoint proof happened.
+
+Next Ready lane:
+
+- M001-L26 - Limited Client Key Ops Runbook.

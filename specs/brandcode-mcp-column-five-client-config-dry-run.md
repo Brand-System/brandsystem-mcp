@@ -1,6 +1,6 @@
 # Column Five Brandcode MCP Client Config Dry Run
 
-**Status:** Blocked on staging bearer-key handoff
+**Status:** Passed with staging-only generate-and-run key flow
 **Date:** 2026-05-11
 **Brand / slug:** Column Five Brandcode internal instance, `brandcode`
 **Endpoint:** `https://mcp.staging.brandcode.studio/brandcode`
@@ -25,10 +25,9 @@ Available local MCP client paths:
 - Codex CLI is installed at `/Users/jasonlankow/.local/bin/codex`.
 - `npx` is available for MCP Inspector-style client runs.
 
-The most direct client-config path remains Claude Code with a temporary
-`--mcp-config` file that references an environment-provided bearer key. That
-path was not executed against the hosted route because no usable staging bearer
-key was available in the local environment.
+The most direct client-config path is Claude Code with a temporary
+`--mcp-config` file that references a staging-only bearer key. M001-L25 proved
+that path after Jason authorized the staging-only generate-and-run flow.
 
 ## Secret Availability Check
 
@@ -55,18 +54,75 @@ Vercel Preview env inspection:
   sensitive Preview values are not usable as a local proof input.
 - The temporary env file was removed after checking value presence/length only.
 
-## Result
+## Generate-And-Run Repair
 
-The real client configuration proof is blocked before useful hosted tool calls.
+Jason authorized option 2: a staging-only generate-and-run flow.
 
-The precise blocker is not endpoint reachability or MCP client availability. It
-is the lack of an intentionally handed-off staging bearer key in the current
-local process. Running Claude Code, Codex CLI, or MCP Inspector without that
-key would only prove `missing_bearer` or `invalid_token`, not `brand_status` or
-`get_brand_asset` through a useful approved-client configuration.
+Executed at `2026-05-11T21:45:13Z`:
 
-No hosted env, deployment, alias, package metadata, listing metadata, public
-release posture, custody behavior, or production key posture was changed.
+- Generated fresh `bck_test_` full/read keys for the `brandcode` staging slug.
+- Installed the generated key bundle into Vercel Preview
+  `BRANDCODE_MCP_TEST_KEYS` through the Vercel API for all Preview branches.
+- Kept generated keys in local `0600` temp files only.
+- Did not print, commit, or write bearer-key values to docs.
+- Deployed fresh Preview `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb` at
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- Re-aliased `https://mcp.staging.brandcode.studio` to that deployment.
+
+## Smoke Proof
+
+Command shape:
+
+```bash
+BRANDCODE_MCP_SMOKE_URL=https://mcp.staging.brandcode.studio/brandcode \
+BRANDCODE_MCP_SMOKE_FULL_KEY=<redacted> \
+BRANDCODE_MCP_SMOKE_READ_KEY=<redacted> \
+BRANDCODE_MCP_SMOKE_ASSET_ID=brandcode:logo:c5-logomark-red.svg \
+npm run smoke:hosted-mcp -- --json
+```
+
+Result:
+
+- `ok: true`
+- `status: "pass"`
+- `fail: 0`
+- `blocked: 0`
+- `skipped: 0`
+- Locked 8-tool order passed.
+- `get_brand_asset` passed for
+  `brandcode:logo:c5-logomark-red.svg`.
+- Asset delivery stayed `package_safe` with `delivery_ref_kind:
+  "package_path"`.
+- `safe_for_mcp: true`.
+- `raw_private_provider_url_exposed: false`.
+- Read-only insufficient-scope checks passed for `brand_check` and
+  `brand_feedback`.
+
+## Client Config Proof
+
+Client path: Claude Code CLI using a temporary `--mcp-config` file with an HTTP
+MCP server entry for `https://mcp.staging.brandcode.studio/brandcode`.
+
+The temporary config was removed after the run.
+
+Redacted result:
+
+```json
+{
+  "brand_status_called": true,
+  "get_brand_asset_called": true,
+  "implemented_tool_count": 8,
+  "rate_limit_status": "active_durable_shared",
+  "asset_delivery_posture": "package_safe",
+  "safe_for_mcp": true,
+  "raw_private_provider_url_exposed": false,
+  "setup_friction": "low"
+}
+```
+
+No hosted code, package metadata, listing metadata, public release posture,
+custody behavior, production key posture, or production endpoint posture was
+changed.
 
 ## Future Option 3 Friction
 
@@ -80,15 +136,19 @@ This dry run surfaced one clear connector/client design signal:
   instructions from hosted-service entitlement and should give operators a
   clear secure-key handoff path.
 
-## Required Decision
+## Remaining Operational Signal
 
-Jason needs to choose one of these before the client-config proof can continue:
+The client config itself is straightforward. The remaining limited-client
+friction is key operations:
 
-1. Provide a staging `bck_test_` bearer key through a secure local secret
-   handoff for the current proof run.
-2. Explicitly authorize a staging-only generate-and-run flow that creates or
-   rotates a temporary Preview test key, deploys/aliases the staging target if
-   needed, runs the client proof, and records only redacted results.
+- repeatable secure staging key handoff;
+- production key issuance gating;
+- key rotation/revocation runbook;
+- client-facing config examples that do not imply public package/source
+  distribution;
+- operator proof steps that avoid printing or committing secrets.
 
-Production `bck_live_` key issuance and production endpoint proof remain out of
-scope unless Jason explicitly authorizes them.
+Production `bck_live_` key issuance, production endpoint proof, public
+`@brandcode/mcp` package/source distribution, npm publish, directory
+submission, and release remain out of scope unless Jason explicitly authorizes
+them.

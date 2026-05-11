@@ -13,7 +13,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 
 - `origin/main` includes M001-L20 durable shared rate-limit implementation and
   CI closeout docs through pushed tip `48f6fec`; local `main` also includes
-  unpushed coordination/proof docs through M001-L24.
+  unpushed coordination/proof docs through M001-L25.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -172,20 +172,25 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   package/listing metadata, release/publish posture, directory submission,
   public source/license posture, production client keys, or production endpoint
   access.
-- M001-L25 attempted the Column Five Brandcode client-config dry run and
-  recorded a precise blocker in
-  `specs/brandcode-mcp-column-five-client-config-dry-run.md`.
-- L25 found Claude Code, Codex CLI, and `npx`/MCP Inspector client paths
-  locally available, but no usable staging bearer key was present in the local
-  environment. Vercel Preview lists encrypted `BRANDCODE_MCP_TEST_KEYS`, but
-  `vercel env pull` returned zero-length local values for encrypted sensitive
-  variables.
-- M001-L25 was docs-only and did not run useful hosted client calls, because
-  doing so without a bearer key would only prove auth failure. It did not
-  change code, hosted env, deployment aliases, hosted tools, custody,
-  package/listing metadata, release/publish posture, directory submission,
-  public source/license posture, production client keys, or production endpoint
-  access.
+- M001-L25 completed the Column Five Brandcode client-config dry run through
+  Jason-approved staging-only generate-and-run keys.
+- L25 generated fresh staging-only `bck_test_` full/read keys, installed them in
+  Vercel Preview `BRANDCODE_MCP_TEST_KEYS` for all Preview branches, deployed
+  fresh Preview `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb`, and re-aliased
+  `https://mcp.staging.brandcode.studio` to
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- L25 hosted smoke passed against
+  `https://mcp.staging.brandcode.studio/brandcode` with
+  `brandcode:logo:c5-logomark-red.svg`: `ok: true`, `status: "pass"`,
+  `fail: 0`, `blocked: 0`, `skipped: 0`.
+- L25 Claude Code proof passed through a temporary HTTP MCP config: Claude
+  called `brand_status` and `get_brand_asset`, reported 8 implemented tools,
+  `rate_limit_status: "active_durable_shared"`, package-safe asset delivery,
+  `safe_for_mcp: true`, and no raw private/provider URL exposure.
+- M001-L25 did not print, commit, or write bearer-key values to docs. It did
+  not change code, hosted tools, custody, package/listing metadata,
+  release/publish posture, directory submission, public source/license posture,
+  production client keys, or production endpoint access.
 
 ## Lanes
 
@@ -215,7 +220,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L22 | Done | `.claudex/packets/M001-L22-package-source-posture-decision-brief.md` | Prepare the Jason decision brief for `@brandcode/mcp` package/source posture before npm, directory, listing, or release work. |
 | M001-L23 | Done | `.claudex/packets/M001-L23-limited-client-readiness-plan.md` | Turn the approved Option 4 posture into a limited-client readiness plan and guardrails without publishing or listing Brandcode MCP. |
 | M001-L24 | Done | `.claudex/packets/M001-L24-limited-client-onboarding-template.md` | Turn the limited-client readiness plan into a reusable per-client onboarding template/checklist and test it against the internal Brandcode staging instance. |
-| M001-L25 | Done - blocked | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Record the real MCP client configuration dry run blocker for the Column Five Brandcode staging endpoint without exposing keys. |
+| M001-L25 | Done | `.claudex/packets/M001-L25-column-five-brandcode-client-config-dry-run.md` | Prove the Column Five Brandcode staging endpoint through a real MCP client config without exposing keys. |
+| M001-L26 | Ready | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
 
 ## Blockers And Decisions
 
@@ -248,19 +254,18 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   final deletion/export launch approval, future public package/source approval,
   directory metadata, and Jason explicit release approval.
 - M001-L24 proved the limited-client onboarding template against the internal
-  `brandcode` staging instance. The next useful proof is a real MCP client
-  configuration dry run using that same staging endpoint.
-- M001-L25 client-config proof is blocked on a named Jason decision: provide a
-  staging `bck_test_` bearer key through secure local secret handoff, or
-  explicitly authorize a staging-only generate-and-run flow that creates or
-  rotates a temporary Preview test key, deploys/aliases staging if needed, runs
-  the client proof, and records only redacted results.
+  `brandcode` staging instance.
+- M001-L25 proved the same endpoint through a real Claude Code MCP client
+  configuration after Jason authorized a staging-only generate-and-run key flow.
+- The next useful hardening step is M001-L26: turn the key-generation,
+  handoff, rotation, revocation, leak-response, and redacted proof process into
+  a limited-client key operations runbook.
 
 ## Ready Lane Rule
 
-No lane is Ready for automation.
+Exactly one lane is Ready for automation:
 
-The next useful proof step is blocked on the M001-L25 Jason decision above.
+- `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md`
 
 Do not publish, release, submit to directories, add tools, alter public listing
 metadata, issue production client keys, name a real client without approval, or
