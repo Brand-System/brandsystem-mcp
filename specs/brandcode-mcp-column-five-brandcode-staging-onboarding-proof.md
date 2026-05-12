@@ -1,7 +1,7 @@
 # Column Five Brandcode MCP Staging Onboarding Proof
 
-**Status:** Internal approved-brand staging proof
-**Date:** 2026-05-11
+**Status:** Internal approved-brand staging proof; 2026-05-12 freshness proof passed after staging-only key rotation
+**Date:** 2026-05-11; refreshed 2026-05-12
 **Brand / slug:** Column Five Brandcode internal instance, `brandcode`
 **Endpoint:** `https://mcp.staging.brandcode.studio/brandcode`
 **Production posture:** not approved, not tested in this proof
@@ -40,6 +40,61 @@ npm run smoke:hosted-mcp -- --json
 | Blocked count | `0` |
 | Skipped count | `0` |
 | Package-safe asset id | `brandcode:logo:c5-logomark-red.svg` |
+
+## 2026-05-12 Freshness Read
+
+M001-L30 applied the limited-client go/no-go checklist to the current Column
+Five Brandcode staging route. The first read found the route reachable and
+bearer-gated but blocked on missing local staging full/read keys. Jason then
+asked to generate the needed keys, so fresh staging-only `bck_test_` full/read
+keys were generated into `0600` temp files, installed as a sensitive
+all-Preview `BRANDCODE_MCP_TEST_KEYS` value through the Vercel API, deployed,
+and removed locally after proof.
+
+| Field | Value |
+| --- | --- |
+| Checked at | `2026-05-12T02:25:44.680Z` |
+| Endpoint | `https://mcp.staging.brandcode.studio/brandcode` |
+| Staging route reachability | Reachable; unauthenticated request returned `401 missing_bearer` for slug `brandcode` |
+| Vercel deployment inspected | `dpl_4aQ9vVdsXC6SD5u7TMqXZKs4eCQC` |
+| Alias target inspected | `https://brandsystem-pwnz9m3oy-column-five.vercel.app` |
+| Deployment target/status | Preview, Ready |
+| Latest pushed CI checked | GitHub Actions run `25705113500`, success on `201ee36d8c140e811950eb4e7d9d69a64a5a08db` |
+| Key posture | Fresh staging-only `bck_test_` full/read keys generated, installed in Vercel Preview, used for proof, and removed locally |
+| Smoke command result | `pass` |
+| `ok` | `true` |
+| Fail count | `0` |
+| Blocked count | `0` |
+| Skipped count | `0` |
+| Fresh staging verdict | Go for internal Column Five Brandcode staging rehearsal only |
+
+Fresh smoke summary:
+
+```json
+{
+  "ok": true,
+  "status": "pass",
+  "endpoint": "https://mcp.staging.brandcode.studio/brandcode",
+  "checked_at": "2026-05-12T02:25:44.680Z",
+  "counts": {
+    "pass": 7,
+    "fail": 0,
+    "blocked": 0,
+    "skipped": 0
+  }
+}
+```
+
+M001-L30 refreshed the locked 8-tool order, durable shared rate-limit posture,
+package-safe asset custody, feedback append, and read-only insufficient-scope
+proof. A direct `brand_status` read returned:
+
+- `rate_limits.status: "active_durable_shared"`
+- `rate_limits.enforcement: "durable_shared_redis_fixed_window"`
+
+Read-only scope proof returned structured `insufficient_scope` payloads with
+status `403`, required scope `check` for `brand_check`, and required scope
+`feedback` for `brand_feedback`.
 
 ## Tool And Scope Proof
 
@@ -86,8 +141,9 @@ internal Brandcode staging instance.
 
 ## Handoff Posture
 
-This proof supports internal limited-client readiness for the `brandcode`
-staging route only. It does not authorize:
+The 2026-05-11 proof and 2026-05-12 freshness proof support internal
+limited-client readiness for the `brandcode` staging route only. Neither proof
+authorizes:
 
 - production endpoint access;
 - production/live `bck_live_` key issuance;

@@ -1,6 +1,6 @@
 # M001-L30 - Limited Client Staging Freshness Proof
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Non-release hosted proof / limited-client QC
@@ -62,15 +62,33 @@ Implement narrowly:
 
 ## Acceptance
 
-- The Column Five Brandcode staging instance has a current go/no-go read, or a
-  truthful blocker is recorded.
-- Evidence is redacted and linked from sprint docs.
-- Hosted staging proof, if run, shows locked 8-tool order, durable shared
-  rate-limit posture, package-safe asset custody for
-  `brandcode:logo:c5-logomark-red.svg`, and read-only insufficient-scope
-  behavior.
-- `git diff --check` passes.
-- No code changes are expected; lint/build/tests may be skipped with a clear
-  docs-only/proof-only note.
-- Exactly one next Ready lane remains, unless a named Jason decision blocker is
-  surfaced.
+- Done: the Column Five Brandcode staging route has a current go/no-go read in
+  `specs/brandcode-mcp-limited-client-go-no-go-checklist.md` and
+  `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`.
+- Done: redacted evidence records endpoint, route reachability, Vercel Preview
+  deployment/alias, latest pushed CI, staging-only key generation posture, and
+  smoke summary.
+- Done: Jason asked to generate the needed keys. Fresh staging-only `bck_test_`
+  full/read keys were generated into `0600` temp files, installed as sensitive
+  all-Preview `BRANDCODE_MCP_TEST_KEYS`, deployed behind staging, used for
+  proof, and removed locally.
+- Done: hosted smoke passed against
+  `https://mcp.staging.brandcode.studio/brandcode` at
+  `2026-05-12T02:25:44.680Z` with `ok: true`, `status: "pass"`,
+  `fail: 0`, `blocked: 0`, and `skipped: 0`.
+- Done: locked 8-tool order, durable shared rate-limit posture, package-safe
+  asset custody for `brandcode:logo:c5-logomark-red.svg`, `brand_feedback`
+  append, and read-only insufficient-scope behavior were refreshed.
+- Done: `git diff --check` passes.
+- Done: no code changed; lint/build/tests were skipped as docs/proof-only.
+- Done: no next Ready lane remains because the next action is a named Jason
+  decision blocker: explicit production proof/live-key approval, final public
+  legal/subprocessor launch language, future public package/source approval,
+  directory metadata, and explicit release approval remain outside this lane.
+
+## Closeout Notes
+
+M001-L30 did not publish, release, submit to directories, change package
+metadata, add hosted tools, alter selected-kit behavior, relax custody, issue
+production keys, run production endpoint proof, or promise public
+deletion/export language.

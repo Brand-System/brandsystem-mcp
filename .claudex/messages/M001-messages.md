@@ -1554,3 +1554,119 @@ The checklist:
 Next Ready lane:
 
 - M001-L30 - Limited Client Staging Freshness Proof.
+
+## 2026-05-12 - M001-L30 Closed With Staging Key-Input Blocker
+
+Applied the M001-L29 limited-client go/no-go checklist to the current Column
+Five Brandcode staging route.
+
+Updated:
+
+- `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`
+- `specs/brandcode-mcp-limited-client-go-no-go-checklist.md`
+- `.claudex/packets/M001-L30-limited-client-staging-freshness-proof.md`
+- `.claudex/sprints/current.md`
+- `HANDOFF.md`
+
+Redacted evidence:
+
+- Endpoint checked:
+  `https://mcp.staging.brandcode.studio/brandcode`.
+- Unauthenticated route check returned `401 missing_bearer` with slug
+  `brandcode`, proving the route is reachable and bearer-gated.
+- Vercel inspect found Ready Preview deployment
+  `dpl_E45BFFLXS2H2BJWz9TvBuZv8Cgtb` at
+  `https://brandsystem-umyitawby-column-five.vercel.app`.
+- Latest pushed CI run `25705113500` remains green on
+  `201ee36d8c140e811950eb4e7d9d69a64a5a08db`.
+- Local `.env.local` contains only `VERCEL_OIDC_TOKEN`; no staging full/read
+  Brandcode MCP smoke bearer keys were available.
+- `npm run smoke:hosted-mcp -- --json` stopped before MCP initialize with
+  `status: "blocked"`, `fail: 0`, `blocked: 1`, and blocker
+  `Missing required live proof env: BRANDCODE_MCP_SMOKE_FULL_KEY`.
+
+Not refreshed:
+
+- locked 8-tool order;
+- `brand_status.rate_limits.status`;
+- package-safe custody for `brandcode:logo:c5-logomark-red.svg`;
+- `brand_feedback` append;
+- read-only insufficient-scope behavior;
+- real MCP client path.
+
+Verification:
+
+- `git diff --check` passed.
+- No code changed, so lint/build/tests were skipped as docs/proof-only.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, self-serve deletion/export
+operation, public SLA, legal terms, or production endpoint proof happened.
+
+No next Ready lane remains because the next action is a named Jason decision
+blocker: provide safe staging full/read key material for this proof
+environment, or explicitly authorize a staging-only generate-and-run key
+refresh for the `brandcode` staging slug before rerunning proof.
+
+## 2026-05-12 - M001-L30 Reopened And Completed After Key Generation
+
+Jason asked to generate the needed staging keys, resolving the key-input
+blocker for L30.
+
+Actions:
+
+- Generated fresh staging-only `bck_test_` full/read keys into `0600` temp
+  files.
+- Installed the key bundle as sensitive all-Preview
+  `BRANDCODE_MCP_TEST_KEYS` through the Vercel API with `gitBranch: null`.
+- Deployed fresh Preview
+  `https://brandsystem-pwnz9m3oy-column-five.vercel.app`.
+- Re-aliased `https://mcp.staging.brandcode.studio` to that deployment.
+- Used the temp keys for proof and removed them locally afterward.
+
+Fresh proof:
+
+- Vercel inspect found Ready Preview deployment
+  `dpl_4aQ9vVdsXC6SD5u7TMqXZKs4eCQC`.
+- Hosted smoke against
+  `https://mcp.staging.brandcode.studio/brandcode` passed at
+  `2026-05-12T02:25:44.680Z`: `ok: true`, `status: "pass"`,
+  `fail: 0`, `blocked: 0`, `skipped: 0`.
+- Locked 8-tool order passed:
+  `brand_runtime`, `brand_search`, `brand_check`, `brand_status`,
+  `list_brand_assets`, `get_brand_asset`, `brand_feedback`, `brand_history`.
+- `brand_status.rate_limits.status` returned `active_durable_shared` with
+  `durable_shared_redis_fixed_window` enforcement.
+- `get_brand_asset` passed for `brandcode:logo:c5-logomark-red.svg` with
+  package-safe custody, `safe_for_mcp: true`,
+  `blocked_private_provider_url: false`, `delivery_posture: "package_safe"`,
+  `delivery_ref_kind: "package_path"`, and
+  `raw_private_provider_url_exposed: false`.
+- `brand_feedback` append returned `append_status: "recorded"`.
+- Read-only scope proof returned structured `insufficient_scope` payloads with
+  status `403`, required scope `check` for `brand_check`, and required scope
+  `feedback` for `brand_feedback`.
+
+Updated:
+
+- `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`
+- `specs/brandcode-mcp-limited-client-go-no-go-checklist.md`
+- `.claudex/packets/M001-L30-limited-client-staging-freshness-proof.md`
+- `.claudex/sprints/current.md`
+- `HANDOFF.md`
+
+Verification:
+
+- `git diff --check` passed.
+- No code changed, so lint/build/tests were skipped as docs/proof-only.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, self-serve deletion/export
+operation, public SLA, legal terms, or production endpoint proof happened.
+
+No next Ready lane remains because the next useful actions are named
+Jason/legal/ops decision blockers: explicit production proof/live-key
+approval, final public legal/subprocessor launch language, future public
+package/source approval, directory metadata, and explicit release approval.

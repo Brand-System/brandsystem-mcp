@@ -151,14 +151,34 @@ Use these repo artifacts as the starting evidence set:
 
 ## Column Five Brandcode Current Read
 
-This example reflects the latest recorded internal proof, not an evergreen
-claim.
+This example reflects the latest recorded internal proof plus the M001-L30
+freshness proof after Jason-authorized staging-only key generation. It is not
+an evergreen claim.
 
 | Decision | Current read | Evidence |
 | --- | --- | --- |
-| Staging readiness | Go for internal staging rehearsal, assuming current staging env still has valid test keys. | Hosted smoke and Claude Code client-config proof recorded in the Column Five staging proof docs. |
+| Staging readiness | Go for internal Column Five Brandcode staging rehearsal. Fresh staging-only full/read keys were generated, installed in Vercel Preview, deployed behind staging, proven, and removed locally after proof. | Freshness proof recorded in `specs/brandcode-mcp-column-five-brandcode-staging-onboarding-proof.md`. |
 | Production proof readiness | Blocked until Jason explicitly approves production proof and live key issuance for the `brandcode` slug. | No production endpoint proof or production key issuance has been approved. |
 | Public release readiness | Blocked. | Option 4 defers public package/source distribution; final legal/subprocessor launch language, directory metadata, and explicit release approval are still missing. |
+
+### 2026-05-12 Column Five Staging Checklist Application
+
+| Gate | Fresh read |
+| --- | --- |
+| Client and brand approval | Pass for internal Column Five Brandcode staging rehearsal based on the existing approved-brand proof posture. |
+| Endpoint | Pass. `https://mcp.staging.brandcode.studio/brandcode` is reachable and points to Ready Preview deployment `dpl_4aQ9vVdsXC6SD5u7TMqXZKs4eCQC` / `https://brandsystem-pwnz9m3oy-column-five.vercel.app`. |
+| Key posture | Pass. Fresh staging-only `bck_test_` full/read keys were generated into `0600` temp files, installed as sensitive Vercel Preview env, used for proof, and removed locally. |
+| Service token | Pass. Authenticated `brand_history` returned scoped hosted MCP history shape and `brand_feedback` append returned `append_status: "recorded"`. |
+| Durable rate limit | Pass. Authenticated `brand_status` returned `rate_limits.status: "active_durable_shared"` and `enforcement: "durable_shared_redis_fixed_window"`. |
+| Smoke proof | Pass. Hosted smoke returned `ok: true`, `status: "pass"`, `fail: 0`, `blocked: 0`, and `skipped: 0` at `2026-05-12T02:25:44.680Z`. |
+| Tool surface | Pass. `tools/list` returned the locked 8-tool order. |
+| Scope proof | Pass. Read-only key returned structured `insufficient_scope` payloads with status `403` for `brand_check` and `brand_feedback`. |
+| Asset custody | Pass. `get_brand_asset` for `brandcode:logo:c5-logomark-red.svg` returned package-safe custody, `safe_for_mcp: true`, and no raw private/provider URL exposure. |
+| Feedback posture | Pass. `brand_feedback` append returned `append_status: "recorded"`. |
+| Client config proof | Not refreshed; latest real client path proof remains the 2026-05-11 Claude Code dry run. |
+| Support intake | Pass. Limited-client support intake ledger exists and names owners/categories. |
+| Deletion/export posture | Pass for pre-release manual ops review; public launch language remains blocked. |
+| CI freshness | Pass for latest pushed hosted-affecting baseline: GitHub Actions run `25705113500` succeeded on `201ee36d8c140e811950eb4e7d9d69a64a5a08db`. Local L29/L30 docs are not hosted-affecting. |
 
 ## Closeout Rule
 
