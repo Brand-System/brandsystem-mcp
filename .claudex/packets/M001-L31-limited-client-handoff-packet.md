@@ -1,6 +1,6 @@
 # M001-L31 - Limited Client Handoff Packet
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Non-release limited-client enablement / client-facing packet
@@ -69,6 +69,21 @@ Implement narrowly:
 - No secret values in docs, commits, logs, or examples.
 
 ## Acceptance
+
+- Done: handoff packet is usable for an approved limited-client staging
+  handoff:
+  `specs/brandcode-mcp-limited-client-handoff-packet.md`
+- Done: packet distinguishes client-facing approved claims from internal
+  operator proof and public-release blockers.
+- Done: packet includes the current production proof blocker truthfully.
+- Done: `git diff --check` passes.
+- Done: no code changed; lint/build/tests were skipped as docs-only.
+- Done: no next Ready lane remains because the next useful proof step is
+  blocked on production DNS/env provisioning, while public release remains
+  blocked on final legal/subprocessor language, future public package/source
+  approval, directory metadata, and explicit Jason release approval.
+
+Original acceptance:
 
 - Handoff packet is usable for an approved limited-client staging handoff.
 - Packet distinguishes client-facing approved claims from internal operator

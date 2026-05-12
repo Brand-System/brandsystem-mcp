@@ -1737,3 +1737,50 @@ Purpose:
 Current Ready lane:
 
 - M001-L31 - Limited Client Handoff Packet.
+
+## 2026-05-12 - M001-L31 Closed
+
+Closed M001-L31 as a docs-only limited-client handoff packet lane.
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-handoff-packet.md`
+
+The handoff packet:
+
+- gives approved limited-client staging users a setup shape, including generic
+  HTTP MCP client configuration without secrets;
+- separates approved staging/limited-client claims from explicit non-claims for
+  public release, package/source access, production proof, public SLA, and
+  public deletion/export;
+- documents key/scope posture, tool expectations, custody expectations,
+  smoke/proof expectations, support/intake routing, rotation, revocation, and
+  offboarding;
+- includes the Column Five Brandcode internal staging example using redacted
+  M001-L30 proof only;
+- keeps production proof truth explicit: Jason authorized production
+  proof/live-key testing for `brandcode`, but proof remains blocked on
+  `mcp.brandcode.studio` DNS/alias and missing Production env for hosted MCP
+  mode, live-key seed, service token, and durable shared rate limits.
+
+Updated:
+
+- `.claudex/packets/M001-L31-limited-client-handoff-packet.md`
+- `.claudex/sprints/current.md`
+- `HANDOFF.md`
+
+Verification:
+
+- `git diff --check` passed.
+- No code changed, so lint/build/tests were skipped as docs-only.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client handoff, production key generation, production
+endpoint proof, self-serve deletion/export operation, public SLA, legal terms,
+or public release proof happened.
+
+No next Ready lane remains because the next useful proof step is blocked on
+external production route/env provisioning. Public release also remains blocked
+on final legal/subprocessor launch language, future public package/source
+approval, directory metadata, and explicit Jason release approval.
