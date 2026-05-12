@@ -1670,3 +1670,70 @@ No next Ready lane remains because the next useful actions are named
 Jason/legal/ops decision blockers: explicit production proof/live-key
 approval, final public legal/subprocessor launch language, future public
 package/source approval, directory metadata, and explicit release approval.
+
+## 2026-05-12 - M001-L30 Pushed And CI-Proven
+
+Jason asked to push L30 and verify CI.
+
+Pushed:
+
+- `main` from `201ee36` to `3961be4`.
+
+GitHub CI:
+
+- Run: `25710999132`
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25710999132`
+- Result: success.
+- Node 20, Node 22, and Node 24 jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client handoff, self-serve deletion/export operation,
+public SLA, legal terms, or public release proof happened.
+
+## 2026-05-12 - Production Proof Authorized And Preflighted
+
+Jason explicitly authorized #3: production proof/live-key testing for the
+`brandcode` slug.
+
+Preflight result:
+
+- Production proof is authorized but blocked on route/env provisioning.
+- `https://mcp.brandcode.studio/brandcode` does not resolve:
+  `curl` returned `Could not resolve host: mcp.brandcode.studio`.
+- `vercel alias ls` shows `mcp.staging.brandcode.studio`, but no production
+  `mcp.brandcode.studio` alias.
+- `vercel env ls production` lists only `MCP_LOG_LEVEL`, `NODE_ENV`, and
+  `UCS_API_BASE_URL`.
+- Production does not currently list `BRANDCODE_MCP_ENV=production`,
+  `BRANDCODE_MCP_TEST_KEYS` or equivalent live-key seed env,
+  `BRANDCODE_MCP_SERVICE_TOKEN`, or durable shared rate-limit env.
+- No `bck_live_` keys were generated because the production endpoint/env
+  baseline is not ready for proof.
+
+Recorded durable preflight:
+
+- `specs/brandcode-mcp-production-proof-preflight.md`
+
+## 2026-05-12 - M001-L31 Shaped
+
+Prepared the next Ready lane:
+
+- `.claudex/packets/M001-L31-limited-client-handoff-packet.md`
+- `.claudex/prompts/M001-L31-limited-client-handoff-packet.md`
+
+Purpose:
+
+- draft the handoff packet an approved limited-client staging user could
+  receive;
+- include setup shape, approved claims, non-claims, support/intake route,
+  key/scope posture, custody expectations, smoke/proof expectations, rotation
+  and offboarding notes;
+- reference the production proof blocker truthfully without generating live
+  keys or implying public release.
+
+Current Ready lane:
+
+- M001-L31 - Limited Client Handoff Packet.

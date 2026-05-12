@@ -12,8 +12,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 ## Current Truth
 
 - `origin/main` includes M001 coordination/proof docs through pushed tip
-  `201ee36`; local `main` now includes M001-L29 checklist work and the M001-L30
-  staging freshness proof.
+  `3961be4`; local `main` now includes M001-L31 lane prep and production
+  proof preflight truth.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -263,6 +263,20 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   order, `brand_status.rate_limits.status: "active_durable_shared"`,
   package-safe asset custody, `brand_feedback` append recorded, and read-only
   `insufficient_scope` for `brand_check` and `brand_feedback`.
+- M001-L30 was pushed to `origin/main` at tip `3961be4`.
+- GitHub CI run `25710999132` passed on pushed tip `3961be4` across Node 20,
+  Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- Jason authorized production proof and live-key testing for the `brandcode`
+  slug on 2026-05-12.
+- Production proof is authorized but blocked on infrastructure: `mcp.brandcode.studio`
+  does not currently resolve, `vercel alias ls` shows only
+  `mcp.staging.brandcode.studio`, and `vercel env ls production` lists only
+  `MCP_LOG_LEVEL`, `NODE_ENV`, and `UCS_API_BASE_URL`.
+- Production `BRANDCODE_MCP_ENV=production`, `BRANDCODE_MCP_TEST_KEYS` or
+  equivalent live-key seed env, `BRANDCODE_MCP_SERVICE_TOKEN`, and durable
+  shared rate-limit env are not listed in Production. No `bck_live_` keys were
+  generated.
 
 ## Lanes
 
@@ -298,6 +312,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L28 | Done | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
 | M001-L29 | Done | `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md` | Consolidate limited-client evidence into a staging/production/public go/no-go checklist without making release claims. |
 | M001-L30 | Done | `.claudex/packets/M001-L30-limited-client-staging-freshness-proof.md` | Applied the go/no-go checklist to the current Column Five Brandcode staging instance and refreshed redacted hosted proof. |
+| M001-L31 | Ready | `.claudex/packets/M001-L31-limited-client-handoff-packet.md` | Draft the approved limited-client handoff packet with setup, claims, support, custody, key posture, and current production-proof blocker. |
 
 ## Blockers And Decisions
 
@@ -322,6 +337,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   run `25701556152` passed on pushed tip `9619b37`.
 - Push/CI proof for the pushed L28 decision updates and L29 prep is complete:
   GitHub CI run `25705113500` passed on pushed tip `201ee36`.
+- Push/CI proof for M001-L30 is complete: GitHub CI run `25710999132`
+  passed on pushed tip `3961be4`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
@@ -356,23 +373,26 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   Brandcode rehearsal only; production proof, production key issuance, public
   package/source posture, directory metadata, final legal/subprocessor launch
   language, and release remain Jason/legal/ops blockers.
+- Jason has now authorized production proof/live-key testing for `brandcode`,
+  but production proof is blocked on route/env provisioning. The durable
+  preflight is `specs/brandcode-mcp-production-proof-preflight.md`.
+- The next non-release hardening step is M001-L31: draft the limited-client
+  handoff packet that an approved staging client could receive, while keeping
+  the production proof blocker and public-release blockers explicit.
 
 ## Ready Lane Rule
 
-No lane is Ready for automation because the next useful actions are named
-Jason/legal/ops decision blockers:
+Exactly one lane is Ready for automation:
 
-- explicit Jason approval for any production proof or `bck_live_` key issuance
-  for the `brandcode` slug;
-- final public legal/subprocessor launch language;
-- future public package/source posture approval, directory metadata, and
-  explicit release approval.
+- `.claudex/packets/M001-L31-limited-client-handoff-packet.md`
 
 The deletion/export pre-release operating posture is recorded, but public
 deletion/export launch language is still blocked on final legal/subprocessor
 review. No public SLA, self-serve deletion/export, or release claim is allowed.
 
 Do not publish, release, submit to directories, add tools, alter public listing
-metadata, issue production client keys, name a real client without approval, or
-relax private custody. Jason approval remains a hard blocker for any release or
+metadata, issue production client handoff keys, name a real client without
+approval, or relax private custody. Production proof/live-key testing for
+`brandcode` is authorized, but the production route/env blockers must be
+resolved first. Jason approval remains a hard blocker for any release or
 publish action.
