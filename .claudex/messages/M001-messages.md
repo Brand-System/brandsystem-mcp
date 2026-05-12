@@ -1505,3 +1505,52 @@ operation, public SLA, legal terms, or production endpoint proof happened.
 Current Ready lane remains:
 
 - M001-L29 - Limited Client Go No-Go Checklist.
+
+## 2026-05-12 - L28 Decision Updates And L29 Prep Pushed
+
+Pushed the current coordination stack before continuing L29:
+
+- `main` from `9619b37` to `201ee36`.
+
+GitHub CI:
+
+- Run: `25705113500`
+- URL:
+  `https://github.com/Brandcode-Studio/brandsystem-mcp/actions/runs/25705113500`
+- Result: success.
+- Node 20, Node 22, and Node 24 jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+
+No release, npm publish, public MCP directory submission, public listing
+metadata change, hosted tool addition, selected-kit default behavior, custody
+relaxation, production client key generation, self-serve deletion/export
+operation, public SLA, legal terms, or production endpoint proof happened.
+
+## 2026-05-12 - M001-L29 Closed
+
+Closed M001-L29 as a docs-only limited-client go/no-go lane.
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-go-no-go-checklist.md`
+
+The checklist:
+
+- separates staging readiness, production proof readiness, and public release
+  readiness;
+- records per-client evidence fields for approval, endpoint, key posture,
+  service-token env, durable rate limits, smoke proof, locked 8-tool order,
+  scope behavior, package-safe custody, feedback posture, client config proof,
+  support intake, deletion/export posture, and CI freshness;
+- makes production proof dependent on explicit Jason approval;
+- keeps public release blocked until final legal/subprocessor launch language,
+  future public package/source approval, directory metadata, and explicit
+  Jason release approval exist;
+- includes fail-closed criteria for missing approval, missing or unsafe keys,
+  missing hosted proof, private/provider URL exposure, no package-safe asset
+  for required asset delivery, absent support ownership, failing CI, and
+  release-shaped actions without Jason approval.
+
+Next Ready lane:
+
+- M001-L30 - Limited Client Staging Freshness Proof.

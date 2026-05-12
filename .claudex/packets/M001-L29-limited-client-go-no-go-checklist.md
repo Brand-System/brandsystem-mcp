@@ -1,6 +1,6 @@
 # M001-L29 - Limited Client Go No-Go Checklist
 
-**Status:** Ready
+**Status:** Done
 **Sprint:** M001 - Brandcode MCP Stabilization And Pre-Release Hardening
 **Repo:** `/Users/jasonlankow/Desktop/brandsystem-mcp`
 **Lane type:** Non-release hardening / limited-client readiness audit
@@ -83,3 +83,25 @@ Implement narrowly:
   docs-only note.
 - Exactly one next Ready lane remains, unless a named Jason decision blocker is
   surfaced.
+
+## Closeout
+
+Completed 2026-05-12.
+
+Added:
+
+- `specs/brandcode-mcp-limited-client-go-no-go-checklist.md`
+
+The checklist separates staging readiness, production proof readiness, and
+public release readiness. It records fail-closed criteria for missing approval,
+missing or unsafe keys, missing hosted proof, custody exposure, absent support
+ownership, failing CI, and unresolved public deletion/export launch language.
+
+It preserves the accepted pre-release deletion/export operating posture while
+keeping public deletion/export SLA, self-serve operations, legal terms, public
+package/source distribution, npm publish, directory submission, production
+keys, production proof, and release blocked on explicit future approval.
+
+Next Ready lane:
+
+- `M001-L30 - Limited Client Staging Freshness Proof`

@@ -30,6 +30,8 @@ the limited-client key operations runbook is
 [`specs/brandcode-mcp-limited-client-key-ops-runbook.md`](specs/brandcode-mcp-limited-client-key-ops-runbook.md),
 the limited-client support intake ledger is
 [`specs/brandcode-mcp-limited-client-support-intake-ledger.md`](specs/brandcode-mcp-limited-client-support-intake-ledger.md),
+the limited-client go/no-go checklist is
+[`specs/brandcode-mcp-limited-client-go-no-go-checklist.md`](specs/brandcode-mcp-limited-client-go-no-go-checklist.md),
 the deletion/export launch decision brief is
 [`specs/brandcode-mcp-deletion-export-launch-decision-brief.md`](specs/brandcode-mcp-deletion-export-launch-decision-brief.md),
 and the internal Column Five Brandcode staging proof is

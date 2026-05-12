@@ -12,8 +12,7 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 ## Current Truth
 
 - `origin/main` includes M001 coordination/proof docs through pushed tip
-  `9619b37`; local `main` also includes unpushed M001-L29 lane prep and L28
-  pre-release deletion/export decision updates.
+  `201ee36`; local `main` now includes M001-L29 checklist work.
 - Latest GitHub CI baseline before M001-L01 was `61218ac`, and that CI is green.
 - The seven hosted implementation commits from `9cd1c77` through `40e94a0` landed as one push batch; only the tip got CI.
 - The `40e94a0` CI failure was `npm audit`; build, lint, and tests passed at the cumulative hosted MCP state.
@@ -237,6 +236,18 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 - GitHub CI run `25701556152` passed on pushed tip `9619b37` across Node 20,
   Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
   `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- M001-L28 decision updates and L29 prep were pushed to `origin/main` at tip
+  `201ee36`.
+- GitHub CI run `25705113500` passed on pushed tip `201ee36` across Node 20,
+  Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,
+  `npm run lint`, `npm test`, and `npm audit --audit-level=high`.
+- M001-L29 added
+  `specs/brandcode-mcp-limited-client-go-no-go-checklist.md`, a per-client
+  operator checklist that separates staging readiness, production proof
+  readiness, and public release readiness.
+- M001-L29 keeps public release blocked: final legal/subprocessor launch
+  language, future public package/source approval, directory metadata, and
+  explicit Jason release approval are still required.
 
 ## Lanes
 
@@ -270,7 +281,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
 | M001-L26 | Done | `.claudex/packets/M001-L26-limited-client-key-ops-runbook.md` | Document limited-client key operations for staging, production gating, rotation, revocation, leak response, and redacted proof capture. |
 | M001-L27 | Done | `.claudex/packets/M001-L27-limited-client-support-intake-ledger.md` | Document limited-client support, incident, deletion/export, and offboarding intake without promising public SLA or self-serve operations. |
 | M001-L28 | Done | `.claudex/packets/M001-L28-deletion-export-launch-decision-brief.md` | Prepare the Jason/legal/ops deletion/export launch decision brief without implying public approval or self-serve operations. |
-| M001-L29 | Ready | `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md` | Consolidate limited-client evidence into a staging/production/public go-no-go checklist without making release claims. |
+| M001-L29 | Done | `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md` | Consolidate limited-client evidence into a staging/production/public go/no-go checklist without making release claims. |
+| M001-L30 | Ready | `.claudex/packets/M001-L30-limited-client-staging-freshness-proof.md` | Apply the go/no-go checklist to the current Column Five Brandcode staging instance and refresh redacted hosted proof. |
 
 ## Blockers And Decisions
 
@@ -293,6 +305,8 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   pushed tip `cc94bee`.
 - Push/CI proof for the M001-L23 through M001-L28 stack is complete: GitHub CI
   run `25701556152` passed on pushed tip `9619b37`.
+- Push/CI proof for the pushed L28 decision updates and L29 prep is complete:
+  GitHub CI run `25705113500` passed on pushed tip `201ee36`.
 - L13 converted directory metadata and production-key/non-Brandcode proof into product-spine deferrals until hosted terms/rate-limit posture is settled.
 - L14 converted hosted-service terms, retention/privacy, custody, abuse handling, rate-limit posture, pricing copy, and package/source posture into a blocked release gate.
 - Full-suite local test deferral is resolved by M001-L16.
@@ -318,16 +332,19 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   compact Jason/legal/ops decision brief. The pre-release operating posture is
   now recorded; the remaining blocker is final legal/subprocessor launch
   language, not missing repo preparation.
-- The next non-release hardening step is M001-L29: consolidate limited-client
-  evidence into a go/no-go checklist that separates staging, production proof,
-  and public release readiness while keeping deletion/export launch language
-  blocked until final legal/subprocessor launch language is approved.
+- M001-L29 consolidated limited-client evidence into a go/no-go checklist that
+  separates staging, production proof, and public release readiness while
+  keeping deletion/export launch language blocked until final
+  legal/subprocessor launch language is approved.
+- The next non-release hardening step is M001-L30: apply the checklist to the
+  current Column Five Brandcode staging instance and refresh redacted hosted
+  proof without making any release claim.
 
 ## Ready Lane Rule
 
 Exactly one lane is Ready for automation:
 
-- `.claudex/packets/M001-L29-limited-client-go-no-go-checklist.md`
+- `.claudex/packets/M001-L30-limited-client-staging-freshness-proof.md`
 
 The deletion/export pre-release operating posture is recorded, but public
 deletion/export launch language is still blocked on final legal/subprocessor
