@@ -226,10 +226,13 @@ Turn the implemented Brandcode hosted MCP surface into an A-grade pre-release ca
   as Brandcode Studio Ops; authority proof is brand instance admin status or,
   for the internal Column Five Brandcode instance, verified
   `columnfivemedia.com` / `columnfive.com` email.
-- L28 now records the recommended scope/exclusion/export posture: hosted MCP
-  service data only, curated support-packet exports, security/abuse/audit/legal
-  exclusions, no public SLA, no self-serve deletion/export, and draft
-  legal/subprocessor language for review.
+- Jason accepted the L28 public-operating recommendations: external authority
+  proof requires brand admin role, approved client contact, or written
+  admin/contract-owner approval; scope stays hosted MCP service data only;
+  exports are curated support packets; security/abuse/audit/legal/backups and
+  out-of-custody provider data are excluded; no public SLA or self-serve
+  deletion/export is approved; draft legal/subprocessor language is useful
+  review input but not final public terms.
 - M001-L23 through M001-L28 were pushed to `origin/main` at tip `9619b37`.
 - GitHub CI run `25701556152` passed on pushed tip `9619b37` across Node 20,
   Node 22, and Node 24. All three jobs passed `npm ci`, `npm run build`,

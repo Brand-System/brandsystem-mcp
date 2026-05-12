@@ -24,13 +24,15 @@ M001-L28 completed the deletion/export launch decision brief:
   public listing metadata, production client keys, self-serve deletion/export
   tooling, public SLA, legal terms, custody relaxation, or selected-kit default
   behavior.
-- Jason then approved the pre-release deletion/export operating posture:
-  brand owner/admin or Jason as authorized requester, brand instance admin
-  status or verified `columnfivemedia.com` / `columnfive.com` email as proof,
-  hosted MCP service data as scope, curated support-packet export, security and
-  legal exclusions, no public SLA, and Jason Lankow as escalation owner.
-- Draft legal/subprocessor language exists in the brief for review, but it is
-  not approved public launch copy.
+- Jason then approved the pre-release deletion/export operating posture and
+  accepted the public-operating recommendations: brand owner/admin, recorded
+  legal/contract contact, or Jason as authorized requester; brand admin role,
+  approved contact, or written admin/contract-owner approval as external proof;
+  hosted MCP service data as scope; curated support-packet export; security,
+  abuse, audit, legal, backup, and out-of-custody exclusions; no public SLA;
+  and Jason Lankow as escalation owner.
+- Draft legal/subprocessor language exists in the brief as useful review input,
+  but it is not approved public launch copy.
 - No code changed. Verification was docs-only with `git diff --check` and
   `git diff --cached --check`.
 
